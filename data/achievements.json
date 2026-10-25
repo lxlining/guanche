@@ -1,0 +1,108 @@
+{
+  "achievements": [
+    {
+      "id": "first_spot",
+      "name": "初次见面",
+      "desc": "第一次观测到列车。",
+      "check": "spots_min",
+      "n": 1
+    },
+    {
+      "id": "morning_rush",
+      "name": "早高峰",
+      "desc": "在 07:00–09:00 之间观测 20 趟不同车次。",
+      "check": "window_min",
+      "from": 7,
+      "to": 9,
+      "n": 20
+    },
+    {
+      "id": "late_train",
+      "name": "末班车",
+      "desc": "观测到 22:00 之后仍在运行的列车。",
+      "check": "window_min",
+      "from": 22,
+      "to": 24,
+      "n": 1
+    },
+    {
+      "id": "midnight",
+      "name": "夕发朝至",
+      "desc": "发现夜间动卧列车（CRH2E）——京沪高铁有 0:00–5:00 的天窗，它们清晨才会驶过。",
+      "check": "types_include",
+      "list": ["CRH2E"]
+    },
+    {
+      "id": "cr400_collector",
+      "name": "复兴号收藏家",
+      "desc": "集齐 CR400AF、CR400BF 与智能复兴号。",
+      "check": "types_include",
+      "list": ["CR400AF", "CR400BF", "CR400AF-BZ"]
+    },
+    {
+      "id": "ten_types",
+      "name": "十全十美",
+      "desc": "发现 10 种车型。",
+      "check": "types_min",
+      "n": 10
+    },
+    {
+      "id": "all_types",
+      "name": "车型全收集",
+      "desc": "发现图鉴中的全部车型。",
+      "check": "types_all"
+    },
+    {
+      "id": "express_master",
+      "name": "大站快车",
+      "desc": "观测 10 趟沿线停站不超过 4 站的大站车次。",
+      "check": "express_min",
+      "n": 10
+    },
+    {
+      "id": "full_journey",
+      "name": "全程见证",
+      "desc": "完整跟随一趟北京南 ↔ 上海虹桥的全程车。",
+      "check": "full_journey"
+    },
+    {
+      "id": "thousand_km",
+      "name": "一日千里",
+      "desc": "单次跟随累计里程达到 1000 公里。",
+      "check": "follow_km",
+      "km": 1000
+    },
+    {
+      "id": "follower_10",
+      "name": "老车迷",
+      "desc": "累计跟随过 10 趟不同车次。",
+      "check": "follow_count",
+      "n": 10
+    },
+    {
+      "id": "cross_meet",
+      "name": "擦肩而过",
+      "desc": "跟车时与对向列车交会。",
+      "check": "cross_meet"
+    },
+    {
+      "id": "visit_all_stations",
+      "name": "走遍沿线",
+      "desc": "移动镜头到访沿线全部 23 座车站。",
+      "check": "stations_all"
+    },
+    {
+      "id": "screen_10",
+      "name": "同屏盛况",
+      "desc": "同一屏幕内看到 10 趟在途列车。",
+      "check": "screen_trains"
+    },
+    {
+      "id": "fifty_trains",
+      "name": "半壁江山",
+      "desc": "累计观测 50 趟不同车次。",
+      "check": "spots_min",
+      "n": 50
+    }
+  ]
+}

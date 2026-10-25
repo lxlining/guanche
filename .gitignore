@@ -1,0 +1,19 @@
+# Godot 4
+.godot/
+*.translation
+export.cfg
+export_presets.cfg
+.DS_Store
+
+# 12306 抓取缓存（数据量大，可随时重抓）
+tools/cache12306/
+__pycache__/
+
+# 引擎本体（本地下载）
+godot/
+
+# 本工作区无关文件与测试产物
+.zcode/
+.mimosa/
+stellar-moments/
+tools/shots/

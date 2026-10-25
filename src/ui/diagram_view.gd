@@ -1,0 +1,196 @@
+# 时刻-距离运行图叠加层：全部列车按「到发时刻 × 里程」画成斜线，
+# 红色竖线为当前时刻游标（可左右拖动平移时间），点击车次线选中列车。
+# 纵轴用车站官方里程（真实公里标），斜线在站间取直线（传统运行图画法）。
+extends Control
+
+const UIKit := preload("res://src/ui/ui_kit.gd")
+const FontLib := preload("res://src/ui/font_lib.gd")
+
+signal train_picked(code: String)
+
+var selected := ""
+var hover := ""
+
+var _scrubbing := false
+var _mouse := Vector2.ZERO
+const MARGIN_L := 104.0
+const MARGIN_R := 30.0
+const MARGIN_T := 46.0
+const MARGIN_B := 30.0
+
+
+func _ready() -> void:
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	visible = false
+	mouse_filter = Control.MOUSE_FILTER_STOP
+
+
+func toggle() -> void:
+	visible = not visible
+	if visible:
+		queue_redraw()
+
+
+func set_selected(code: String) -> void:
+	selected = code
+	if visible:
+		queue_redraw()
+
+
+func _process(_delta: float) -> void:
+	if visible:
+		queue_redraw()
+
+
+func _km_max() -> float:
+	return float(DB.stations[DB.station_order[DB.station_order.size() - 1]]["km"])
+
+
+func _plot_rect() -> Rect2:
+	return Rect2(MARGIN_L, MARGIN_T, maxf(size.x - MARGIN_L - MARGIN_R, 100.0),
+			maxf(size.y - MARGIN_T - MARGIN_B, 100.0))
+
+
+func _x_of(t: float, pr: Rect2) -> float:
+	return pr.position.x + fposmod(t, 86400.0) / 86400.0 * pr.size.x
+
+
+func _y_of(km: float, pr: Rect2) -> float:
+	return pr.position.y + pr.size.y * (1.0 - clampf(km, 0.0, _km_max()) / _km_max())
+
+
+# 每趟车在图上的折线（像素坐标）：[[(x,y), ...], 段列表]
+func _train_points(train: Dictionary, pr: Rect2) -> PackedVector2Array:
+	var pts := PackedVector2Array()
+	var stops: Array = train["stops"]
+	var n := stops.size()
+	for i in range(n):
+		var sid: String = stops[i]["sid"]
+		var km: float = float(DB.stations[sid]["km"])
+		var y := _y_of(km, pr)
+		if i == 0:
+			pts.append(Vector2(_x_of(stops[i]["dep_s"], pr), y))
+		elif i == n - 1:
+			pts.append(Vector2(_x_of(stops[i]["arr_s"], pr), y))
+		else:
+			pts.append(Vector2(_x_of(stops[i]["dep_s"], pr), y))
+	return pts
+
+
+func _seg_dist(p: Vector2, a: Vector2, b: Vector2) -> float:
+	var ab := b - a
+	var t := 0.0
+	var l2 := ab.length_squared()
+	if l2 > 0.0001:
+		t = clampf((p - a).dot(ab) / l2, 0.0, 1.0)
+	return p.distance_to(a + ab * t)
+
+
+func _pick_at(pos: Vector2) -> String:
+	var pr := _plot_rect()
+	if not pr.grow(20.0).has_point(pos):
+		return ""
+	var best := ""
+	var best_d := 7.0
+	for train in DB.trains:
+		var pts := _train_points(train, pr)
+		for i in range(pts.size() - 1):
+			var d := _seg_dist(pos, pts[i], pts[i + 1])
+			if d < best_d:
+				best_d = d
+				best = train["code"]
+	return best
+
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			var pr := _plot_rect()
+			var cursor_x := _x_of(GameTime.t, pr)
+			if absf(event.position.x - cursor_x) < 10.0:
+				_scrubbing = true
+			else:
+				train_picked.emit(_pick_at(event.position))
+		else:
+			_scrubbing = false
+	elif event is InputEventMouseMotion:
+		_mouse = event.position
+		if _scrubbing:
+			var pr := _plot_rect()
+			var t: float = (event.position.x - pr.position.x) / pr.size.x * 86400.0
+			GameTime.jump_to_seconds(clampf(t, 0.0, 86399.0))
+		else:
+			var h := _pick_at(event.position)
+			if h != hover:
+				hover = h
+				queue_redraw()
+
+
+func _draw() -> void:
+	var font := FontLib.get_font()
+	var pr := _plot_rect()
+
+	draw_rect(Rect2(Vector2.ZERO, size), Color(0.045, 0.055, 0.08, 0.97))
+
+	# 小时网格
+	for h in range(0, 25):
+		var x := _x_of(h * 3600.0, pr)
+		draw_line(Vector2(x, pr.position.y), Vector2(x, pr.position.y + pr.size.y),
+				Color(1, 1, 1, 0.05), 1.0)
+		draw_string(font, Vector2(x - 20, pr.position.y + pr.size.y + 18),
+				"%02d:00" % (h % 24), HORIZONTAL_ALIGNMENT_CENTER, 40, 11, UIKit.DIM)
+	# 车站横线与站名
+	for sid in DB.station_order:
+		var st: Dictionary = DB.stations[sid]
+		var y := _y_of(float(st["km"]), pr)
+		var major: bool = st["major"]
+		draw_line(Vector2(pr.position.x, y), Vector2(pr.position.x + pr.size.x, y),
+				Color(1, 1, 1, 0.09 if major else 0.045), 1.0 if major else 1.0)
+		draw_string(font, Vector2(10, y + 4), "K%d" % int(st["km"]),
+				HORIZONTAL_ALIGNMENT_LEFT, 34, 9, Color(0.5, 0.56, 0.66))
+		draw_string(font, Vector2(48, y + 4), str(st["name"]), HORIZONTAL_ALIGNMENT_LEFT,
+				60, 11 if major else 10, UIKit.TEXT if major else Color(0.6, 0.66, 0.76))
+
+	# 列车斜线（先普通后高亮）
+	for train in DB.trains:
+		var code: String = train["code"]
+		if code == selected or code == hover:
+			continue
+		var tt: Dictionary = DB.train_types.get(train["type"], {})
+		var col: Color = Color(tt.get("color", "#8fa3b8"))
+		col.a = 0.35
+		_draw_line_pts(_train_points(train, pr), col, 1.2)
+	if hover != "" and hover != selected:
+		_draw_line_pts(_train_points(DB.train_by_code[hover], pr), Color(1, 1, 1, 0.75), 2.0)
+	if selected != "":
+		_draw_line_pts(_train_points(DB.train_by_code[selected], pr), Color.WHITE, 2.6)
+
+	# 当前时刻游标
+	var cx := _x_of(GameTime.t, pr)
+	draw_line(Vector2(cx, pr.position.y), Vector2(cx, pr.position.y + pr.size.y),
+			Color(0.95, 0.35, 0.35, 0.9), 1.6)
+	draw_rect(Rect2(cx - 26, 10, 52, 22), Color(0.5, 0.13, 0.13, 0.9))
+	draw_string(font, Vector2(cx - 26, 25), GameTime.time_string(),
+			HORIZONTAL_ALIGNMENT_CENTER, 52, 13, Color.WHITE)
+	# 每趟在线列车在游标上的当前位置
+	for code in Simulation.states:
+		var st: Dictionary = Simulation.states[code]
+		var s: String = st.get("status", "off")
+		if s != "run" and s != "stop" and s != "wait":
+			continue
+		var col: Color = Color(DB.train_types.get(st["type"], {}).get("color", "#8fa3b8"))
+		var pos := Vector2(cx, _y_of(float(st.get("km", 0.0)), pr))
+		if code == selected:
+			draw_circle(pos, 4.2, Color.WHITE)
+			draw_arc(pos, 6.5, 0, TAU, 20, Color(1, 1, 1, 0.5), 1.2, true)
+		else:
+			draw_circle(pos, 2.4, col.lightened(0.2))
+
+	draw_string(font, Vector2(MARGIN_L, 30),
+			"运行图（时刻-距离图）· 拖动红色游标平移时刻 · 点击斜线选中列车 · [G] 关闭",
+			HORIZONTAL_ALIGNMENT_LEFT, 900, 12, UIKit.DIM)
+
+
+func _draw_line_pts(pts: PackedVector2Array, col: Color, w: float) -> void:
+	if pts.size() >= 2:
+		draw_polyline(pts, col, w, true)

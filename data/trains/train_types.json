@@ -1,0 +1,122 @@
+{
+  "note": "车型资料为面向游戏的简要整理，涂装昵称与编组细节仅供图鉴参考。",
+  "types": [
+    {
+      "id": "CRH2C",
+      "name": "CRH2C",
+      "family": "CRH2 系",
+      "formation": "8 辆编组",
+      "speed": 350,
+      "color": "#8fa3b8",
+      "desc": "早期高速动车组，曾在京津城际与京沪高铁开通初期担当主力交路。"
+    },
+    {
+      "id": "CRH380A",
+      "name": "CRH380A",
+      "family": "CRH380 系",
+      "formation": "8 辆编组",
+      "speed": 380,
+      "color": "#5fb0e8",
+      "desc": "流线型头型，京沪高铁开通初期的明星车型之一。"
+    },
+    {
+      "id": "CRH380AL",
+      "name": "CRH380AL",
+      "family": "CRH380 系",
+      "formation": "16 辆长编组",
+      "speed": 380,
+      "color": "#5fb0e8",
+      "desc": "CRH380A 的 16 辆长编组版本，运力更强。"
+    },
+    {
+      "id": "CRH380B",
+      "name": "CRH380B",
+      "family": "CRH380 系",
+      "formation": "8 辆编组",
+      "speed": 380,
+      "color": "#8f7fe8",
+      "desc": "泛用型高速动车组，跨线交路中最常见的面孔。"
+    },
+    {
+      "id": "CRH380BL",
+      "name": "CRH380BL",
+      "family": "CRH380 系",
+      "formation": "16 辆长编组",
+      "speed": 380,
+      "color": "#8f7fe8",
+      "desc": "CRH380B 的长编组版本，常见于京沪间大编组车次。"
+    },
+    {
+      "id": "CRH380CL",
+      "name": "CRH380CL",
+      "family": "CRH380 系",
+      "formation": "16 辆长编组",
+      "speed": 380,
+      "color": "#9aa7b8",
+      "desc": "头型修长的长编组高速动车组，保有量不多，见到算缘分。"
+    },
+    {
+      "id": "CRH2E",
+      "name": "CRH2E",
+      "family": "CRH2 系",
+      "formation": "16 辆编组（卧铺）",
+      "speed": 250,
+      "color": "#7fbf7f",
+      "desc": "动车组卧铺列车，承担夕发朝至的夜间长途交路。"
+    },
+    {
+      "id": "CR400AF",
+      "name": "CR400AF",
+      "family": "复兴号",
+      "formation": "8 辆编组",
+      "speed": 350,
+      "color": "#e5484d",
+      "desc": "红色涂装的复兴号（红神龙），京沪高铁 350km/h 标尺运行的主力。"
+    },
+    {
+      "id": "CR400BF",
+      "name": "CR400BF",
+      "family": "复兴号",
+      "formation": "8 辆编组",
+      "speed": 350,
+      "color": "#e8a33d",
+      "desc": "金色涂装的复兴号（金凤凰），与 CR400AF 并肩驰骋京沪线。"
+    },
+    {
+      "id": "CR400AF-A",
+      "name": "CR400AF-A",
+      "family": "复兴号",
+      "formation": "16 辆长编组",
+      "speed": 350,
+      "color": "#e5484d",
+      "desc": "16 辆长编组复兴号，热门时段的主力运力。"
+    },
+    {
+      "id": "CR400BF-A",
+      "name": "CR400BF-A",
+      "family": "复兴号",
+      "formation": "16 辆长编组",
+      "speed": 350,
+      "color": "#e8a33d",
+      "desc": "16 辆长编组复兴号（金凤凰长编版）。"
+    },
+    {
+      "id": "CR400AF-BZ",
+      "name": "CR400AF-BZ",
+      "family": "复兴号（智能）",
+      "formation": "17 辆超长编组",
+      "speed": 350,
+      "color": "#f2f4f8",
+      "desc": "智能复兴号超长编组，京沪旗舰车底，商务座带星空顶。"
+    },
+    {
+      "id": "CR400BF-BZ",
+      "name": "CR400BF-BZ",
+      "family": "复兴号（智能）",
+      "formation": "8/16 辆编组",
+      "speed": 350,
+      "color": "#ffd166",
+      "desc": "智能复兴号车底，服务设施全面升级的「海空蓝」涂装。"
+    }
+  ]
+}
