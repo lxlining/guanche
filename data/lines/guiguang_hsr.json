@@ -8,43 +8,242 @@
   "color": "#4ade80",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "gg_gyn",  "name": "贵阳北", "lon": 106.688, "lat": 26.660, "km": 0,   "major": true },
-    { "id": "gg_llb",  "name": "龙里北", "lon": 106.980, "lat": 26.450, "km": 33,  "major": false },
-    { "id": "gg_dyd",  "name": "都匀东", "lon": 107.520, "lat": 26.260, "km": 83,  "major": false },
-    { "id": "gg_sd",   "name": "三都",   "lon": 107.880, "lat": 25.980, "km": 129, "major": false },
-    { "id": "gg_rj",   "name": "榕江",   "lon": 108.520, "lat": 25.930, "km": 191, "major": false },
-    { "id": "gg_cj",   "name": "从江",   "lon": 108.910, "lat": 25.740, "km": 236, "major": false },
-    { "id": "gg_sjn",  "name": "三江南", "lon": 109.610, "lat": 25.780, "km": 300, "major": false },
-    { "id": "gg_glx",  "name": "桂林西", "lon": 110.290, "lat": 25.330, "km": 370, "major": true },
-    { "id": "gg_gl",   "name": "阳朔",   "lon": 110.490, "lat": 24.740, "km": 427, "major": false },
-    { "id": "gg_gc",   "name": "恭城",   "lon": 110.820, "lat": 24.830, "km": 462, "major": false },
-    { "id": "gg_zsx",  "name": "钟山西", "lon": 111.300, "lat": 24.530, "km": 518, "major": false },
-    { "id": "gg_hz",   "name": "贺州",   "lon": 111.560, "lat": 24.420, "km": 548, "major": false },
-    { "id": "gg_hj",   "name": "怀集",   "lon": 112.180, "lat": 23.910, "km": 618, "major": false },
-    { "id": "gg_gn",   "name": "广宁",   "lon": 112.440, "lat": 23.630, "km": 654, "major": false },
-    { "id": "gg_zqd",  "name": "肇庆东", "lon": 112.520, "lat": 23.330, "km": 693, "major": false },
-    { "id": "gg_ssn",  "name": "三水南", "lon": 112.890, "lat": 23.160, "km": 729, "major": false },
-    { "id": "gg_fsx",  "name": "佛山西", "lon": 113.090, "lat": 23.070, "km": 762, "major": false },
-    { "id": "gg_gzn",  "name": "广州南", "lon": 113.273, "lat": 22.989, "km": 803, "major": true }
+    {
+      "id": "gg_gyn",
+      "name": "贵阳北",
+      "lon": 106.688,
+      "lat": 26.66,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "gg_llb",
+      "name": "龙里北",
+      "lon": 106.98,
+      "lat": 26.45,
+      "km": 33,
+      "major": false
+    },
+    {
+      "id": "gg_dyd",
+      "name": "都匀东",
+      "lon": 107.52,
+      "lat": 26.26,
+      "km": 83,
+      "major": false
+    },
+    {
+      "id": "gg_sd",
+      "name": "三都",
+      "lon": 107.88,
+      "lat": 25.98,
+      "km": 129,
+      "major": false
+    },
+    {
+      "id": "gg_rj",
+      "name": "榕江",
+      "lon": 108.52,
+      "lat": 25.93,
+      "km": 191,
+      "major": false
+    },
+    {
+      "id": "gg_cj",
+      "name": "从江",
+      "lon": 108.91,
+      "lat": 25.74,
+      "km": 236,
+      "major": false
+    },
+    {
+      "id": "gg_sjn",
+      "name": "三江南",
+      "lon": 109.61,
+      "lat": 25.78,
+      "km": 300,
+      "major": false
+    },
+    {
+      "id": "gg_glx",
+      "name": "桂林西",
+      "lon": 110.29,
+      "lat": 25.33,
+      "km": 370,
+      "major": true
+    },
+    {
+      "id": "gg_gl",
+      "name": "阳朔",
+      "lon": 110.49,
+      "lat": 24.74,
+      "km": 427,
+      "major": false
+    },
+    {
+      "id": "gg_gc",
+      "name": "恭城",
+      "lon": 110.82,
+      "lat": 24.83,
+      "km": 462,
+      "major": false
+    },
+    {
+      "id": "gg_zsx",
+      "name": "钟山西",
+      "lon": 111.3,
+      "lat": 24.53,
+      "km": 518,
+      "major": false
+    },
+    {
+      "id": "gg_hz",
+      "name": "贺州",
+      "lon": 111.56,
+      "lat": 24.42,
+      "km": 548,
+      "major": false
+    },
+    {
+      "id": "gg_hj",
+      "name": "怀集",
+      "lon": 112.18,
+      "lat": 23.91,
+      "km": 618,
+      "major": false
+    },
+    {
+      "id": "gg_gn",
+      "name": "广宁",
+      "lon": 112.44,
+      "lat": 23.63,
+      "km": 654,
+      "major": false
+    },
+    {
+      "id": "gg_zqd",
+      "name": "肇庆东",
+      "lon": 112.52,
+      "lat": 23.33,
+      "km": 693,
+      "major": false
+    },
+    {
+      "id": "gg_ssn",
+      "name": "三水南",
+      "lon": 112.89,
+      "lat": 23.16,
+      "km": 729,
+      "major": false
+    },
+    {
+      "id": "gg_fsx",
+      "name": "佛山西",
+      "lon": 113.09,
+      "lat": 23.07,
+      "km": 762,
+      "major": false
+    },
+    {
+      "id": "gg_gzn",
+      "name": "广州南",
+      "lon": 113.273,
+      "lat": 22.989,
+      "km": 803,
+      "major": true
+    }
   ],
   "geometry": [
-    [106.688, 26.660, "gg_gyn"],
-    [106.980, 26.450, "gg_llb"],
-    [107.520, 26.260, "gg_dyd"],
-    [107.880, 25.980, "gg_sd"],
-    [108.520, 25.930, "gg_rj"],
-    [108.910, 25.740, "gg_cj"],
-    [109.610, 25.780, "gg_sjn"],
-    [110.290, 25.330, "gg_glx"],
-    [110.490, 24.740, "gg_gl"],
-    [110.820, 24.830, "gg_gc"],
-    [111.300, 24.530, "gg_zsx"],
-    [111.560, 24.420, "gg_hz"],
-    [112.180, 23.910, "gg_hj"],
-    [112.440, 23.630, "gg_gn"],
-    [112.520, 23.330, "gg_zqd"],
-    [112.890, 23.160, "gg_ssn"],
-    [113.090, 23.070, "gg_fsx"],
-    [113.273, 22.989, "gg_gzn"]
-  ]
+    [
+      106.688,
+      26.66,
+      "gg_gyn"
+    ],
+    [
+      106.98,
+      26.45,
+      "gg_llb"
+    ],
+    [
+      107.52,
+      26.26,
+      "gg_dyd"
+    ],
+    [
+      107.88,
+      25.98,
+      "gg_sd"
+    ],
+    [
+      108.52,
+      25.93,
+      "gg_rj"
+    ],
+    [
+      108.91,
+      25.74,
+      "gg_cj"
+    ],
+    [
+      109.61,
+      25.78,
+      "gg_sjn"
+    ],
+    [
+      110.29,
+      25.33,
+      "gg_glx"
+    ],
+    [
+      110.49,
+      24.74,
+      "gg_gl"
+    ],
+    [
+      110.82,
+      24.83,
+      "gg_gc"
+    ],
+    [
+      111.3,
+      24.53,
+      "gg_zsx"
+    ],
+    [
+      111.56,
+      24.42,
+      "gg_hz"
+    ],
+    [
+      112.18,
+      23.91,
+      "gg_hj"
+    ],
+    [
+      112.44,
+      23.63,
+      "gg_gn"
+    ],
+    [
+      112.52,
+      23.33,
+      "gg_zqd"
+    ],
+    [
+      112.89,
+      23.16,
+      "gg_ssn"
+    ],
+    [
+      113.09,
+      23.07,
+      "gg_fsx"
+    ],
+    [
+      113.273,
+      22.989,
+      "gg_gzn"
+    ]
+  ],
+  "line_class": "hsr250"
 }

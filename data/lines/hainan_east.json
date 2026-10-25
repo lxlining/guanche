@@ -8,25 +8,125 @@
   "color": "#22d3ee",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "hain_hkd", "name": "海口东", "lon": 110.360, "lat": 20.020, "km": 0,   "major": true },
-    { "id": "hain_ml",  "name": "美兰",   "lon": 110.460, "lat": 19.940, "km": 14,  "major": false },
-    { "id": "hain_wc",  "name": "文昌",   "lon": 110.790, "lat": 19.560, "km": 55,  "major": false },
-    { "id": "hain_qh",  "name": "琼海",   "lon": 110.480, "lat": 19.240, "km": 101, "major": false },
-    { "id": "hain_ba",  "name": "博鳌",   "lon": 110.580, "lat": 19.150, "km": 113, "major": false },
-    { "id": "hain_wn",  "name": "万宁",   "lon": 110.400, "lat": 18.800, "km": 156, "major": false },
-    { "id": "hain_ls",  "name": "陵水",   "lon": 110.030, "lat": 18.510, "km": 199, "major": false },
-    { "id": "hain_ylw", "name": "亚龙湾", "lon": 109.650, "lat": 18.230, "km": 262, "major": false },
-    { "id": "hain_sy",  "name": "三亚",   "lon": 109.500, "lat": 18.290, "km": 285, "major": true }
+    {
+      "id": "hain_hkd",
+      "name": "海口东",
+      "lon": 110.36,
+      "lat": 20.02,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "hain_ml",
+      "name": "美兰",
+      "lon": 110.46,
+      "lat": 19.94,
+      "km": 14,
+      "major": false
+    },
+    {
+      "id": "hain_wc",
+      "name": "文昌",
+      "lon": 110.79,
+      "lat": 19.56,
+      "km": 55,
+      "major": false
+    },
+    {
+      "id": "hain_qh",
+      "name": "琼海",
+      "lon": 110.48,
+      "lat": 19.24,
+      "km": 101,
+      "major": false
+    },
+    {
+      "id": "hain_ba",
+      "name": "博鳌",
+      "lon": 110.58,
+      "lat": 19.15,
+      "km": 113,
+      "major": false
+    },
+    {
+      "id": "hain_wn",
+      "name": "万宁",
+      "lon": 110.4,
+      "lat": 18.8,
+      "km": 156,
+      "major": false
+    },
+    {
+      "id": "hain_ls",
+      "name": "陵水",
+      "lon": 110.03,
+      "lat": 18.51,
+      "km": 199,
+      "major": false
+    },
+    {
+      "id": "hain_ylw",
+      "name": "亚龙湾",
+      "lon": 109.65,
+      "lat": 18.23,
+      "km": 262,
+      "major": false
+    },
+    {
+      "id": "hain_sy",
+      "name": "三亚",
+      "lon": 109.5,
+      "lat": 18.29,
+      "km": 285,
+      "major": true
+    }
   ],
   "geometry": [
-    [110.360, 20.020, "hain_hkd"],
-    [110.460, 19.940, "hain_ml"],
-    [110.790, 19.560, "hain_wc"],
-    [110.480, 19.240, "hain_qh"],
-    [110.580, 19.150, "hain_ba"],
-    [110.400, 18.800, "hain_wn"],
-    [110.030, 18.510, "hain_ls"],
-    [109.650, 18.230, "hain_ylw"],
-    [109.500, 18.290, "hain_sy"]
-  ]
+    [
+      110.36,
+      20.02,
+      "hain_hkd"
+    ],
+    [
+      110.46,
+      19.94,
+      "hain_ml"
+    ],
+    [
+      110.79,
+      19.56,
+      "hain_wc"
+    ],
+    [
+      110.48,
+      19.24,
+      "hain_qh"
+    ],
+    [
+      110.58,
+      19.15,
+      "hain_ba"
+    ],
+    [
+      110.4,
+      18.8,
+      "hain_wn"
+    ],
+    [
+      110.03,
+      18.51,
+      "hain_ls"
+    ],
+    [
+      109.65,
+      18.23,
+      "hain_ylw"
+    ],
+    [
+      109.5,
+      18.29,
+      "hain_sy"
+    ]
+  ],
+  "line_class": "intercity"
 }

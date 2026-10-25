@@ -1,0 +1,67 @@
+{
+  "id": "hajia",
+  "name": "哈佳铁路",
+  "short": "哈佳线",
+  "from": "哈尔滨",
+  "to": "佳木斯",
+  "length_km": 344,
+  "color": "#fdba74",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    {
+      "id": "hj_hrb",
+      "name": "哈尔滨",
+      "lon": 126.63,
+      "lat": 45.75,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "hj_fz",
+      "name": "方正",
+      "lon": 128.8,
+      "lat": 45.83,
+      "km": 219,
+      "major": false
+    },
+    {
+      "id": "hj_yl",
+      "name": "依兰",
+      "lon": 129.55,
+      "lat": 46.02,
+      "km": 292,
+      "major": false
+    },
+    {
+      "id": "hj_jms",
+      "name": "佳木斯",
+      "lon": 130.32,
+      "lat": 46.8,
+      "km": 344,
+      "major": true
+    }
+  ],
+  "geometry": [
+    [
+      126.63,
+      45.75,
+      "hj_hrb"
+    ],
+    [
+      128.8,
+      45.83,
+      "hj_fz"
+    ],
+    [
+      129.55,
+      46.02,
+      "hj_yl"
+    ],
+    [
+      130.32,
+      46.8,
+      "hj_jms"
+    ]
+  ]
+}

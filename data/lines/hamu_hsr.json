@@ -1,0 +1,67 @@
+{
+  "id": "hamu_hsr",
+  "name": "哈牡高铁",
+  "short": "哈牡高铁",
+  "from": "哈尔滨",
+  "to": "牡丹江",
+  "length_km": 293,
+  "color": "#f0abfc",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    {
+      "id": "hm_hrb",
+      "name": "哈尔滨",
+      "lon": 126.63,
+      "lat": 45.75,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "hm_sz",
+      "name": "尚志",
+      "lon": 127.97,
+      "lat": 45.21,
+      "km": 137,
+      "major": false
+    },
+    {
+      "id": "hm_hlb",
+      "name": "海林北",
+      "lon": 129.3,
+      "lat": 44.6,
+      "km": 258,
+      "major": false
+    },
+    {
+      "id": "hm_mdj",
+      "name": "牡丹江",
+      "lon": 129.63,
+      "lat": 44.55,
+      "km": 293,
+      "major": true
+    }
+  ],
+  "geometry": [
+    [
+      126.63,
+      45.75,
+      "hm_hrb"
+    ],
+    [
+      127.97,
+      45.21,
+      "hm_sz"
+    ],
+    [
+      129.3,
+      44.6,
+      "hm_hlb"
+    ],
+    [
+      129.63,
+      44.55,
+      "hm_mdj"
+    ]
+  ]
+}

@@ -8,27 +8,138 @@
   "color": "#facc15",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "yg_cqx",  "name": "重庆西",   "lon": 106.470, "lat": 29.480, "km": 0,   "major": true },
-    { "id": "yg_lln",  "name": "珞璜南",   "lon": 106.560, "lat": 29.280, "km": 23,  "major": false },
-    { "id": "yg_qjd",  "name": "綦江东",   "lon": 106.660, "lat": 29.020, "km": 53,  "major": false },
-    { "id": "yg_tzd",  "name": "桐梓东",   "lon": 106.820, "lat": 28.320, "km": 128, "major": false },
-    { "id": "yg_lsgn", "name": "娄山关南", "lon": 106.840, "lat": 27.990, "km": 164, "major": false },
-    { "id": "yg_zy",   "name": "遵义",     "lon": 106.900, "lat": 27.680, "km": 199, "major": true },
-    { "id": "yg_zyn",  "name": "遵义南",   "lon": 106.880, "lat": 27.520, "km": 219, "major": false },
-    { "id": "yg_xf",   "name": "息烽",     "lon": 106.730, "lat": 27.090, "km": 266, "major": false },
-    { "id": "yg_xwx",  "name": "修文县",   "lon": 106.600, "lat": 26.860, "km": 291, "major": false },
-    { "id": "yg_gyn",  "name": "贵阳北",   "lon": 106.688, "lat": 26.660, "km": 345, "major": true }
+    {
+      "id": "yg_cqx",
+      "name": "重庆西",
+      "lon": 106.47,
+      "lat": 29.48,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "yg_lln",
+      "name": "珞璜南",
+      "lon": 106.56,
+      "lat": 29.28,
+      "km": 23,
+      "major": false
+    },
+    {
+      "id": "yg_qjd",
+      "name": "綦江东",
+      "lon": 106.66,
+      "lat": 29.02,
+      "km": 53,
+      "major": false
+    },
+    {
+      "id": "yg_tzd",
+      "name": "桐梓东",
+      "lon": 106.82,
+      "lat": 28.32,
+      "km": 128,
+      "major": false
+    },
+    {
+      "id": "yg_lsgn",
+      "name": "娄山关南",
+      "lon": 106.84,
+      "lat": 27.99,
+      "km": 164,
+      "major": false
+    },
+    {
+      "id": "yg_zy",
+      "name": "遵义",
+      "lon": 106.9,
+      "lat": 27.68,
+      "km": 199,
+      "major": true
+    },
+    {
+      "id": "yg_zyn",
+      "name": "遵义南",
+      "lon": 106.88,
+      "lat": 27.52,
+      "km": 219,
+      "major": false
+    },
+    {
+      "id": "yg_xf",
+      "name": "息烽",
+      "lon": 106.73,
+      "lat": 27.09,
+      "km": 266,
+      "major": false
+    },
+    {
+      "id": "yg_xwx",
+      "name": "修文县",
+      "lon": 106.6,
+      "lat": 26.86,
+      "km": 291,
+      "major": false
+    },
+    {
+      "id": "yg_gyn",
+      "name": "贵阳北",
+      "lon": 106.688,
+      "lat": 26.66,
+      "km": 345,
+      "major": true
+    }
   ],
   "geometry": [
-    [106.470, 29.480, "yg_cqx"],
-    [106.560, 29.280, "yg_lln"],
-    [106.660, 29.020, "yg_qjd"],
-    [106.820, 28.320, "yg_tzd"],
-    [106.840, 27.990, "yg_lsgn"],
-    [106.900, 27.680, "yg_zy"],
-    [106.880, 27.520, "yg_zyn"],
-    [106.730, 27.090, "yg_xf"],
-    [106.600, 26.860, "yg_xwx"],
-    [106.688, 26.660, "yg_gyn"]
-  ]
+    [
+      106.47,
+      29.48,
+      "yg_cqx"
+    ],
+    [
+      106.56,
+      29.28,
+      "yg_lln"
+    ],
+    [
+      106.66,
+      29.02,
+      "yg_qjd"
+    ],
+    [
+      106.82,
+      28.32,
+      "yg_tzd"
+    ],
+    [
+      106.84,
+      27.99,
+      "yg_lsgn"
+    ],
+    [
+      106.9,
+      27.68,
+      "yg_zy"
+    ],
+    [
+      106.88,
+      27.52,
+      "yg_zyn"
+    ],
+    [
+      106.73,
+      27.09,
+      "yg_xf"
+    ],
+    [
+      106.6,
+      26.86,
+      "yg_xwx"
+    ],
+    [
+      106.688,
+      26.66,
+      "yg_gyn"
+    ]
+  ],
+  "line_class": "hsr250"
 }

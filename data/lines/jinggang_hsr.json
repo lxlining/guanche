@@ -8,45 +8,255 @@
   "color": "#fbbf24",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "jg_ncx",  "name": "南昌西",   "lon": 115.805, "lat": 28.665, "km": 0,   "major": true },
-    { "id": "jg_fcd",  "name": "丰城东",   "lon": 115.960, "lat": 28.180, "km": 56,  "major": false },
-    { "id": "jg_zsd",  "name": "樟树东",   "lon": 115.660, "lat": 27.940, "km": 86,  "major": false },
-    { "id": "jg_xgd",  "name": "新干东",   "lon": 115.560, "lat": 27.740, "km": 110, "major": false },
-    { "id": "jg_xj",   "name": "峡江",     "lon": 115.320, "lat": 27.560, "km": 136, "major": false },
-    { "id": "jg_jax",  "name": "吉安西",   "lon": 114.960, "lat": 27.110, "km": 193, "major": false },
-    { "id": "jg_th",   "name": "泰和",     "lon": 114.910, "lat": 26.790, "km": 228, "major": false },
-    { "id": "jg_wax",  "name": "万安县",   "lon": 114.780, "lat": 26.460, "km": 264, "major": false },
-    { "id": "jg_gzx",  "name": "赣州西",   "lon": 114.790, "lat": 25.830, "km": 331, "major": true },
-    { "id": "jg_xfx",  "name": "信丰西",   "lon": 114.930, "lat": 25.390, "km": 379, "major": false },
-    { "id": "jg_lnd",  "name": "龙南东",   "lon": 114.810, "lat": 24.860, "km": 436, "major": false },
-    { "id": "jj_dnx",  "name": "定南西",   "lon": 114.640, "lat": 24.550, "km": 469, "major": false },
-    { "id": "jj_hbb",  "name": "和平北",   "lon": 114.820, "lat": 24.130, "km": 515, "major": false },
-    { "id": "jj_lcx",  "name": "龙川西",   "lon": 115.100, "lat": 24.090, "km": 547, "major": false },
-    { "id": "jj_hyb",  "name": "河源北",   "lon": 114.900, "lat": 23.740, "km": 586, "major": false },
-    { "id": "jj_hyb2", "name": "惠州北",   "lon": 114.410, "lat": 23.140, "km": 644, "major": false },
-    { "id": "jj_zk",   "name": "仲恺",     "lon": 114.320, "lat": 23.020, "km": 657, "major": false },
-    { "id": "jj_dgn",  "name": "东莞南",   "lon": 114.130, "lat": 22.850, "km": 678, "major": false },
-    { "id": "jj_szb",  "name": "深圳北",   "lon": 114.028, "lat": 22.610, "km": 716, "major": true }
+    {
+      "id": "jg_ncx",
+      "name": "南昌西",
+      "lon": 115.805,
+      "lat": 28.665,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "jg_fcd",
+      "name": "丰城东",
+      "lon": 115.96,
+      "lat": 28.18,
+      "km": 56,
+      "major": false
+    },
+    {
+      "id": "jg_zsd",
+      "name": "樟树东",
+      "lon": 115.66,
+      "lat": 27.94,
+      "km": 86,
+      "major": false
+    },
+    {
+      "id": "jg_xgd",
+      "name": "新干东",
+      "lon": 115.56,
+      "lat": 27.74,
+      "km": 110,
+      "major": false
+    },
+    {
+      "id": "jg_xj",
+      "name": "峡江",
+      "lon": 115.32,
+      "lat": 27.56,
+      "km": 136,
+      "major": false
+    },
+    {
+      "id": "jg_jax",
+      "name": "吉安西",
+      "lon": 114.96,
+      "lat": 27.11,
+      "km": 193,
+      "major": false
+    },
+    {
+      "id": "jg_th",
+      "name": "泰和",
+      "lon": 114.91,
+      "lat": 26.79,
+      "km": 228,
+      "major": false
+    },
+    {
+      "id": "jg_wax",
+      "name": "万安县",
+      "lon": 114.78,
+      "lat": 26.46,
+      "km": 264,
+      "major": false
+    },
+    {
+      "id": "jg_gzx",
+      "name": "赣州西",
+      "lon": 114.79,
+      "lat": 25.83,
+      "km": 331,
+      "major": true
+    },
+    {
+      "id": "jg_xfx",
+      "name": "信丰西",
+      "lon": 114.93,
+      "lat": 25.39,
+      "km": 379,
+      "major": false
+    },
+    {
+      "id": "jg_lnd",
+      "name": "龙南东",
+      "lon": 114.81,
+      "lat": 24.86,
+      "km": 436,
+      "major": false
+    },
+    {
+      "id": "jj_dnx",
+      "name": "定南西",
+      "lon": 114.64,
+      "lat": 24.55,
+      "km": 469,
+      "major": false
+    },
+    {
+      "id": "jj_hbb",
+      "name": "和平北",
+      "lon": 114.82,
+      "lat": 24.13,
+      "km": 515,
+      "major": false
+    },
+    {
+      "id": "jj_lcx",
+      "name": "龙川西",
+      "lon": 115.1,
+      "lat": 24.09,
+      "km": 547,
+      "major": false
+    },
+    {
+      "id": "jj_hyb",
+      "name": "河源北",
+      "lon": 114.9,
+      "lat": 23.74,
+      "km": 586,
+      "major": false
+    },
+    {
+      "id": "jj_hyb2",
+      "name": "惠州北",
+      "lon": 114.41,
+      "lat": 23.14,
+      "km": 644,
+      "major": false
+    },
+    {
+      "id": "jj_zk",
+      "name": "仲恺",
+      "lon": 114.32,
+      "lat": 23.02,
+      "km": 657,
+      "major": false
+    },
+    {
+      "id": "jj_dgn",
+      "name": "东莞南",
+      "lon": 114.13,
+      "lat": 22.85,
+      "km": 678,
+      "major": false
+    },
+    {
+      "id": "jj_szb",
+      "name": "深圳北",
+      "lon": 114.028,
+      "lat": 22.61,
+      "km": 716,
+      "major": true
+    }
   ],
   "geometry": [
-    [115.805, 28.665, "jg_ncx"],
-    [115.960, 28.180, "jg_fcd"],
-    [115.660, 27.940, "jg_zsd"],
-    [115.560, 27.740, "jg_xgd"],
-    [115.320, 27.560, "jg_xj"],
-    [114.960, 27.110, "jg_jax"],
-    [114.910, 26.790, "jg_th"],
-    [114.780, 26.460, "jg_wax"],
-    [114.790, 25.830, "jg_gzx"],
-    [114.930, 25.390, "jg_xfx"],
-    [114.810, 24.860, "jg_lnd"],
-    [114.640, 24.550, "jj_dnx"],
-    [114.820, 24.130, "jj_hbb"],
-    [115.100, 24.090, "jj_lcx"],
-    [114.900, 23.740, "jj_hyb"],
-    [114.410, 23.140, "jj_hyb2"],
-    [114.320, 23.020, "jj_zk"],
-    [114.130, 22.850, "jj_dgn"],
-    [114.028, 22.610, "jj_szb"]
-  ]
+    [
+      115.805,
+      28.665,
+      "jg_ncx"
+    ],
+    [
+      115.96,
+      28.18,
+      "jg_fcd"
+    ],
+    [
+      115.66,
+      27.94,
+      "jg_zsd"
+    ],
+    [
+      115.56,
+      27.74,
+      "jg_xgd"
+    ],
+    [
+      115.32,
+      27.56,
+      "jg_xj"
+    ],
+    [
+      114.96,
+      27.11,
+      "jg_jax"
+    ],
+    [
+      114.91,
+      26.79,
+      "jg_th"
+    ],
+    [
+      114.78,
+      26.46,
+      "jg_wax"
+    ],
+    [
+      114.79,
+      25.83,
+      "jg_gzx"
+    ],
+    [
+      114.93,
+      25.39,
+      "jg_xfx"
+    ],
+    [
+      114.81,
+      24.86,
+      "jg_lnd"
+    ],
+    [
+      114.64,
+      24.55,
+      "jj_dnx"
+    ],
+    [
+      114.82,
+      24.13,
+      "jj_hbb"
+    ],
+    [
+      115.1,
+      24.09,
+      "jj_lcx"
+    ],
+    [
+      114.9,
+      23.74,
+      "jj_hyb"
+    ],
+    [
+      114.41,
+      23.14,
+      "jj_hyb2"
+    ],
+    [
+      114.32,
+      23.02,
+      "jj_zk"
+    ],
+    [
+      114.13,
+      22.85,
+      "jj_dgn"
+    ],
+    [
+      114.028,
+      22.61,
+      "jj_szb"
+    ]
+  ],
+  "line_class": "hsr250"
 }

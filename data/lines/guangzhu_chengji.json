@@ -1,0 +1,80 @@
+{
+  "id": "guangzhu_chengji",
+  "name": "广珠城际铁路",
+  "short": "广珠城际",
+  "from": "广州南",
+  "to": "珠海",
+  "length_km": 116,
+  "color": "#f9a8d4",
+  "line_class": "intercity",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    {
+      "id": "gz_gzn",
+      "name": "广州南",
+      "lon": 113.273,
+      "lat": 22.989,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "gz_sd",
+      "name": "顺德",
+      "lon": 113.25,
+      "lat": 22.83,
+      "km": 21,
+      "major": false
+    },
+    {
+      "id": "gz_rg",
+      "name": "容桂",
+      "lon": 113.25,
+      "lat": 22.75,
+      "km": 30,
+      "major": false
+    },
+    {
+      "id": "gz_zs",
+      "name": "中山",
+      "lon": 113.36,
+      "lat": 22.52,
+      "km": 60,
+      "major": false
+    },
+    {
+      "id": "gz_zh",
+      "name": "珠海",
+      "lon": 113.58,
+      "lat": 22.27,
+      "km": 116,
+      "major": true
+    }
+  ],
+  "geometry": [
+    [
+      113.273,
+      22.989,
+      "gz_gzn"
+    ],
+    [
+      113.25,
+      22.83,
+      "gz_sd"
+    ],
+    [
+      113.25,
+      22.75,
+      "gz_rg"
+    ],
+    [
+      113.36,
+      22.52,
+      "gz_zs"
+    ],
+    [
+      113.58,
+      22.27,
+      "gz_zh"
+    ]
+  ]
+}

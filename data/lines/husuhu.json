@@ -1,0 +1,93 @@
+{
+  "id": "husuhu",
+  "name": "沪苏湖铁路",
+  "short": "沪苏湖",
+  "from": "上海虹桥",
+  "to": "湖州",
+  "length_km": 163,
+  "color": "#a5f3fc",
+  "line_class": "hsr350",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    {
+      "id": "hsh_shhq",
+      "name": "上海虹桥",
+      "lon": 121.32,
+      "lat": 31.194,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "hsh_sjn",
+      "name": "松江南",
+      "lon": 121.23,
+      "lat": 30.98,
+      "km": 30,
+      "major": false
+    },
+    {
+      "id": "hsh_lt",
+      "name": "练塘",
+      "lon": 121.0,
+      "lat": 31.02,
+      "km": 50,
+      "major": false
+    },
+    {
+      "id": "hsh_szn",
+      "name": "苏州南",
+      "lon": 120.6,
+      "lat": 31.1,
+      "km": 82,
+      "major": false
+    },
+    {
+      "id": "hsh_sz",
+      "name": "盛泽",
+      "lon": 120.5,
+      "lat": 30.9,
+      "km": 105,
+      "major": false
+    },
+    {
+      "id": "hsh_hz",
+      "name": "湖州",
+      "lon": 120.09,
+      "lat": 30.86,
+      "km": 163,
+      "major": true
+    }
+  ],
+  "geometry": [
+    [
+      121.32,
+      31.194,
+      "hsh_shhq"
+    ],
+    [
+      121.23,
+      30.98,
+      "hsh_sjn"
+    ],
+    [
+      121.0,
+      31.02,
+      "hsh_lt"
+    ],
+    [
+      120.6,
+      31.1,
+      "hsh_szn"
+    ],
+    [
+      120.5,
+      30.9,
+      "hsh_sz"
+    ],
+    [
+      120.09,
+      30.86,
+      "hsh_hz"
+    ]
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "id": "ningan_hsr",
+  "name": "宁安高速铁路",
+  "short": "宁安高铁",
+  "from": "南京南",
+  "to": "安庆",
+  "length_km": 232,
+  "color": "#99f6e4",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    {
+      "id": "na_njn",
+      "name": "南京南",
+      "lon": 118.786,
+      "lat": 31.968,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "na_msd",
+      "name": "马鞍山东",
+      "lon": 118.5,
+      "lat": 31.68,
+      "km": 45,
+      "major": false
+    },
+    {
+      "id": "na_wl",
+      "name": "芜湖",
+      "lon": 118.38,
+      "lat": 31.33,
+      "km": 85,
+      "major": true
+    },
+    {
+      "id": "na_tl",
+      "name": "铜陵",
+      "lon": 117.81,
+      "lat": 30.95,
+      "km": 150,
+      "major": false
+    },
+    {
+      "id": "na_cz",
+      "name": "池州",
+      "lon": 117.49,
+      "lat": 30.66,
+      "km": 190,
+      "major": false
+    },
+    {
+      "id": "na_aq",
+      "name": "安庆",
+      "lon": 117.06,
+      "lat": 30.53,
+      "km": 232,
+      "major": true
+    }
+  ],
+  "geometry": [
+    [
+      118.786,
+      31.968,
+      "na_njn"
+    ],
+    [
+      118.5,
+      31.68,
+      "na_msd"
+    ],
+    [
+      118.38,
+      31.33,
+      "na_wl"
+    ],
+    [
+      117.81,
+      30.95,
+      "na_tl"
+    ],
+    [
+      117.49,
+      30.66,
+      "na_cz"
+    ],
+    [
+      117.06,
+      30.53,
+      "na_aq"
+    ]
+  ]
+}

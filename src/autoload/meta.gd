@@ -5,6 +5,7 @@ signal type_discovered(type_id: String)
 signal achievement_unlocked(ach: Dictionary)
 signal spots_changed
 signal spot_mode_changed(enabled: bool)
+signal class_visibility_changed
 
 const GeoScript := preload("res://src/core/geo.gd")
 const SAVE_PATH := "user://savegame.json"
@@ -29,6 +30,17 @@ var visited: Dictionary = {}      # sid -> true
 
 var _last_observe: Dictionary = {}  # code -> 上次观测的游戏时刻
 var is_fresh: bool = true           # 从未存过档（用于首次引导）
+var class_visible: Dictionary = {"hsr350": true, "hsr250": true, "intercity": true, "conventional": true}
+
+
+func set_class_visible(cls: String, on: bool) -> void:
+	class_visible[cls] = on
+	class_visibility_changed.emit()
+	save()
+
+
+func is_class_visible(cls: String) -> bool:
+	return bool(class_visible.get(cls, true))
 
 
 func _ready() -> void:
@@ -261,7 +273,8 @@ func save() -> void:
 		"window_codes": window_codes, "followed": followed_codes,
 		"max_follow_km": max_follow_km, "full": full_journey_done,
 		"cross": cross_meet_done, "screen": screen_done,
-		"visited": visited.keys(), "spots": spots_data
+		"visited": visited.keys(), "spots": spots_data,
+		"class_visible": class_visible
 	}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f != null:
@@ -293,6 +306,8 @@ func _load_save() -> void:
 	full_journey_done = bool(parsed.get("full", false))
 	cross_meet_done = bool(parsed.get("cross", false))
 	screen_done = bool(parsed.get("screen", false))
+	for cls in parsed.get("class_visible", {}).keys():
+		class_visible[cls] = bool(parsed["class_visible"][cls])
 	visited = {}
 	for sid in parsed.get("visited", []):
 		visited[sid] = true

@@ -8,41 +8,229 @@
   "color": "#e879f9",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "zy_zzd",  "name": "郑州东",   "lon": 113.773, "lat": 34.753, "km": 0,    "major": true },
-    { "id": "zy_cg",   "name": "长葛北",   "lon": 113.780, "lat": 34.240, "km": 57,   "major": false },
-    { "id": "zy_yz",   "name": "禹州",     "lon": 113.490, "lat": 34.140, "km": 89,   "major": false },
-    { "id": "zy_jx",   "name": "郏县",     "lon": 113.220, "lat": 33.970, "km": 120,  "major": false },
-    { "id": "zy_pdsx", "name": "平顶山西", "lon": 112.960, "lat": 33.750, "km": 149,  "major": false },
-    { "id": "zy_rz",   "name": "汝州",     "lon": 112.620, "lat": 33.940, "km": 184,  "major": false },
-    { "id": "zy_nyd",  "name": "南阳东",   "lon": 112.540, "lat": 32.990, "km": 271,  "major": true },
-    { "id": "zy_dzd",  "name": "邓州东",   "lon": 112.200, "lat": 32.680, "km": 317,  "major": false },
-    { "id": "zy_xyb",  "name": "襄阳东",   "lon": 112.130, "lat": 32.080, "km": 386,  "major": true },
-    { "id": "zy_bkx",  "name": "保康县",   "lon": 111.340, "lat": 31.880, "km": 461,  "major": false },
-    { "id": "hy_snj",  "name": "神农架",   "lon": 110.670, "lat": 31.740, "km": 526,  "major": false },
-    { "id": "zy_xs",   "name": "兴山",     "lon": 110.750, "lat": 31.350, "km": 566,  "major": false },
-    { "id": "zy_bd",   "name": "巴东",     "lon": 110.340, "lat": 31.050, "km": 613,  "major": false },
-    { "id": "zy_wzb",  "name": "万州北",   "lon": 108.400, "lat": 30.830, "km": 791,  "major": true },
-    { "id": "zy_dj",   "name": "垫江",     "lon": 107.350, "lat": 30.330, "km": 887,  "major": false },
-    { "id": "zy_csb",  "name": "长寿北",   "lon": 107.080, "lat": 29.860, "km": 942,  "major": false },
-    { "id": "zy_cqb",  "name": "重庆北",   "lon": 106.550, "lat": 29.580, "km": 1000, "major": true }
+    {
+      "id": "zy_zzd",
+      "name": "郑州东",
+      "lon": 113.773,
+      "lat": 34.753,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "zy_cg",
+      "name": "长葛北",
+      "lon": 113.78,
+      "lat": 34.24,
+      "km": 57,
+      "major": false
+    },
+    {
+      "id": "zy_yz",
+      "name": "禹州",
+      "lon": 113.49,
+      "lat": 34.14,
+      "km": 89,
+      "major": false
+    },
+    {
+      "id": "zy_jx",
+      "name": "郏县",
+      "lon": 113.22,
+      "lat": 33.97,
+      "km": 120,
+      "major": false
+    },
+    {
+      "id": "zy_pdsx",
+      "name": "平顶山西",
+      "lon": 112.96,
+      "lat": 33.75,
+      "km": 149,
+      "major": false
+    },
+    {
+      "id": "zy_rz",
+      "name": "汝州",
+      "lon": 112.62,
+      "lat": 33.94,
+      "km": 184,
+      "major": false
+    },
+    {
+      "id": "zy_nyd",
+      "name": "南阳东",
+      "lon": 112.54,
+      "lat": 32.99,
+      "km": 271,
+      "major": true
+    },
+    {
+      "id": "zy_dzd",
+      "name": "邓州东",
+      "lon": 112.2,
+      "lat": 32.68,
+      "km": 317,
+      "major": false
+    },
+    {
+      "id": "zy_xyb",
+      "name": "襄阳东",
+      "lon": 112.13,
+      "lat": 32.08,
+      "km": 386,
+      "major": true
+    },
+    {
+      "id": "zy_bkx",
+      "name": "保康县",
+      "lon": 111.34,
+      "lat": 31.88,
+      "km": 461,
+      "major": false
+    },
+    {
+      "id": "hy_snj",
+      "name": "神农架",
+      "lon": 110.67,
+      "lat": 31.74,
+      "km": 526,
+      "major": false
+    },
+    {
+      "id": "zy_xs",
+      "name": "兴山",
+      "lon": 110.75,
+      "lat": 31.35,
+      "km": 566,
+      "major": false
+    },
+    {
+      "id": "zy_bd",
+      "name": "巴东",
+      "lon": 110.34,
+      "lat": 31.05,
+      "km": 613,
+      "major": false
+    },
+    {
+      "id": "zy_wzb",
+      "name": "万州北",
+      "lon": 108.4,
+      "lat": 30.83,
+      "km": 791,
+      "major": true
+    },
+    {
+      "id": "zy_dj",
+      "name": "垫江",
+      "lon": 107.35,
+      "lat": 30.33,
+      "km": 887,
+      "major": false
+    },
+    {
+      "id": "zy_csb",
+      "name": "长寿北",
+      "lon": 107.08,
+      "lat": 29.86,
+      "km": 942,
+      "major": false
+    },
+    {
+      "id": "zy_cqb",
+      "name": "重庆北",
+      "lon": 106.55,
+      "lat": 29.58,
+      "km": 1000,
+      "major": true
+    }
   ],
   "geometry": [
-    [113.773, 34.753, "zy_zzd"],
-    [113.780, 34.240, "zy_cg"],
-    [113.490, 34.140, "zy_yz"],
-    [113.220, 33.970, "zy_jx"],
-    [112.960, 33.750, "zy_pdsx"],
-    [112.620, 33.940, "zy_rz"],
-    [112.540, 32.990, "zy_nyd"],
-    [112.200, 32.680, "zy_dzd"],
-    [112.130, 32.080, "zy_xyb"],
-    [111.340, 31.880, "zy_bkx"],
-    [110.670, 31.740, "hy_snj"],
-    [110.750, 31.350, "zy_xs"],
-    [110.340, 31.050, "zy_bd"],
-    [108.400, 30.830, "zy_wzb"],
-    [107.350, 30.330, "zy_dj"],
-    [107.080, 29.860, "zy_csb"],
-    [106.550, 29.580, "zy_cqb"]
-  ]
+    [
+      113.773,
+      34.753,
+      "zy_zzd"
+    ],
+    [
+      113.78,
+      34.24,
+      "zy_cg"
+    ],
+    [
+      113.49,
+      34.14,
+      "zy_yz"
+    ],
+    [
+      113.22,
+      33.97,
+      "zy_jx"
+    ],
+    [
+      112.96,
+      33.75,
+      "zy_pdsx"
+    ],
+    [
+      112.62,
+      33.94,
+      "zy_rz"
+    ],
+    [
+      112.54,
+      32.99,
+      "zy_nyd"
+    ],
+    [
+      112.2,
+      32.68,
+      "zy_dzd"
+    ],
+    [
+      112.13,
+      32.08,
+      "zy_xyb"
+    ],
+    [
+      111.34,
+      31.88,
+      "zy_bkx"
+    ],
+    [
+      110.67,
+      31.74,
+      "hy_snj"
+    ],
+    [
+      110.75,
+      31.35,
+      "zy_xs"
+    ],
+    [
+      110.34,
+      31.05,
+      "zy_bd"
+    ],
+    [
+      108.4,
+      30.83,
+      "zy_wzb"
+    ],
+    [
+      107.35,
+      30.33,
+      "zy_dj"
+    ],
+    [
+      107.08,
+      29.86,
+      "zy_csb"
+    ],
+    [
+      106.55,
+      29.58,
+      "zy_cqb"
+    ]
+  ],
+  "line_class": "hsr350"
 }

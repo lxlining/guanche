@@ -8,37 +8,203 @@
   "color": "#94a3b8",
   "note": "普速干线；站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "gc_bjx",  "name": "北京西", "lon": 116.322, "lat": 39.895, "km": 0,    "major": true },
-    { "id": "gc_sjz",  "name": "石家庄", "lon": 114.510, "lat": 38.040, "km": 277,  "major": true },
-    { "id": "gc_xt",   "name": "邢台",   "lon": 114.500, "lat": 37.070, "km": 390,  "major": false },
-    { "id": "gc_hd",   "name": "邯郸",   "lon": 114.490, "lat": 36.610, "km": 442,  "major": false },
-    { "id": "gc_ay",   "name": "安阳",   "lon": 114.390, "lat": 36.100, "km": 501,  "major": false },
-    { "id": "gc_xx",   "name": "新乡",   "lon": 113.880, "lat": 35.300, "km": 609,  "major": false },
-    { "id": "gc_zz",   "name": "郑州",   "lon": 113.660, "lat": 34.750, "km": 689,  "major": true },
-    { "id": "gc_ly",   "name": "洛阳",   "lon": 112.440, "lat": 34.680, "km": 813,  "major": false },
-    { "id": "gc_xy",   "name": "信阳",   "lon": 114.070, "lat": 32.130, "km": 978,  "major": false },
-    { "id": "gc_wc",   "name": "武昌",   "lon": 114.310, "lat": 30.540, "km": 1225, "major": true },
-    { "id": "gc_csn",  "name": "长沙",   "lon": 112.980, "lat": 28.200, "km": 1587, "major": true },
-    { "id": "gc_hy",   "name": "衡阳",   "lon": 112.580, "lat": 26.900, "km": 1774, "major": false },
-    { "id": "gc_cz",   "name": "郴州",   "lon": 113.010, "lat": 25.790, "km": 1920, "major": false },
-    { "id": "gc_sg",   "name": "韶关东", "lon": 113.590, "lat": 24.790, "km": 2029, "major": false },
-    { "id": "gc_gz",   "name": "广州",   "lon": 113.260, "lat": 23.150, "km": 2274, "major": true }
+    {
+      "id": "gc_bjx",
+      "name": "北京西",
+      "lon": 116.322,
+      "lat": 39.895,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "gc_sjz",
+      "name": "石家庄",
+      "lon": 114.51,
+      "lat": 38.04,
+      "km": 277,
+      "major": true
+    },
+    {
+      "id": "gc_xt",
+      "name": "邢台",
+      "lon": 114.5,
+      "lat": 37.07,
+      "km": 390,
+      "major": false
+    },
+    {
+      "id": "gc_hd",
+      "name": "邯郸",
+      "lon": 114.49,
+      "lat": 36.61,
+      "km": 442,
+      "major": false
+    },
+    {
+      "id": "gc_ay",
+      "name": "安阳",
+      "lon": 114.39,
+      "lat": 36.1,
+      "km": 501,
+      "major": false
+    },
+    {
+      "id": "gc_xx",
+      "name": "新乡",
+      "lon": 113.88,
+      "lat": 35.3,
+      "km": 609,
+      "major": false
+    },
+    {
+      "id": "gc_zz",
+      "name": "郑州",
+      "lon": 113.66,
+      "lat": 34.75,
+      "km": 689,
+      "major": true
+    },
+    {
+      "id": "gc_ly",
+      "name": "洛阳",
+      "lon": 112.44,
+      "lat": 34.68,
+      "km": 813,
+      "major": false
+    },
+    {
+      "id": "gc_xy",
+      "name": "信阳",
+      "lon": 114.07,
+      "lat": 32.13,
+      "km": 978,
+      "major": false
+    },
+    {
+      "id": "gc_wc",
+      "name": "武昌",
+      "lon": 114.31,
+      "lat": 30.54,
+      "km": 1225,
+      "major": true
+    },
+    {
+      "id": "gc_csn",
+      "name": "长沙",
+      "lon": 112.98,
+      "lat": 28.2,
+      "km": 1587,
+      "major": true
+    },
+    {
+      "id": "gc_hy",
+      "name": "衡阳",
+      "lon": 112.58,
+      "lat": 26.9,
+      "km": 1774,
+      "major": false
+    },
+    {
+      "id": "gc_cz",
+      "name": "郴州",
+      "lon": 113.01,
+      "lat": 25.79,
+      "km": 1920,
+      "major": false
+    },
+    {
+      "id": "gc_sg",
+      "name": "韶关东",
+      "lon": 113.59,
+      "lat": 24.79,
+      "km": 2029,
+      "major": false
+    },
+    {
+      "id": "gc_gz",
+      "name": "广州",
+      "lon": 113.26,
+      "lat": 23.15,
+      "km": 2274,
+      "major": true
+    }
   ],
   "geometry": [
-    [116.322, 39.895, "gc_bjx"],
-    [114.510, 38.040, "gc_sjz"],
-    [114.500, 37.070, "gc_xt"],
-    [114.490, 36.610, "gc_hd"],
-    [114.390, 36.100, "gc_ay"],
-    [113.880, 35.300, "gc_xx"],
-    [113.660, 34.750, "gc_zz"],
-    [112.440, 34.680, "gc_ly"],
-    [114.070, 32.130, "gc_xy"],
-    [114.310, 30.540, "gc_wc"],
-    [112.980, 28.200, "gc_csn"],
-    [112.580, 26.900, "gc_hy"],
-    [113.010, 25.790, "gc_cz"],
-    [113.590, 24.790, "gc_sg"],
-    [113.260, 23.150, "gc_gz"]
-  ]
+    [
+      116.322,
+      39.895,
+      "gc_bjx"
+    ],
+    [
+      114.51,
+      38.04,
+      "gc_sjz"
+    ],
+    [
+      114.5,
+      37.07,
+      "gc_xt"
+    ],
+    [
+      114.49,
+      36.61,
+      "gc_hd"
+    ],
+    [
+      114.39,
+      36.1,
+      "gc_ay"
+    ],
+    [
+      113.88,
+      35.3,
+      "gc_xx"
+    ],
+    [
+      113.66,
+      34.75,
+      "gc_zz"
+    ],
+    [
+      112.44,
+      34.68,
+      "gc_ly"
+    ],
+    [
+      114.07,
+      32.13,
+      "gc_xy"
+    ],
+    [
+      114.31,
+      30.54,
+      "gc_wc"
+    ],
+    [
+      112.98,
+      28.2,
+      "gc_csn"
+    ],
+    [
+      112.58,
+      26.9,
+      "gc_hy"
+    ],
+    [
+      113.01,
+      25.79,
+      "gc_cz"
+    ],
+    [
+      113.59,
+      24.79,
+      "gc_sg"
+    ],
+    [
+      113.26,
+      23.15,
+      "gc_gz"
+    ]
+  ],
+  "line_class": "conventional"
 }

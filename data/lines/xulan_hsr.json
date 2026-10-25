@@ -8,55 +8,320 @@
   "color": "#2dd4bf",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "xl_xzd",  "name": "徐州东",   "lon": 117.306, "lat": 34.262, "km": 0,    "major": true },
-    { "id": "xl_xxb",  "name": "萧县北",   "lon": 116.950, "lat": 34.230, "km": 32,   "major": false },
-    { "id": "xl_ycb",  "name": "永城北",   "lon": 116.560, "lat": 33.980, "km": 70,   "major": false },
-    { "id": "xl_sq",   "name": "商丘",     "lon": 115.660, "lat": 34.430, "km": 146,  "major": true },
-    { "id": "xl_lkn",  "name": "兰考南",   "lon": 114.820, "lat": 34.740, "km": 215,  "major": false },
-    { "id": "xl_kfb",  "name": "开封北",   "lon": 114.370, "lat": 34.790, "km": 254,  "major": false },
-    { "id": "xl_zzd",  "name": "郑州东",   "lon": 113.773, "lat": 34.753, "km": 316,  "major": true },
-    { "id": "xl_gyn",  "name": "巩义南",   "lon": 113.010, "lat": 34.710, "km": 374,  "major": false },
-    { "id": "xl_lylm", "name": "洛阳龙门", "lon": 112.400, "lat": 34.620, "km": 424,  "major": false },
-    { "id": "xl_mcn",  "name": "渑池南",   "lon": 111.760, "lat": 34.760, "km": 484,  "major": false },
-    { "id": "xl_smxn", "name": "三门峡南", "lon": 111.190, "lat": 34.760, "km": 538,  "major": false },
-    { "id": "xl_lbx",  "name": "灵宝西",   "lon": 110.540, "lat": 34.730, "km": 594,  "major": false },
-    { "id": "xl_hsb",  "name": "华山北",   "lon": 110.080, "lat": 34.580, "km": 644,  "major": false },
-    { "id": "xl_wngb", "name": "渭南北",   "lon": 109.500, "lat": 34.520, "km": 694,  "major": false },
-    { "id": "xl_xab",  "name": "西安北",   "lon": 108.938, "lat": 34.378, "km": 746,  "major": true },
-    { "id": "xl_xyqd", "name": "咸阳秦都", "lon": 108.680, "lat": 34.340, "km": 771,  "major": false },
-    { "id": "xl_yl",   "name": "杨陵南",   "lon": 108.090, "lat": 34.260, "km": 823,  "major": false },
-    { "id": "xl_qs",   "name": "岐山",     "lon": 107.620, "lat": 34.320, "km": 866,  "major": false },
-    { "id": "xl_bjs",  "name": "宝鸡南",   "lon": 107.230, "lat": 34.340, "km": 903,  "major": false },
-    { "id": "xl_tsn",  "name": "天水南",   "lon": 105.760, "lat": 34.580, "km": 1035, "major": false },
-    { "id": "xl_qa",   "name": "秦安",     "lon": 105.580, "lat": 34.870, "km": 1078, "major": false },
-    { "id": "xl_tw",   "name": "通渭",     "lon": 105.220, "lat": 35.210, "km": 1122, "major": false },
-    { "id": "xl_dxb",  "name": "定西北",   "lon": 104.620, "lat": 35.580, "km": 1177, "major": false },
-    { "id": "xl_lzx",  "name": "兰州西",   "lon": 103.730, "lat": 36.070, "km": 1261, "major": true }
+    {
+      "id": "xl_xzd",
+      "name": "徐州东",
+      "lon": 117.306,
+      "lat": 34.262,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "xl_xxb",
+      "name": "萧县北",
+      "lon": 116.95,
+      "lat": 34.23,
+      "km": 32,
+      "major": false
+    },
+    {
+      "id": "xl_ycb",
+      "name": "永城北",
+      "lon": 116.56,
+      "lat": 33.98,
+      "km": 70,
+      "major": false
+    },
+    {
+      "id": "xl_sq",
+      "name": "商丘",
+      "lon": 115.66,
+      "lat": 34.43,
+      "km": 146,
+      "major": true
+    },
+    {
+      "id": "xl_lkn",
+      "name": "兰考南",
+      "lon": 114.82,
+      "lat": 34.74,
+      "km": 215,
+      "major": false
+    },
+    {
+      "id": "xl_kfb",
+      "name": "开封北",
+      "lon": 114.37,
+      "lat": 34.79,
+      "km": 254,
+      "major": false
+    },
+    {
+      "id": "xl_zzd",
+      "name": "郑州东",
+      "lon": 113.773,
+      "lat": 34.753,
+      "km": 316,
+      "major": true
+    },
+    {
+      "id": "xl_gyn",
+      "name": "巩义南",
+      "lon": 113.01,
+      "lat": 34.71,
+      "km": 374,
+      "major": false
+    },
+    {
+      "id": "xl_lylm",
+      "name": "洛阳龙门",
+      "lon": 112.4,
+      "lat": 34.62,
+      "km": 424,
+      "major": false
+    },
+    {
+      "id": "xl_mcn",
+      "name": "渑池南",
+      "lon": 111.76,
+      "lat": 34.76,
+      "km": 484,
+      "major": false
+    },
+    {
+      "id": "xl_smxn",
+      "name": "三门峡南",
+      "lon": 111.19,
+      "lat": 34.76,
+      "km": 538,
+      "major": false
+    },
+    {
+      "id": "xl_lbx",
+      "name": "灵宝西",
+      "lon": 110.54,
+      "lat": 34.73,
+      "km": 594,
+      "major": false
+    },
+    {
+      "id": "xl_hsb",
+      "name": "华山北",
+      "lon": 110.08,
+      "lat": 34.58,
+      "km": 644,
+      "major": false
+    },
+    {
+      "id": "xl_wngb",
+      "name": "渭南北",
+      "lon": 109.5,
+      "lat": 34.52,
+      "km": 694,
+      "major": false
+    },
+    {
+      "id": "xl_xab",
+      "name": "西安北",
+      "lon": 108.938,
+      "lat": 34.378,
+      "km": 746,
+      "major": true
+    },
+    {
+      "id": "xl_xyqd",
+      "name": "咸阳秦都",
+      "lon": 108.68,
+      "lat": 34.34,
+      "km": 771,
+      "major": false
+    },
+    {
+      "id": "xl_yl",
+      "name": "杨陵南",
+      "lon": 108.09,
+      "lat": 34.26,
+      "km": 823,
+      "major": false
+    },
+    {
+      "id": "xl_qs",
+      "name": "岐山",
+      "lon": 107.62,
+      "lat": 34.32,
+      "km": 866,
+      "major": false
+    },
+    {
+      "id": "xl_bjs",
+      "name": "宝鸡南",
+      "lon": 107.23,
+      "lat": 34.34,
+      "km": 903,
+      "major": false
+    },
+    {
+      "id": "xl_tsn",
+      "name": "天水南",
+      "lon": 105.76,
+      "lat": 34.58,
+      "km": 1035,
+      "major": false
+    },
+    {
+      "id": "xl_qa",
+      "name": "秦安",
+      "lon": 105.58,
+      "lat": 34.87,
+      "km": 1078,
+      "major": false
+    },
+    {
+      "id": "xl_tw",
+      "name": "通渭",
+      "lon": 105.22,
+      "lat": 35.21,
+      "km": 1122,
+      "major": false
+    },
+    {
+      "id": "xl_dxb",
+      "name": "定西北",
+      "lon": 104.62,
+      "lat": 35.58,
+      "km": 1177,
+      "major": false
+    },
+    {
+      "id": "xl_lzx",
+      "name": "兰州西",
+      "lon": 103.73,
+      "lat": 36.07,
+      "km": 1261,
+      "major": true
+    }
   ],
   "geometry": [
-    [117.306, 34.262, "xl_xzd"],
-    [116.950, 34.230, "xl_xxb"],
-    [116.560, 33.980, "xl_ycb"],
-    [115.660, 34.430, "xl_sq"],
-    [114.820, 34.740, "xl_lkn"],
-    [114.370, 34.790, "xl_kfb"],
-    [113.773, 34.753, "xl_zzd"],
-    [113.010, 34.710, "xl_gyn"],
-    [112.400, 34.620, "xl_lylm"],
-    [111.760, 34.760, "xl_mcn"],
-    [111.190, 34.760, "xl_smxn"],
-    [110.540, 34.730, "xl_lbx"],
-    [110.080, 34.580, "xl_hsb"],
-    [109.500, 34.520, "xl_wngb"],
-    [108.938, 34.378, "xl_xab"],
-    [108.680, 34.340, "xl_xyqd"],
-    [108.090, 34.260, "xl_yl"],
-    [107.620, 34.320, "xl_qs"],
-    [107.230, 34.340, "xl_bjs"],
-    [105.760, 34.580, "xl_tsn"],
-    [105.580, 34.870, "xl_qa"],
-    [105.220, 35.210, "xl_tw"],
-    [104.620, 35.580, "xl_dxb"],
-    [103.730, 36.070, "xl_lzx"]
-  ]
+    [
+      117.306,
+      34.262,
+      "xl_xzd"
+    ],
+    [
+      116.95,
+      34.23,
+      "xl_xxb"
+    ],
+    [
+      116.56,
+      33.98,
+      "xl_ycb"
+    ],
+    [
+      115.66,
+      34.43,
+      "xl_sq"
+    ],
+    [
+      114.82,
+      34.74,
+      "xl_lkn"
+    ],
+    [
+      114.37,
+      34.79,
+      "xl_kfb"
+    ],
+    [
+      113.773,
+      34.753,
+      "xl_zzd"
+    ],
+    [
+      113.01,
+      34.71,
+      "xl_gyn"
+    ],
+    [
+      112.4,
+      34.62,
+      "xl_lylm"
+    ],
+    [
+      111.76,
+      34.76,
+      "xl_mcn"
+    ],
+    [
+      111.19,
+      34.76,
+      "xl_smxn"
+    ],
+    [
+      110.54,
+      34.73,
+      "xl_lbx"
+    ],
+    [
+      110.08,
+      34.58,
+      "xl_hsb"
+    ],
+    [
+      109.5,
+      34.52,
+      "xl_wngb"
+    ],
+    [
+      108.938,
+      34.378,
+      "xl_xab"
+    ],
+    [
+      108.68,
+      34.34,
+      "xl_xyqd"
+    ],
+    [
+      108.09,
+      34.26,
+      "xl_yl"
+    ],
+    [
+      107.62,
+      34.32,
+      "xl_qs"
+    ],
+    [
+      107.23,
+      34.34,
+      "xl_bjs"
+    ],
+    [
+      105.76,
+      34.58,
+      "xl_tsn"
+    ],
+    [
+      105.58,
+      34.87,
+      "xl_qa"
+    ],
+    [
+      105.22,
+      35.21,
+      "xl_tw"
+    ],
+    [
+      104.62,
+      35.58,
+      "xl_dxb"
+    ],
+    [
+      103.73,
+      36.07,
+      "xl_lzx"
+    ]
+  ],
+  "line_class": "hsr250"
 }

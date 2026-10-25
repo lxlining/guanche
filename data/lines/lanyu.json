@@ -1,0 +1,93 @@
+{
+  "id": "lanyu",
+  "name": "兰渝铁路",
+  "short": "兰渝线",
+  "from": "兰州",
+  "to": "重庆",
+  "length_km": 886,
+  "color": "#94a3b8",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    {
+      "id": "ly_lz",
+      "name": "兰州",
+      "lon": 103.82,
+      "lat": 36.05,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "ly_mx",
+      "name": "岷县",
+      "lon": 104.04,
+      "lat": 34.44,
+      "km": 205,
+      "major": false
+    },
+    {
+      "id": "ly_ln",
+      "name": "陇南",
+      "lon": 104.92,
+      "lat": 33.4,
+      "km": 320,
+      "major": false
+    },
+    {
+      "id": "ly_gy",
+      "name": "广元",
+      "lon": 105.84,
+      "lat": 32.44,
+      "km": 445,
+      "major": true
+    },
+    {
+      "id": "ly_nc",
+      "name": "南充",
+      "lon": 106.11,
+      "lat": 30.79,
+      "km": 660,
+      "major": false
+    },
+    {
+      "id": "ly_cq",
+      "name": "重庆",
+      "lon": 106.55,
+      "lat": 29.56,
+      "km": 830,
+      "major": true
+    }
+  ],
+  "geometry": [
+    [
+      103.82,
+      36.05,
+      "ly_lz"
+    ],
+    [
+      104.04,
+      34.44,
+      "ly_mx"
+    ],
+    [
+      104.92,
+      33.4,
+      "ly_ln"
+    ],
+    [
+      105.84,
+      32.44,
+      "ly_gy"
+    ],
+    [
+      106.11,
+      30.79,
+      "ly_nc"
+    ],
+    [
+      106.55,
+      29.56,
+      "ly_cq"
+    ]
+  ]
+}

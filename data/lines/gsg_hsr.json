@@ -8,21 +8,99 @@
   "color": "#fb7185",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "gs_gzn",   "name": "广州南",     "lon": 113.273, "lat": 22.989, "km": 0,   "major": true },
-    { "id": "gs_qh",    "name": "庆盛",       "lon": 113.480, "lat": 22.930, "km": 30,  "major": false },
-    { "id": "gs_hzn",   "name": "虎门",       "lon": 113.660, "lat": 22.830, "km": 50,  "major": false },
-    { "id": "gs_gm",    "name": "光明城",     "lon": 113.950, "lat": 22.760, "km": 86,  "major": false },
-    { "id": "gs_szb",   "name": "深圳北",     "lon": 114.028, "lat": 22.610, "km": 108, "major": true },
-    { "id": "gs_ftd",   "name": "福田",       "lon": 114.055, "lat": 22.535, "km": 116, "major": false },
-    { "id": "gs_xjl",   "name": "香港西九龙", "lon": 114.170, "lat": 22.303, "km": 141, "major": true }
+    {
+      "id": "gs_gzn",
+      "name": "广州南",
+      "lon": 113.273,
+      "lat": 22.989,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "gs_qh",
+      "name": "庆盛",
+      "lon": 113.48,
+      "lat": 22.93,
+      "km": 30,
+      "major": false
+    },
+    {
+      "id": "gs_hzn",
+      "name": "虎门",
+      "lon": 113.66,
+      "lat": 22.83,
+      "km": 50,
+      "major": false
+    },
+    {
+      "id": "gs_gm",
+      "name": "光明城",
+      "lon": 113.95,
+      "lat": 22.76,
+      "km": 86,
+      "major": false
+    },
+    {
+      "id": "gs_szb",
+      "name": "深圳北",
+      "lon": 114.028,
+      "lat": 22.61,
+      "km": 108,
+      "major": true
+    },
+    {
+      "id": "gs_ftd",
+      "name": "福田",
+      "lon": 114.055,
+      "lat": 22.535,
+      "km": 116,
+      "major": false
+    },
+    {
+      "id": "gs_xjl",
+      "name": "香港西九龙",
+      "lon": 114.17,
+      "lat": 22.303,
+      "km": 141,
+      "major": true
+    }
   ],
   "geometry": [
-    [113.273, 22.989, "gs_gzn"],
-    [113.480, 22.930, "gs_qh"],
-    [113.660, 22.830, "gs_hzn"],
-    [113.950, 22.760, "gs_gm"],
-    [114.028, 22.610, "gs_szb"],
-    [114.055, 22.535, "gs_ftd"],
-    [114.170, 22.303, "gs_xjl"]
-  ]
+    [
+      113.273,
+      22.989,
+      "gs_gzn"
+    ],
+    [
+      113.48,
+      22.93,
+      "gs_qh"
+    ],
+    [
+      113.66,
+      22.83,
+      "gs_hzn"
+    ],
+    [
+      113.95,
+      22.76,
+      "gs_gm"
+    ],
+    [
+      114.028,
+      22.61,
+      "gs_szb"
+    ],
+    [
+      114.055,
+      22.535,
+      "gs_ftd"
+    ],
+    [
+      114.17,
+      22.303,
+      "gs_xjl"
+    ]
+  ],
+  "line_class": "hsr250"
 }

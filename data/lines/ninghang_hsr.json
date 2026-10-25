@@ -8,25 +8,125 @@
   "color": "#5eead4",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "nh_njn",  "name": "南京南", "lon": 118.786, "lat": 31.968, "km": 0,   "major": true },
-    { "id": "nh_jn",   "name": "江宁",   "lon": 118.850, "lat": 31.860, "km": 12,  "major": false },
-    { "id": "nh_ls",   "name": "溧水",   "lon": 119.030, "lat": 31.650, "km": 38,  "major": false },
-    { "id": "nh_ly",   "name": "溧阳",   "lon": 119.480, "lat": 31.420, "km": 74,  "major": false },
-    { "id": "nh_yx",   "name": "宜兴",   "lon": 119.820, "lat": 31.340, "km": 110, "major": false },
-    { "id": "hn_cx",   "name": "长兴",   "lon": 119.910, "lat": 31.020, "km": 145, "major": false },
-    { "id": "hn_hz",   "name": "湖州",   "lon": 120.090, "lat": 30.860, "km": 165, "major": false },
-    { "id": "hn_dq",   "name": "德清",   "lon": 119.970, "lat": 30.540, "km": 209, "major": false },
-    { "id": "hn_hzd",  "name": "杭州东", "lon": 120.213, "lat": 30.291, "km": 257, "major": true }
+    {
+      "id": "nh_njn",
+      "name": "南京南",
+      "lon": 118.786,
+      "lat": 31.968,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "nh_jn",
+      "name": "江宁",
+      "lon": 118.85,
+      "lat": 31.86,
+      "km": 12,
+      "major": false
+    },
+    {
+      "id": "nh_ls",
+      "name": "溧水",
+      "lon": 119.03,
+      "lat": 31.65,
+      "km": 38,
+      "major": false
+    },
+    {
+      "id": "nh_ly",
+      "name": "溧阳",
+      "lon": 119.48,
+      "lat": 31.42,
+      "km": 74,
+      "major": false
+    },
+    {
+      "id": "nh_yx",
+      "name": "宜兴",
+      "lon": 119.82,
+      "lat": 31.34,
+      "km": 110,
+      "major": false
+    },
+    {
+      "id": "hn_cx",
+      "name": "长兴",
+      "lon": 119.91,
+      "lat": 31.02,
+      "km": 145,
+      "major": false
+    },
+    {
+      "id": "hn_hz",
+      "name": "湖州",
+      "lon": 120.09,
+      "lat": 30.86,
+      "km": 165,
+      "major": false
+    },
+    {
+      "id": "hn_dq",
+      "name": "德清",
+      "lon": 119.97,
+      "lat": 30.54,
+      "km": 209,
+      "major": false
+    },
+    {
+      "id": "hn_hzd",
+      "name": "杭州东",
+      "lon": 120.213,
+      "lat": 30.291,
+      "km": 257,
+      "major": true
+    }
   ],
   "geometry": [
-    [118.786, 31.968, "nh_njn"],
-    [118.850, 31.860, "nh_jn"],
-    [119.030, 31.650, "nh_ls"],
-    [119.480, 31.420, "nh_ly"],
-    [119.820, 31.340, "nh_yx"],
-    [119.910, 31.020, "hn_cx"],
-    [120.090, 30.860, "hn_hz"],
-    [119.970, 30.540, "hn_dq"],
-    [120.213, 30.291, "hn_hzd"]
-  ]
+    [
+      118.786,
+      31.968,
+      "nh_njn"
+    ],
+    [
+      118.85,
+      31.86,
+      "nh_jn"
+    ],
+    [
+      119.03,
+      31.65,
+      "nh_ls"
+    ],
+    [
+      119.48,
+      31.42,
+      "nh_ly"
+    ],
+    [
+      119.82,
+      31.34,
+      "nh_yx"
+    ],
+    [
+      119.91,
+      31.02,
+      "hn_cx"
+    ],
+    [
+      120.09,
+      30.86,
+      "hn_hz"
+    ],
+    [
+      119.97,
+      30.54,
+      "hn_dq"
+    ],
+    [
+      120.213,
+      30.291,
+      "hn_hzd"
+    ]
+  ],
+  "line_class": "hsr250"
 }

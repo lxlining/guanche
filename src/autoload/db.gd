@@ -78,6 +78,7 @@ func _build_line(doc: Dictionary) -> Dictionary:
 	var line := {
 		"id": doc["id"], "name": doc.get("name", doc["id"]),
 		"short": doc.get("short", doc["id"]), "color": Color(doc.get("color", "#6272e0")),
+		"line_class": doc.get("line_class", "hsr250"),
 		"from": doc.get("from", ""), "to": doc.get("to", ""),
 		"stations": {}, "order": [], "geometry_pts": [],
 		"cum": PackedFloat64Array(), "total_len_m": 0.0,
@@ -383,6 +384,10 @@ func station_name(line_id: String, sid: String) -> String:
 	var line: Dictionary = line(line_id)
 	var st: Dictionary = line["stations"].get(sid, {})
 	return str(st.get("name", sid))
+
+
+func line_class(line_id: String) -> String:
+	return str(line(line_id).get("line_class", "hsr250"))
 
 
 func total_station_count() -> int:

@@ -8,29 +8,151 @@
   "color": "#4fd1c5",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "cg_cdx",  "name": "成都东",   "lon": 104.140, "lat": 30.630, "km": 0,   "major": true },
-    { "id": "cg_lss",  "name": "乐山",     "lon": 103.760, "lat": 29.570, "km": 123, "major": true },
-    { "id": "cg_qw",   "name": "犍为",     "lon": 103.920, "lat": 29.230, "km": 165, "major": false },
-    { "id": "cg_ybx",  "name": "宜宾西",   "lon": 104.620, "lat": 28.760, "km": 237, "major": true },
-    { "id": "cg_cn",   "name": "长宁",     "lon": 104.920, "lat": 28.580, "km": 274, "major": false },
-    { "id": "cg_xw",   "name": "兴文",     "lon": 105.230, "lat": 28.360, "km": 310, "major": false },
-    { "id": "cg_zx",   "name": "镇雄",     "lon": 104.870, "lat": 27.440, "km": 409, "major": false },
-    { "id": "gg_bj",   "name": "毕节",     "lon": 105.280, "lat": 27.300, "km": 452, "major": false },
-    { "id": "gg_qx",   "name": "黔西",     "lon": 106.020, "lat": 27.000, "km": 521, "major": false },
-    { "id": "gg_qzx",  "name": "清镇西",   "lon": 106.430, "lat": 26.680, "km": 582, "major": false },
-    { "id": "gg_gyn",  "name": "贵阳北",   "lon": 106.688, "lat": 26.660, "km": 621, "major": true }
+    {
+      "id": "cg_cdx",
+      "name": "成都东",
+      "lon": 104.14,
+      "lat": 30.63,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "cg_lss",
+      "name": "乐山",
+      "lon": 103.76,
+      "lat": 29.57,
+      "km": 123,
+      "major": true
+    },
+    {
+      "id": "cg_qw",
+      "name": "犍为",
+      "lon": 103.92,
+      "lat": 29.23,
+      "km": 165,
+      "major": false
+    },
+    {
+      "id": "cg_ybx",
+      "name": "宜宾西",
+      "lon": 104.62,
+      "lat": 28.76,
+      "km": 237,
+      "major": true
+    },
+    {
+      "id": "cg_cn",
+      "name": "长宁",
+      "lon": 104.92,
+      "lat": 28.58,
+      "km": 274,
+      "major": false
+    },
+    {
+      "id": "cg_xw",
+      "name": "兴文",
+      "lon": 105.23,
+      "lat": 28.36,
+      "km": 310,
+      "major": false
+    },
+    {
+      "id": "cg_zx",
+      "name": "镇雄",
+      "lon": 104.87,
+      "lat": 27.44,
+      "km": 409,
+      "major": false
+    },
+    {
+      "id": "gg_bj",
+      "name": "毕节",
+      "lon": 105.28,
+      "lat": 27.3,
+      "km": 452,
+      "major": false
+    },
+    {
+      "id": "gg_qx",
+      "name": "黔西",
+      "lon": 106.02,
+      "lat": 27.0,
+      "km": 521,
+      "major": false
+    },
+    {
+      "id": "gg_qzx",
+      "name": "清镇西",
+      "lon": 106.43,
+      "lat": 26.68,
+      "km": 582,
+      "major": false
+    },
+    {
+      "id": "gg_gyn",
+      "name": "贵阳北",
+      "lon": 106.688,
+      "lat": 26.66,
+      "km": 621,
+      "major": true
+    }
   ],
   "geometry": [
-    [104.140, 30.630, "cg_cdx"],
-    [103.760, 29.570, "cg_lss"],
-    [103.920, 29.230, "cg_qw"],
-    [104.620, 28.760, "cg_ybx"],
-    [104.920, 28.580, "cg_cn"],
-    [105.230, 28.360, "cg_xw"],
-    [104.870, 27.440, "cg_zx"],
-    [105.280, 27.300, "gg_bj"],
-    [106.020, 27.000, "gg_qx"],
-    [106.430, 26.680, "gg_qzx"],
-    [106.688, 26.660, "gg_gyn"]
-  ]
+    [
+      104.14,
+      30.63,
+      "cg_cdx"
+    ],
+    [
+      103.76,
+      29.57,
+      "cg_lss"
+    ],
+    [
+      103.92,
+      29.23,
+      "cg_qw"
+    ],
+    [
+      104.62,
+      28.76,
+      "cg_ybx"
+    ],
+    [
+      104.92,
+      28.58,
+      "cg_cn"
+    ],
+    [
+      105.23,
+      28.36,
+      "cg_xw"
+    ],
+    [
+      104.87,
+      27.44,
+      "cg_zx"
+    ],
+    [
+      105.28,
+      27.3,
+      "gg_bj"
+    ],
+    [
+      106.02,
+      27.0,
+      "gg_qx"
+    ],
+    [
+      106.43,
+      26.68,
+      "gg_qzx"
+    ],
+    [
+      106.688,
+      26.66,
+      "gg_gyn"
+    ]
+  ],
+  "line_class": "hsr250"
 }

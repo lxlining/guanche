@@ -1,0 +1,106 @@
+{
+  "id": "jinqin_hsr",
+  "name": "津秦高速铁路",
+  "short": "津秦高铁",
+  "from": "天津",
+  "to": "秦皇岛",
+  "length_km": 257,
+  "color": "#fde68a",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    {
+      "id": "jq_tj",
+      "name": "天津",
+      "lon": 117.202,
+      "lat": 39.144,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "jq_jlc",
+      "name": "军粮城北",
+      "lon": 117.56,
+      "lat": 39.06,
+      "km": 36,
+      "major": false
+    },
+    {
+      "id": "jq_bh",
+      "name": "滨海",
+      "lon": 117.72,
+      "lat": 39.03,
+      "km": 53,
+      "major": false
+    },
+    {
+      "id": "jq_ts",
+      "name": "唐山",
+      "lon": 118.18,
+      "lat": 39.63,
+      "km": 120,
+      "major": true
+    },
+    {
+      "id": "jq_lh",
+      "name": "滦河",
+      "lon": 118.74,
+      "lat": 39.74,
+      "km": 178,
+      "major": false
+    },
+    {
+      "id": "jq_bdh",
+      "name": "北戴河",
+      "lon": 119.4,
+      "lat": 39.82,
+      "km": 236,
+      "major": false
+    },
+    {
+      "id": "jq_qhd",
+      "name": "秦皇岛",
+      "lon": 119.6,
+      "lat": 39.94,
+      "km": 257,
+      "major": true
+    }
+  ],
+  "geometry": [
+    [
+      117.202,
+      39.144,
+      "jq_tj"
+    ],
+    [
+      117.56,
+      39.06,
+      "jq_jlc"
+    ],
+    [
+      117.72,
+      39.03,
+      "jq_bh"
+    ],
+    [
+      118.18,
+      39.63,
+      "jq_ts"
+    ],
+    [
+      118.74,
+      39.74,
+      "jq_lh"
+    ],
+    [
+      119.4,
+      39.82,
+      "jq_bdh"
+    ],
+    [
+      119.6,
+      39.94,
+      "jq_qhd"
+    ]
+  ]
+}

@@ -8,29 +8,151 @@
   "color": "#fcd34d",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "xy_xab",  "name": "西安北",   "lon": 108.938, "lat": 34.378, "km": 0,   "major": true },
-    { "id": "xy_lqn",  "name": "礼泉南",   "lon": 108.590, "lat": 34.500, "km": 36,  "major": false },
-    { "id": "xy_qx",   "name": "乾县",     "lon": 108.250, "lat": 34.540, "km": 68,  "major": false },
-    { "id": "xy_ysn",  "name": "永寿南",   "lon": 108.030, "lat": 34.700, "km": 94,  "major": false },
-    { "id": "xy_bzd",  "name": "彬州东",   "lon": 108.100, "lat": 35.040, "km": 133, "major": false },
-    { "id": "xy_nx",   "name": "宁县",     "lon": 107.930, "lat": 35.460, "km": 179, "major": false },
-    { "id": "xy_qy",   "name": "庆阳",     "lon": 107.660, "lat": 35.730, "km": 216, "major": true },
-    { "id": "xy_hx",   "name": "环县",     "lon": 107.370, "lat": 36.570, "km": 307, "major": false },
-    { "id": "xy_yc",   "name": "盐池",     "lon": 107.410, "lat": 37.790, "km": 434, "major": false },
-    { "id": "xy_wz",   "name": "吴忠",     "lon": 106.210, "lat": 37.990, "km": 538, "major": false },
-    { "id": "xy_yc2",  "name": "银川",     "lon": 106.230, "lat": 38.490, "km": 618, "major": true }
+    {
+      "id": "xy_xab",
+      "name": "西安北",
+      "lon": 108.938,
+      "lat": 34.378,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "xy_lqn",
+      "name": "礼泉南",
+      "lon": 108.59,
+      "lat": 34.5,
+      "km": 36,
+      "major": false
+    },
+    {
+      "id": "xy_qx",
+      "name": "乾县",
+      "lon": 108.25,
+      "lat": 34.54,
+      "km": 68,
+      "major": false
+    },
+    {
+      "id": "xy_ysn",
+      "name": "永寿南",
+      "lon": 108.03,
+      "lat": 34.7,
+      "km": 94,
+      "major": false
+    },
+    {
+      "id": "xy_bzd",
+      "name": "彬州东",
+      "lon": 108.1,
+      "lat": 35.04,
+      "km": 133,
+      "major": false
+    },
+    {
+      "id": "xy_nx",
+      "name": "宁县",
+      "lon": 107.93,
+      "lat": 35.46,
+      "km": 179,
+      "major": false
+    },
+    {
+      "id": "xy_qy",
+      "name": "庆阳",
+      "lon": 107.66,
+      "lat": 35.73,
+      "km": 216,
+      "major": true
+    },
+    {
+      "id": "xy_hx",
+      "name": "环县",
+      "lon": 107.37,
+      "lat": 36.57,
+      "km": 307,
+      "major": false
+    },
+    {
+      "id": "xy_yc",
+      "name": "盐池",
+      "lon": 107.41,
+      "lat": 37.79,
+      "km": 434,
+      "major": false
+    },
+    {
+      "id": "xy_wz",
+      "name": "吴忠",
+      "lon": 106.21,
+      "lat": 37.99,
+      "km": 538,
+      "major": false
+    },
+    {
+      "id": "xy_yc2",
+      "name": "银川",
+      "lon": 106.23,
+      "lat": 38.49,
+      "km": 618,
+      "major": true
+    }
   ],
   "geometry": [
-    [108.938, 34.378, "xy_xab"],
-    [108.590, 34.500, "xy_lqn"],
-    [108.250, 34.540, "xy_qx"],
-    [108.030, 34.700, "xy_ysn"],
-    [108.100, 35.040, "xy_bzd"],
-    [107.930, 35.460, "xy_nx"],
-    [107.660, 35.730, "xy_qy"],
-    [107.370, 36.570, "xy_hx"],
-    [107.410, 37.790, "xy_yc"],
-    [106.210, 37.990, "xy_wz"],
-    [106.230, 38.490, "xy_yc2"]
-  ]
+    [
+      108.938,
+      34.378,
+      "xy_xab"
+    ],
+    [
+      108.59,
+      34.5,
+      "xy_lqn"
+    ],
+    [
+      108.25,
+      34.54,
+      "xy_qx"
+    ],
+    [
+      108.03,
+      34.7,
+      "xy_ysn"
+    ],
+    [
+      108.1,
+      35.04,
+      "xy_bzd"
+    ],
+    [
+      107.93,
+      35.46,
+      "xy_nx"
+    ],
+    [
+      107.66,
+      35.73,
+      "xy_qy"
+    ],
+    [
+      107.37,
+      36.57,
+      "xy_hx"
+    ],
+    [
+      107.41,
+      37.79,
+      "xy_yc"
+    ],
+    [
+      106.21,
+      37.99,
+      "xy_wz"
+    ],
+    [
+      106.23,
+      38.49,
+      "xy_yc2"
+    ]
+  ],
+  "line_class": "hsr250"
 }

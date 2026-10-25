@@ -8,43 +8,242 @@
   "color": "#fca5a5",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "dx_tyn",  "name": "太原南",   "lon": 112.570, "lat": 37.820, "km": 0,   "major": true },
-    { "id": "dx_jz",   "name": "晋中",     "lon": 112.750, "lat": 37.720, "km": 19,  "major": false },
-    { "id": "dx_tgx",  "name": "太谷西",   "lon": 112.550, "lat": 37.420, "km": 47,  "major": false },
-    { "id": "dx_qxd",  "name": "祁县东",   "lon": 112.370, "lat": 37.340, "km": 66,  "major": false },
-    { "id": "dx_pyg",  "name": "平遥古城", "lon": 112.170, "lat": 37.190, "km": 92,  "major": false },
-    { "id": "dx_jxd",  "name": "介休东",   "lon": 111.920, "lat": 37.040, "km": 118, "major": false },
-    { "id": "dx_lsd",  "name": "灵石东",   "lon": 111.760, "lat": 36.840, "km": 143, "major": false },
-    { "id": "dx_hzd",  "name": "霍州东",   "lon": 111.740, "lat": 36.570, "km": 175, "major": false },
-    { "id": "dx_htx",  "name": "洪洞西",   "lon": 111.500, "lat": 36.300, "km": 207, "major": false },
-    { "id": "dx_lfx",  "name": "临汾西",   "lon": 111.490, "lat": 36.080, "km": 231, "major": false },
-    { "id": "dx_xfx",  "name": "襄汾西",   "lon": 111.380, "lat": 35.880, "km": 256, "major": false },
-    { "id": "dx_hmx",  "name": "侯马西",   "lon": 111.350, "lat": 35.620, "km": 286, "major": false },
-    { "id": "dx_wxx",  "name": "闻喜西",   "lon": 111.160, "lat": 35.360, "km": 316, "major": false },
-    { "id": "dx_ycb",  "name": "运城北",   "lon": 111.000, "lat": 35.050, "km": 352, "major": false },
-    { "id": "dx_yjb",  "name": "永济北",   "lon": 110.450, "lat": 34.890, "km": 416, "major": false },
-    { "id": "dx_hsb",  "name": "华山北",   "lon": 110.080, "lat": 34.580, "km": 461, "major": false },
-    { "id": "dx_wngb", "name": "渭南北",   "lon": 109.500, "lat": 34.520, "km": 511, "major": false },
-    { "id": "dx_xab",  "name": "西安北",   "lon": 108.938, "lat": 34.378, "km": 561, "major": true }
+    {
+      "id": "dx_tyn",
+      "name": "太原南",
+      "lon": 112.57,
+      "lat": 37.82,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "dx_jz",
+      "name": "晋中",
+      "lon": 112.75,
+      "lat": 37.72,
+      "km": 19,
+      "major": false
+    },
+    {
+      "id": "dx_tgx",
+      "name": "太谷西",
+      "lon": 112.55,
+      "lat": 37.42,
+      "km": 47,
+      "major": false
+    },
+    {
+      "id": "dx_qxd",
+      "name": "祁县东",
+      "lon": 112.37,
+      "lat": 37.34,
+      "km": 66,
+      "major": false
+    },
+    {
+      "id": "dx_pyg",
+      "name": "平遥古城",
+      "lon": 112.17,
+      "lat": 37.19,
+      "km": 92,
+      "major": false
+    },
+    {
+      "id": "dx_jxd",
+      "name": "介休东",
+      "lon": 111.92,
+      "lat": 37.04,
+      "km": 118,
+      "major": false
+    },
+    {
+      "id": "dx_lsd",
+      "name": "灵石东",
+      "lon": 111.76,
+      "lat": 36.84,
+      "km": 143,
+      "major": false
+    },
+    {
+      "id": "dx_hzd",
+      "name": "霍州东",
+      "lon": 111.74,
+      "lat": 36.57,
+      "km": 175,
+      "major": false
+    },
+    {
+      "id": "dx_htx",
+      "name": "洪洞西",
+      "lon": 111.5,
+      "lat": 36.3,
+      "km": 207,
+      "major": false
+    },
+    {
+      "id": "dx_lfx",
+      "name": "临汾西",
+      "lon": 111.49,
+      "lat": 36.08,
+      "km": 231,
+      "major": false
+    },
+    {
+      "id": "dx_xfx",
+      "name": "襄汾西",
+      "lon": 111.38,
+      "lat": 35.88,
+      "km": 256,
+      "major": false
+    },
+    {
+      "id": "dx_hmx",
+      "name": "侯马西",
+      "lon": 111.35,
+      "lat": 35.62,
+      "km": 286,
+      "major": false
+    },
+    {
+      "id": "dx_wxx",
+      "name": "闻喜西",
+      "lon": 111.16,
+      "lat": 35.36,
+      "km": 316,
+      "major": false
+    },
+    {
+      "id": "dx_ycb",
+      "name": "运城北",
+      "lon": 111.0,
+      "lat": 35.05,
+      "km": 352,
+      "major": false
+    },
+    {
+      "id": "dx_yjb",
+      "name": "永济北",
+      "lon": 110.45,
+      "lat": 34.89,
+      "km": 416,
+      "major": false
+    },
+    {
+      "id": "dx_hsb",
+      "name": "华山北",
+      "lon": 110.08,
+      "lat": 34.58,
+      "km": 461,
+      "major": false
+    },
+    {
+      "id": "dx_wngb",
+      "name": "渭南北",
+      "lon": 109.5,
+      "lat": 34.52,
+      "km": 511,
+      "major": false
+    },
+    {
+      "id": "dx_xab",
+      "name": "西安北",
+      "lon": 108.938,
+      "lat": 34.378,
+      "km": 561,
+      "major": true
+    }
   ],
   "geometry": [
-    [112.570, 37.820, "dx_tyn"],
-    [112.750, 37.720, "dx_jz"],
-    [112.550, 37.420, "dx_tgx"],
-    [112.370, 37.340, "dx_qxd"],
-    [112.170, 37.190, "dx_pyg"],
-    [111.920, 37.040, "dx_jxd"],
-    [111.760, 36.840, "dx_lsd"],
-    [111.740, 36.570, "dx_hzd"],
-    [111.500, 36.300, "dx_htx"],
-    [111.490, 36.080, "dx_lfx"],
-    [111.380, 35.880, "dx_xfx"],
-    [111.350, 35.620, "dx_hmx"],
-    [111.160, 35.360, "dx_wxx"],
-    [111.000, 35.050, "dx_ycb"],
-    [110.450, 34.890, "dx_yjb"],
-    [110.080, 34.580, "dx_hsb"],
-    [109.500, 34.520, "dx_wngb"],
-    [108.938, 34.378, "dx_xab"]
-  ]
+    [
+      112.57,
+      37.82,
+      "dx_tyn"
+    ],
+    [
+      112.75,
+      37.72,
+      "dx_jz"
+    ],
+    [
+      112.55,
+      37.42,
+      "dx_tgx"
+    ],
+    [
+      112.37,
+      37.34,
+      "dx_qxd"
+    ],
+    [
+      112.17,
+      37.19,
+      "dx_pyg"
+    ],
+    [
+      111.92,
+      37.04,
+      "dx_jxd"
+    ],
+    [
+      111.76,
+      36.84,
+      "dx_lsd"
+    ],
+    [
+      111.74,
+      36.57,
+      "dx_hzd"
+    ],
+    [
+      111.5,
+      36.3,
+      "dx_htx"
+    ],
+    [
+      111.49,
+      36.08,
+      "dx_lfx"
+    ],
+    [
+      111.38,
+      35.88,
+      "dx_xfx"
+    ],
+    [
+      111.35,
+      35.62,
+      "dx_hmx"
+    ],
+    [
+      111.16,
+      35.36,
+      "dx_wxx"
+    ],
+    [
+      111.0,
+      35.05,
+      "dx_ycb"
+    ],
+    [
+      110.45,
+      34.89,
+      "dx_yjb"
+    ],
+    [
+      110.08,
+      34.58,
+      "dx_hsb"
+    ],
+    [
+      109.5,
+      34.52,
+      "dx_wngb"
+    ],
+    [
+      108.938,
+      34.378,
+      "dx_xab"
+    ]
+  ],
+  "line_class": "hsr250"
 }

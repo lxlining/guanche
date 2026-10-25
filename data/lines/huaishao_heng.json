@@ -8,19 +8,86 @@
   "color": "#fda4af",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "hs_hhn",  "name": "怀化南",   "lon": 109.970, "lat": 27.540, "km": 0,   "major": true },
-    { "id": "hs_aj",   "name": "安江",     "lon": 110.370, "lat": 27.330, "km": 45,  "major": false },
-    { "id": "hs_sy",   "name": "邵阳",     "lon": 111.470, "lat": 27.230, "km": 155, "major": true },
-    { "id": "hs_sdd",  "name": "邵东",     "lon": 111.740, "lat": 27.250, "km": 183, "major": false },
-    { "id": "hs_xd",   "name": "西渡",     "lon": 112.290, "lat": 26.960, "km": 238, "major": false },
-    { "id": "hs_hyd",  "name": "衡阳东",   "lon": 112.610, "lat": 26.890, "km": 318, "major": true }
+    {
+      "id": "hs_hhn",
+      "name": "怀化南",
+      "lon": 109.97,
+      "lat": 27.54,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "hs_aj",
+      "name": "安江",
+      "lon": 110.37,
+      "lat": 27.33,
+      "km": 45,
+      "major": false
+    },
+    {
+      "id": "hs_sy",
+      "name": "邵阳",
+      "lon": 111.47,
+      "lat": 27.23,
+      "km": 155,
+      "major": true
+    },
+    {
+      "id": "hs_sdd",
+      "name": "邵东",
+      "lon": 111.74,
+      "lat": 27.25,
+      "km": 183,
+      "major": false
+    },
+    {
+      "id": "hs_xd",
+      "name": "西渡",
+      "lon": 112.29,
+      "lat": 26.96,
+      "km": 238,
+      "major": false
+    },
+    {
+      "id": "hs_hyd",
+      "name": "衡阳东",
+      "lon": 112.61,
+      "lat": 26.89,
+      "km": 318,
+      "major": true
+    }
   ],
   "geometry": [
-    [109.970, 27.540, "hs_hhn"],
-    [110.370, 27.330, "hs_aj"],
-    [111.470, 27.230, "hs_sy"],
-    [111.740, 27.250, "hs_sdd"],
-    [112.290, 26.960, "hs_xd"],
-    [112.610, 26.890, "hs_hyd"]
-  ]
+    [
+      109.97,
+      27.54,
+      "hs_hhn"
+    ],
+    [
+      110.37,
+      27.33,
+      "hs_aj"
+    ],
+    [
+      111.47,
+      27.23,
+      "hs_sy"
+    ],
+    [
+      111.74,
+      27.25,
+      "hs_sdd"
+    ],
+    [
+      112.29,
+      26.96,
+      "hs_xd"
+    ],
+    [
+      112.61,
+      26.89,
+      "hs_hyd"
+    ]
+  ],
+  "line_class": "hsr250"
 }

@@ -1,0 +1,80 @@
+{
+  "id": "chengkun",
+  "name": "成昆铁路（复线）",
+  "short": "成昆线",
+  "from": "成都南",
+  "to": "昆明",
+  "length_km": 1100,
+  "color": "#94a3b8",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    {
+      "id": "ck_cdn",
+      "name": "成都南",
+      "lon": 104.07,
+      "lat": 30.57,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "ck_em",
+      "name": "峨眉",
+      "lon": 103.48,
+      "lat": 29.6,
+      "km": 130,
+      "major": false
+    },
+    {
+      "id": "ck_xc",
+      "name": "西昌",
+      "lon": 102.26,
+      "lat": 27.89,
+      "km": 400,
+      "major": false
+    },
+    {
+      "id": "ck_pzh",
+      "name": "攀枝花",
+      "lon": 101.72,
+      "lat": 26.58,
+      "km": 700,
+      "major": true
+    },
+    {
+      "id": "km_yn",
+      "name": "昆明",
+      "lon": 102.42,
+      "lat": 25.02,
+      "km": 1100,
+      "major": true
+    }
+  ],
+  "geometry": [
+    [
+      104.07,
+      30.57,
+      "ck_cdn"
+    ],
+    [
+      103.48,
+      29.6,
+      "ck_em"
+    ],
+    [
+      102.26,
+      27.89,
+      "ck_xc"
+    ],
+    [
+      101.72,
+      26.58,
+      "ck_pzh"
+    ],
+    [
+      102.42,
+      25.02,
+      "km_yn"
+    ]
+  ]
+}

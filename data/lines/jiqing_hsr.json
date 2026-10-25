@@ -8,25 +8,125 @@
   "color": "#c084fc",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "jq_jnd",  "name": "济南东",   "lon": 117.155, "lat": 36.700, "km": 0,   "major": true },
-    { "id": "jq_zqb",  "name": "章丘北",   "lon": 117.530, "lat": 36.760, "km": 33,  "major": false },
-    { "id": "jq_zb",   "name": "淄博北",   "lon": 118.060, "lat": 36.830, "km": 80,  "major": false },
-    { "id": "jq_lz",   "name": "临淄",     "lon": 118.320, "lat": 36.830, "km": 106, "major": false },
-    { "id": "jq_wf",   "name": "潍坊北",   "lon": 119.140, "lat": 37.000, "km": 178, "major": false },
-    { "id": "jq_gmw",  "name": "高密北",   "lon": 119.680, "lat": 36.760, "km": 228, "major": false },
-    { "id": "jq_jyw",  "name": "胶州北",   "lon": 120.010, "lat": 36.400, "km": 262, "major": false },
-    { "id": "jq_jgb",  "name": "机场",     "lon": 120.230, "lat": 36.370, "km": 285, "major": false },
-    { "id": "jq_qdb",  "name": "青岛北",   "lon": 120.370, "lat": 36.110, "km": 308, "major": true }
+    {
+      "id": "jq_jnd",
+      "name": "济南东",
+      "lon": 117.155,
+      "lat": 36.7,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "jq_zqb",
+      "name": "章丘北",
+      "lon": 117.53,
+      "lat": 36.76,
+      "km": 33,
+      "major": false
+    },
+    {
+      "id": "jq_zb",
+      "name": "淄博北",
+      "lon": 118.06,
+      "lat": 36.83,
+      "km": 80,
+      "major": false
+    },
+    {
+      "id": "jq_lz",
+      "name": "临淄",
+      "lon": 118.32,
+      "lat": 36.83,
+      "km": 106,
+      "major": false
+    },
+    {
+      "id": "jq_wf",
+      "name": "潍坊北",
+      "lon": 119.14,
+      "lat": 37.0,
+      "km": 178,
+      "major": false
+    },
+    {
+      "id": "jq_gmw",
+      "name": "高密北",
+      "lon": 119.68,
+      "lat": 36.76,
+      "km": 228,
+      "major": false
+    },
+    {
+      "id": "jq_jyw",
+      "name": "胶州北",
+      "lon": 120.01,
+      "lat": 36.4,
+      "km": 262,
+      "major": false
+    },
+    {
+      "id": "jq_jgb",
+      "name": "机场",
+      "lon": 120.23,
+      "lat": 36.37,
+      "km": 285,
+      "major": false
+    },
+    {
+      "id": "jq_qdb",
+      "name": "青岛北",
+      "lon": 120.37,
+      "lat": 36.11,
+      "km": 308,
+      "major": true
+    }
   ],
   "geometry": [
-    [117.155, 36.700, "jq_jnd"],
-    [117.530, 36.760, "jq_zqb"],
-    [118.060, 36.830, "jq_zb"],
-    [118.320, 36.830, "jq_lz"],
-    [119.140, 37.000, "jq_wf"],
-    [119.680, 36.760, "jq_gmw"],
-    [120.010, 36.400, "jq_jyw"],
-    [120.230, 36.370, "jq_jgb"],
-    [120.370, 36.110, "jq_qdb"]
-  ]
+    [
+      117.155,
+      36.7,
+      "jq_jnd"
+    ],
+    [
+      117.53,
+      36.76,
+      "jq_zqb"
+    ],
+    [
+      118.06,
+      36.83,
+      "jq_zb"
+    ],
+    [
+      118.32,
+      36.83,
+      "jq_lz"
+    ],
+    [
+      119.14,
+      37.0,
+      "jq_wf"
+    ],
+    [
+      119.68,
+      36.76,
+      "jq_gmw"
+    ],
+    [
+      120.01,
+      36.4,
+      "jq_jyw"
+    ],
+    [
+      120.23,
+      36.37,
+      "jq_jgb"
+    ],
+    [
+      120.37,
+      36.11,
+      "jq_qdb"
+    ]
+  ],
+  "line_class": "hsr250"
 }

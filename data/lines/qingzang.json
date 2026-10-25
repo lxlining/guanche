@@ -1,0 +1,126 @@
+{
+  "id": "qingzang",
+  "name": "青藏铁路",
+  "short": "青藏线",
+  "from": "西宁",
+  "to": "拉萨",
+  "length_km": 1956,
+  "color": "#e0e0e0",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    {
+      "id": "qz_xn",
+      "name": "西宁",
+      "lon": 101.78,
+      "lat": 36.62,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "qz_dlh",
+      "name": "德令哈",
+      "lon": 97.37,
+      "lat": 37.37,
+      "km": 500,
+      "major": false
+    },
+    {
+      "id": "qz_gem",
+      "name": "格尔木",
+      "lon": 94.9,
+      "lat": 36.4,
+      "km": 814,
+      "major": true
+    },
+    {
+      "id": "qz_ad",
+      "name": "安多",
+      "lon": 91.68,
+      "lat": 32.27,
+      "km": 1396,
+      "major": false
+    },
+    {
+      "id": "qz_nq",
+      "name": "那曲",
+      "lon": 92.05,
+      "lat": 31.48,
+      "km": 1500,
+      "major": false
+    },
+    {
+      "id": "qz_dx",
+      "name": "当雄",
+      "lon": 91.1,
+      "lat": 30.48,
+      "km": 1700,
+      "major": false
+    },
+    {
+      "id": "qz_ls",
+      "name": "拉萨",
+      "lon": 91.14,
+      "lat": 29.65,
+      "km": 1956,
+      "major": true
+    }
+  ],
+  "geometry": [
+    [
+      101.78,
+      36.62,
+      "qz_xn"
+    ],
+    [
+      99.8,
+      37.2,
+      null
+    ],
+    [
+      97.37,
+      37.37,
+      "qz_dlh"
+    ],
+    [
+      95.5,
+      36.6,
+      null
+    ],
+    [
+      94.9,
+      36.4,
+      "qz_gem"
+    ],
+    [
+      93.3,
+      35.2,
+      null
+    ],
+    [
+      91.68,
+      32.27,
+      "qz_ad"
+    ],
+    [
+      92.05,
+      31.48,
+      "qz_nq"
+    ],
+    [
+      91.7,
+      30.9,
+      null
+    ],
+    [
+      91.1,
+      30.48,
+      "qz_dx"
+    ],
+    [
+      91.14,
+      29.65,
+      "qz_ls"
+    ]
+  ]
+}

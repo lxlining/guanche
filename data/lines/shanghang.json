@@ -8,33 +8,177 @@
   "color": "#a5b4fc",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "shh_sq",   "name": "商丘",     "lon": 115.660, "lat": 34.430, "km": 0,   "major": true },
-    { "id": "shh_bzn",  "name": "亳州南",   "lon": 115.760, "lat": 33.880, "km": 63,  "major": false },
-    { "id": "shh_fyx",  "name": "阜阳西",   "lon": 115.790, "lat": 32.890, "km": 166, "major": true },
-    { "id": "shh_sx",   "name": "寿县",     "lon": 116.620, "lat": 32.470, "km": 256, "major": false },
-    { "id": "shh_hbc",  "name": "合肥北城", "lon": 117.120, "lat": 32.130, "km": 316, "major": false },
-    { "id": "shh_hfn",  "name": "合肥南",   "lon": 117.310, "lat": 31.790, "km": 348, "major": true },
-    { "id": "shh_wl",   "name": "芜湖",     "lon": 118.390, "lat": 31.330, "km": 447, "major": true },
-    { "id": "shh_wzn",  "name": "湾沚南",   "lon": 118.610, "lat": 31.060, "km": 483, "major": false },
-    { "id": "shh_xc",   "name": "宣城",     "lon": 118.730, "lat": 30.940, "km": 502, "major": false },
-    { "id": "shh_lxn",  "name": "郎溪南",   "lon": 119.140, "lat": 31.020, "km": 545, "major": false },
-    { "id": "shh_gdn",  "name": "广德南",   "lon": 119.420, "lat": 30.890, "km": 578, "major": false },
-    { "id": "shh_hzn",  "name": "湖州",     "lon": 120.090, "lat": 30.860, "km": 632, "major": false },
-    { "id": "shh_hzd",  "name": "杭州东",   "lon": 120.213, "lat": 30.291, "km": 752, "major": true }
+    {
+      "id": "shh_sq",
+      "name": "商丘",
+      "lon": 115.66,
+      "lat": 34.43,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "shh_bzn",
+      "name": "亳州南",
+      "lon": 115.76,
+      "lat": 33.88,
+      "km": 63,
+      "major": false
+    },
+    {
+      "id": "shh_fyx",
+      "name": "阜阳西",
+      "lon": 115.79,
+      "lat": 32.89,
+      "km": 166,
+      "major": true
+    },
+    {
+      "id": "shh_sx",
+      "name": "寿县",
+      "lon": 116.62,
+      "lat": 32.47,
+      "km": 256,
+      "major": false
+    },
+    {
+      "id": "shh_hbc",
+      "name": "合肥北城",
+      "lon": 117.12,
+      "lat": 32.13,
+      "km": 316,
+      "major": false
+    },
+    {
+      "id": "shh_hfn",
+      "name": "合肥南",
+      "lon": 117.31,
+      "lat": 31.79,
+      "km": 348,
+      "major": true
+    },
+    {
+      "id": "shh_wl",
+      "name": "芜湖",
+      "lon": 118.39,
+      "lat": 31.33,
+      "km": 447,
+      "major": true
+    },
+    {
+      "id": "shh_wzn",
+      "name": "湾沚南",
+      "lon": 118.61,
+      "lat": 31.06,
+      "km": 483,
+      "major": false
+    },
+    {
+      "id": "shh_xc",
+      "name": "宣城",
+      "lon": 118.73,
+      "lat": 30.94,
+      "km": 502,
+      "major": false
+    },
+    {
+      "id": "shh_lxn",
+      "name": "郎溪南",
+      "lon": 119.14,
+      "lat": 31.02,
+      "km": 545,
+      "major": false
+    },
+    {
+      "id": "shh_gdn",
+      "name": "广德南",
+      "lon": 119.42,
+      "lat": 30.89,
+      "km": 578,
+      "major": false
+    },
+    {
+      "id": "shh_hzn",
+      "name": "湖州",
+      "lon": 120.09,
+      "lat": 30.86,
+      "km": 632,
+      "major": false
+    },
+    {
+      "id": "shh_hzd",
+      "name": "杭州东",
+      "lon": 120.213,
+      "lat": 30.291,
+      "km": 752,
+      "major": true
+    }
   ],
   "geometry": [
-    [115.660, 34.430, "shh_sq"],
-    [115.760, 33.880, "shh_bzn"],
-    [115.790, 32.890, "shh_fyx"],
-    [116.620, 32.470, "shh_sx"],
-    [117.120, 32.130, "shh_hbc"],
-    [117.310, 31.790, "shh_hfn"],
-    [118.390, 31.330, "shh_wl"],
-    [118.610, 31.060, "shh_wzn"],
-    [118.730, 30.940, "shh_xc"],
-    [119.140, 31.020, "shh_lxn"],
-    [119.420, 30.890, "shh_gdn"],
-    [120.090, 30.860, "shh_hzn"],
-    [120.213, 30.291, "shh_hzd"]
-  ]
+    [
+      115.66,
+      34.43,
+      "shh_sq"
+    ],
+    [
+      115.76,
+      33.88,
+      "shh_bzn"
+    ],
+    [
+      115.79,
+      32.89,
+      "shh_fyx"
+    ],
+    [
+      116.62,
+      32.47,
+      "shh_sx"
+    ],
+    [
+      117.12,
+      32.13,
+      "shh_hbc"
+    ],
+    [
+      117.31,
+      31.79,
+      "shh_hfn"
+    ],
+    [
+      118.39,
+      31.33,
+      "shh_wl"
+    ],
+    [
+      118.61,
+      31.06,
+      "shh_wzn"
+    ],
+    [
+      118.73,
+      30.94,
+      "shh_xc"
+    ],
+    [
+      119.14,
+      31.02,
+      "shh_lxn"
+    ],
+    [
+      119.42,
+      30.89,
+      "shh_gdn"
+    ],
+    [
+      120.09,
+      30.86,
+      "shh_hzn"
+    ],
+    [
+      120.213,
+      30.291,
+      "shh_hzd"
+    ]
+  ],
+  "line_class": "hsr250"
 }

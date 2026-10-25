@@ -1,0 +1,67 @@
+{
+  "id": "rilan_hsr",
+  "name": "日兰高速铁路",
+  "short": "日兰高铁",
+  "from": "日照",
+  "to": "曲阜东",
+  "length_km": 235,
+  "color": "#fdba74",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    {
+      "id": "rl_rz",
+      "name": "日照",
+      "lon": 119.53,
+      "lat": 35.42,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "rl_lyb",
+      "name": "临沂北",
+      "lon": 118.36,
+      "lat": 35.19,
+      "km": 100,
+      "major": true
+    },
+    {
+      "id": "rl_ms",
+      "name": "蒙山",
+      "lon": 117.58,
+      "lat": 35.5,
+      "km": 180,
+      "major": false
+    },
+    {
+      "id": "rl_qfd",
+      "name": "曲阜东",
+      "lon": 117.006,
+      "lat": 35.584,
+      "km": 235,
+      "major": true
+    }
+  ],
+  "geometry": [
+    [
+      119.53,
+      35.42,
+      "rl_rz"
+    ],
+    [
+      118.36,
+      35.19,
+      "rl_lyb"
+    ],
+    [
+      117.58,
+      35.5,
+      "rl_ms"
+    ],
+    [
+      117.006,
+      35.584,
+      "rl_qfd"
+    ]
+  ]
+}

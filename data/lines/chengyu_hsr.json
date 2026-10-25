@@ -8,25 +8,125 @@
   "color": "#fda4af",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "cy_cdx",  "name": "成都东",   "lon": 104.140, "lat": 30.630, "km": 0,   "major": true },
-    { "id": "cy_jy",   "name": "简阳南",   "lon": 104.540, "lat": 30.390, "km": 41,  "major": false },
-    { "id": "cy_zyn",  "name": "资阳北",   "lon": 104.640, "lat": 30.130, "km": 76,  "major": false },
-    { "id": "cy_zy",   "name": "资中西",   "lon": 104.850, "lat": 29.790, "km": 113, "major": false },
-    { "id": "cy_nb",   "name": "内江北",   "lon": 105.050, "lat": 29.590, "km": 144, "major": false },
-    { "id": "cy_lk",   "name": "隆昌北",   "lon": 105.280, "lat": 29.420, "km": 169, "major": false },
-    { "id": "cy_yp",   "name": "永川东",   "lon": 105.710, "lat": 29.360, "km": 212, "major": false },
-    { "id": "cy_bsn",  "name": "璧山",     "lon": 106.230, "lat": 29.590, "km": 262, "major": false },
-    { "id": "cy_cqb",  "name": "重庆北",   "lon": 106.550, "lat": 29.580, "km": 309, "major": true }
+    {
+      "id": "cy_cdx",
+      "name": "成都东",
+      "lon": 104.14,
+      "lat": 30.63,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "cy_jy",
+      "name": "简阳南",
+      "lon": 104.54,
+      "lat": 30.39,
+      "km": 41,
+      "major": false
+    },
+    {
+      "id": "cy_zyn",
+      "name": "资阳北",
+      "lon": 104.64,
+      "lat": 30.13,
+      "km": 76,
+      "major": false
+    },
+    {
+      "id": "cy_zy",
+      "name": "资中西",
+      "lon": 104.85,
+      "lat": 29.79,
+      "km": 113,
+      "major": false
+    },
+    {
+      "id": "cy_nb",
+      "name": "内江北",
+      "lon": 105.05,
+      "lat": 29.59,
+      "km": 144,
+      "major": false
+    },
+    {
+      "id": "cy_lk",
+      "name": "隆昌北",
+      "lon": 105.28,
+      "lat": 29.42,
+      "km": 169,
+      "major": false
+    },
+    {
+      "id": "cy_yp",
+      "name": "永川东",
+      "lon": 105.71,
+      "lat": 29.36,
+      "km": 212,
+      "major": false
+    },
+    {
+      "id": "cy_bsn",
+      "name": "璧山",
+      "lon": 106.23,
+      "lat": 29.59,
+      "km": 262,
+      "major": false
+    },
+    {
+      "id": "cy_cqb",
+      "name": "重庆北",
+      "lon": 106.55,
+      "lat": 29.58,
+      "km": 309,
+      "major": true
+    }
   ],
   "geometry": [
-    [104.140, 30.630, "cy_cdx"],
-    [104.540, 30.390, "cy_jy"],
-    [104.640, 30.130, "cy_zyn"],
-    [104.850, 29.790, "cy_zy"],
-    [105.050, 29.590, "cy_nb"],
-    [105.280, 29.420, "cy_lk"],
-    [105.710, 29.360, "cy_yp"],
-    [106.230, 29.590, "cy_bsn"],
-    [106.550, 29.580, "cy_cqb"]
-  ]
+    [
+      104.14,
+      30.63,
+      "cy_cdx"
+    ],
+    [
+      104.54,
+      30.39,
+      "cy_jy"
+    ],
+    [
+      104.64,
+      30.13,
+      "cy_zyn"
+    ],
+    [
+      104.85,
+      29.79,
+      "cy_zy"
+    ],
+    [
+      105.05,
+      29.59,
+      "cy_nb"
+    ],
+    [
+      105.28,
+      29.42,
+      "cy_lk"
+    ],
+    [
+      105.71,
+      29.36,
+      "cy_yp"
+    ],
+    [
+      106.23,
+      29.59,
+      "cy_bsn"
+    ],
+    [
+      106.55,
+      29.58,
+      "cy_cqb"
+    ]
+  ],
+  "line_class": "hsr350"
 }

@@ -8,35 +8,190 @@
   "color": "#f97316",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "xc_xab",  "name": "西安北",   "lon": 108.938, "lat": 34.378, "km": 0,   "major": true },
-    { "id": "xc_hy",   "name": "鄠邑",     "lon": 108.610, "lat": 34.110, "km": 34,  "major": false },
-    { "id": "xc_yx",   "name": "洋县西",   "lon": 107.550, "lat": 33.230, "km": 141, "major": false },
-    { "id": "xc_cgb",  "name": "城固北",   "lon": 107.330, "lat": 33.150, "km": 166, "major": false },
-    { "id": "xc_hz",   "name": "汉中",     "lon": 107.030, "lat": 33.070, "km": 198, "major": true },
-    { "id": "xc_nqn",  "name": "宁强南",   "lon": 106.260, "lat": 32.830, "km": 272, "major": false },
-    { "id": "xc_gy",   "name": "广元",     "lon": 105.840, "lat": 32.440, "km": 346, "major": true },
-    { "id": "xc_jmg",  "name": "剑门关",   "lon": 105.560, "lat": 32.220, "km": 380, "major": false },
-    { "id": "xc_qc",   "name": "青川",     "lon": 105.230, "lat": 32.090, "km": 415, "major": false },
-    { "id": "xc_jy",   "name": "江油",     "lon": 104.750, "lat": 31.780, "km": 464, "major": false },
-    { "id": "xc_my",   "name": "绵阳",     "lon": 104.680, "lat": 31.470, "km": 505, "major": true },
-    { "id": "xc_ljd",  "name": "罗江东",   "lon": 104.510, "lat": 31.300, "km": 528, "major": false },
-    { "id": "xc_dy",   "name": "德阳",     "lon": 104.400, "lat": 31.130, "km": 549, "major": false },
-    { "id": "xc_cdx",  "name": "成都东",   "lon": 104.140, "lat": 30.630, "km": 643, "major": true }
+    {
+      "id": "xc_xab",
+      "name": "西安北",
+      "lon": 108.938,
+      "lat": 34.378,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "xc_hy",
+      "name": "鄠邑",
+      "lon": 108.61,
+      "lat": 34.11,
+      "km": 34,
+      "major": false
+    },
+    {
+      "id": "xc_yx",
+      "name": "洋县西",
+      "lon": 107.55,
+      "lat": 33.23,
+      "km": 141,
+      "major": false
+    },
+    {
+      "id": "xc_cgb",
+      "name": "城固北",
+      "lon": 107.33,
+      "lat": 33.15,
+      "km": 166,
+      "major": false
+    },
+    {
+      "id": "xc_hz",
+      "name": "汉中",
+      "lon": 107.03,
+      "lat": 33.07,
+      "km": 198,
+      "major": true
+    },
+    {
+      "id": "xc_nqn",
+      "name": "宁强南",
+      "lon": 106.26,
+      "lat": 32.83,
+      "km": 272,
+      "major": false
+    },
+    {
+      "id": "xc_gy",
+      "name": "广元",
+      "lon": 105.84,
+      "lat": 32.44,
+      "km": 346,
+      "major": true
+    },
+    {
+      "id": "xc_jmg",
+      "name": "剑门关",
+      "lon": 105.56,
+      "lat": 32.22,
+      "km": 380,
+      "major": false
+    },
+    {
+      "id": "xc_qc",
+      "name": "青川",
+      "lon": 105.23,
+      "lat": 32.09,
+      "km": 415,
+      "major": false
+    },
+    {
+      "id": "xc_jy",
+      "name": "江油",
+      "lon": 104.75,
+      "lat": 31.78,
+      "km": 464,
+      "major": false
+    },
+    {
+      "id": "xc_my",
+      "name": "绵阳",
+      "lon": 104.68,
+      "lat": 31.47,
+      "km": 505,
+      "major": true
+    },
+    {
+      "id": "xc_ljd",
+      "name": "罗江东",
+      "lon": 104.51,
+      "lat": 31.3,
+      "km": 528,
+      "major": false
+    },
+    {
+      "id": "xc_dy",
+      "name": "德阳",
+      "lon": 104.4,
+      "lat": 31.13,
+      "km": 549,
+      "major": false
+    },
+    {
+      "id": "xc_cdx",
+      "name": "成都东",
+      "lon": 104.14,
+      "lat": 30.63,
+      "km": 643,
+      "major": true
+    }
   ],
   "geometry": [
-    [108.938, 34.378, "xc_xab"],
-    [108.610, 34.110, "xc_hy"],
-    [107.550, 33.230, "xc_yx"],
-    [107.330, 33.150, "xc_cgb"],
-    [107.030, 33.070, "xc_hz"],
-    [106.260, 32.830, "xc_nqn"],
-    [105.840, 32.440, "xc_gy"],
-    [105.560, 32.220, "xc_jmg"],
-    [105.230, 32.090, "xc_qc"],
-    [104.750, 31.780, "xc_jy"],
-    [104.680, 31.470, "xc_my"],
-    [104.510, 31.300, "xc_ljd"],
-    [104.400, 31.130, "xc_dy"],
-    [104.140, 30.630, "xc_cdx"]
-  ]
+    [
+      108.938,
+      34.378,
+      "xc_xab"
+    ],
+    [
+      108.61,
+      34.11,
+      "xc_hy"
+    ],
+    [
+      107.55,
+      33.23,
+      "xc_yx"
+    ],
+    [
+      107.33,
+      33.15,
+      "xc_cgb"
+    ],
+    [
+      107.03,
+      33.07,
+      "xc_hz"
+    ],
+    [
+      106.26,
+      32.83,
+      "xc_nqn"
+    ],
+    [
+      105.84,
+      32.44,
+      "xc_gy"
+    ],
+    [
+      105.56,
+      32.22,
+      "xc_jmg"
+    ],
+    [
+      105.23,
+      32.09,
+      "xc_qc"
+    ],
+    [
+      104.75,
+      31.78,
+      "xc_jy"
+    ],
+    [
+      104.68,
+      31.47,
+      "xc_my"
+    ],
+    [
+      104.51,
+      31.3,
+      "xc_ljd"
+    ],
+    [
+      104.4,
+      31.13,
+      "xc_dy"
+    ],
+    [
+      104.14,
+      30.63,
+      "xc_cdx"
+    ]
+  ],
+  "line_class": "hsr250"
 }

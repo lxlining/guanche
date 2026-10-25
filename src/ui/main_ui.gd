@@ -33,6 +33,7 @@ func _ready() -> void:
 	layer = 10
 	_build_root()
 	_build_clock()
+	_build_legend()
 	_build_top_buttons()
 	_build_time_bar()
 	_build_pills()
@@ -82,6 +83,52 @@ func _build_clock() -> void:
 	vb.add_child(clock_label)
 	vb.add_child(clock_sub)
 	p.add_child(vb)
+
+
+const LEGEND_CLASSES := [
+	["hsr350", "高铁 350km/h", "#6272e0"],
+	["hsr250", "高铁 200-250", "#fb923c"],
+	["intercity", "城际铁路", "#34d399"],
+	["conventional", "普速铁路", "#94a3b8"],
+]
+
+var legend_buttons: Array = []
+
+
+func _build_legend() -> void:
+	var p := UIKit.panel_container(UIKit.flat(UIKit.BG, 12, UIKit.BORDER, 1, 10))
+	p.set_anchors_and_offsets_preset(Control.PRESET_CENTER_LEFT, Control.PRESET_MODE_MINSIZE, 12)
+	p.grow_vertical = Control.GROW_DIRECTION_BOTH
+	ui_root.add_child(p)
+	var vb := VBoxContainer.new()
+	vb.add_theme_constant_override("separation", 4)
+	p.add_child(vb)
+	vb.add_child(UIKit.label("线路等级", 12, UIKit.DIM))
+	for entry in LEGEND_CLASSES:
+		var hb := HBoxContainer.new()
+		hb.add_theme_constant_override("separation", 6)
+		var chip := UIKit.label("▬", 12, Color(entry[2]))
+		chip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		hb.add_child(chip)
+		var b := Button.new()
+		b.text = entry[1]
+		b.toggle_mode = true
+		b.button_pressed = Meta.is_class_visible(entry[0])
+		b.focus_mode = Control.FOCUS_NONE
+		b.add_theme_font_size_override("font_size", 11)
+		b.add_theme_color_override("font_color", UIKit.TEXT)
+		b.add_theme_color_override("font_hover_color", Color.WHITE)
+		b.flat = true
+		b.toggled.connect(func(on: bool): Meta.set_class_visible(entry[0], on))
+		hb.add_child(b)
+		legend_buttons.append([b, entry[0]])
+		vb.add_child(hb)
+	Meta.class_visibility_changed.connect(_sync_legend)
+
+
+func _sync_legend() -> void:
+	for pair in legend_buttons:
+		(pair[0] as Button).set_pressed_no_signal(Meta.is_class_visible(pair[1]))
 
 
 func _build_top_buttons() -> void:

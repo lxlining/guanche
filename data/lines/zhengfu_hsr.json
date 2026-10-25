@@ -8,31 +8,164 @@
   "color": "#fda4af",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "zf_zzd",   "name": "郑州东",     "lon": 113.773, "lat": 34.753, "km": 0,   "major": true },
-    { "id": "zf_zzhkg", "name": "郑州航空港", "lon": 113.820, "lat": 34.530, "km": 25,  "major": false },
-    { "id": "zf_xcb",   "name": "许昌北",     "lon": 113.880, "lat": 34.060, "km": 78,  "major": false },
-    { "id": "zf_yl",    "name": "鄢陵",       "lon": 114.180, "lat": 34.100, "km": 110, "major": false },
-    { "id": "zf_fgn",   "name": "扶沟南",     "lon": 114.390, "lat": 34.060, "km": 136, "major": false },
-    { "id": "zf_xh",    "name": "西华",       "lon": 114.530, "lat": 33.790, "km": 163, "major": false },
-    { "id": "zf_zkd",   "name": "周口东",     "lon": 114.720, "lat": 33.630, "km": 186, "major": true },
-    { "id": "zf_hyn",   "name": "淮阳南",     "lon": 114.850, "lat": 33.440, "km": 206, "major": false },
-    { "id": "zf_sqb",   "name": "沈丘北",     "lon": 115.080, "lat": 33.390, "km": 230, "major": false },
-    { "id": "zf_jsn",   "name": "界首南",     "lon": 115.380, "lat": 33.260, "km": 260, "major": false },
-    { "id": "zf_lq",    "name": "临泉",       "lon": 115.590, "lat": 33.070, "km": 287, "major": false },
-    { "id": "zf_fyx",   "name": "阜阳西",     "lon": 115.790, "lat": 32.890, "km": 312, "major": true }
+    {
+      "id": "zf_zzd",
+      "name": "郑州东",
+      "lon": 113.773,
+      "lat": 34.753,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "zf_zzhkg",
+      "name": "郑州航空港",
+      "lon": 113.82,
+      "lat": 34.53,
+      "km": 25,
+      "major": false
+    },
+    {
+      "id": "zf_xcb",
+      "name": "许昌北",
+      "lon": 113.88,
+      "lat": 34.06,
+      "km": 78,
+      "major": false
+    },
+    {
+      "id": "zf_yl",
+      "name": "鄢陵",
+      "lon": 114.18,
+      "lat": 34.1,
+      "km": 110,
+      "major": false
+    },
+    {
+      "id": "zf_fgn",
+      "name": "扶沟南",
+      "lon": 114.39,
+      "lat": 34.06,
+      "km": 136,
+      "major": false
+    },
+    {
+      "id": "zf_xh",
+      "name": "西华",
+      "lon": 114.53,
+      "lat": 33.79,
+      "km": 163,
+      "major": false
+    },
+    {
+      "id": "zf_zkd",
+      "name": "周口东",
+      "lon": 114.72,
+      "lat": 33.63,
+      "km": 186,
+      "major": true
+    },
+    {
+      "id": "zf_hyn",
+      "name": "淮阳南",
+      "lon": 114.85,
+      "lat": 33.44,
+      "km": 206,
+      "major": false
+    },
+    {
+      "id": "zf_sqb",
+      "name": "沈丘北",
+      "lon": 115.08,
+      "lat": 33.39,
+      "km": 230,
+      "major": false
+    },
+    {
+      "id": "zf_jsn",
+      "name": "界首南",
+      "lon": 115.38,
+      "lat": 33.26,
+      "km": 260,
+      "major": false
+    },
+    {
+      "id": "zf_lq",
+      "name": "临泉",
+      "lon": 115.59,
+      "lat": 33.07,
+      "km": 287,
+      "major": false
+    },
+    {
+      "id": "zf_fyx",
+      "name": "阜阳西",
+      "lon": 115.79,
+      "lat": 32.89,
+      "km": 312,
+      "major": true
+    }
   ],
   "geometry": [
-    [113.773, 34.753, "zf_zzd"],
-    [113.820, 34.530, "zf_zzhkg"],
-    [113.880, 34.060, "zf_xcb"],
-    [114.180, 34.100, "zf_yl"],
-    [114.390, 34.060, "zf_fgn"],
-    [114.530, 33.790, "zf_xh"],
-    [114.720, 33.630, "zf_zkd"],
-    [114.850, 33.440, "zf_hyn"],
-    [115.080, 33.390, "zf_sqb"],
-    [115.380, 33.260, "zf_jsn"],
-    [115.590, 33.070, "zf_lq"],
-    [115.790, 32.890, "zf_fyx"]
-  ]
+    [
+      113.773,
+      34.753,
+      "zf_zzd"
+    ],
+    [
+      113.82,
+      34.53,
+      "zf_zzhkg"
+    ],
+    [
+      113.88,
+      34.06,
+      "zf_xcb"
+    ],
+    [
+      114.18,
+      34.1,
+      "zf_yl"
+    ],
+    [
+      114.39,
+      34.06,
+      "zf_fgn"
+    ],
+    [
+      114.53,
+      33.79,
+      "zf_xh"
+    ],
+    [
+      114.72,
+      33.63,
+      "zf_zkd"
+    ],
+    [
+      114.85,
+      33.44,
+      "zf_hyn"
+    ],
+    [
+      115.08,
+      33.39,
+      "zf_sqb"
+    ],
+    [
+      115.38,
+      33.26,
+      "zf_jsn"
+    ],
+    [
+      115.59,
+      33.07,
+      "zf_lq"
+    ],
+    [
+      115.79,
+      32.89,
+      "zf_fyx"
+    ]
+  ],
+  "line_class": "hsr250"
 }

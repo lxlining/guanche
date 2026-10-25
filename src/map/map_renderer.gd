@@ -63,18 +63,25 @@ func _draw_geography(px: float) -> void:
 		draw_circle(pos, (3.0 if major else 2.0) * px, Color(0.82, 0.87, 0.95, 0.75))
 
 
+const CLASS_WIDTH := {"hsr350": 5.5, "hsr250": 4.5, "intercity": 4.0, "conventional": 2.6}
+
 func _draw_line(px: float, wf: float) -> void:
 	for line_id in DB.line_order:
 		var line: Dictionary = DB.lines[line_id]
+		if not Meta.is_class_visible(DB.line_class(line_id)):
+			continue
 		var pts := PackedVector2Array()
 		for p in line["geometry_pts"]:
 			pts.append(p["pos"])
-		draw_polyline(pts, COL_LINE_BASE, 11.0 * wf * px, true)
-		draw_polyline(pts, line["color"], 5.5 * wf * px, true)
+		var core: float = float(CLASS_WIDTH.get(DB.line_class(line_id), 4.5))
+		draw_polyline(pts, COL_LINE_BASE, (core + 5.0) * wf * px, true)
+		draw_polyline(pts, line["color"], core * wf * px, true)
 
 
 func _draw_stations(px: float) -> void:
 	for line_id in DB.line_order:
+		if not Meta.is_class_visible(DB.line_class(line_id)):
+			continue
 		var line: Dictionary = DB.lines[line_id]
 		for sid in line["order"]:
 			var st: Dictionary = line["stations"][sid]

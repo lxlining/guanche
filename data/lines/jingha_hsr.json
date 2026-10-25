@@ -8,49 +8,281 @@
   "color": "#fb923c",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "jh_bcy",  "name": "北京朝阳", "lon": 116.516, "lat": 39.927, "km": 0,    "major": true },
-    { "id": "jh_sy",   "name": "顺义西",   "lon": 116.728, "lat": 40.152, "km": 27,   "major": false },
-    { "id": "jh_hrn",  "name": "怀柔南",   "lon": 116.678, "lat": 40.320, "km": 47,   "major": false },
-    { "id": "jh_my",   "name": "密云",     "lon": 116.830, "lat": 40.480, "km": 68,   "major": false },
-    { "id": "jh_xlx",  "name": "兴隆县西", "lon": 117.480, "lat": 40.420, "km": 115,  "major": false },
-    { "id": "jh_cdn",  "name": "承德南",   "lon": 117.940, "lat": 40.900, "km": 165,  "major": true },
-    { "id": "jh_pqb",  "name": "平泉北",   "lon": 118.680, "lat": 41.010, "km": 225,  "major": false },
-    { "id": "jh_nhl",  "name": "牛河梁",   "lon": 119.330, "lat": 41.060, "km": 284,  "major": false },
-    { "id": "jh_kz",   "name": "喀左",     "lon": 119.740, "lat": 41.100, "km": 322,  "major": false },
-    { "id": "jh_cy",   "name": "朝阳",     "lon": 120.450, "lat": 41.570, "km": 391,  "major": false },
-    { "id": "jh_fx",   "name": "阜新",     "lon": 121.660, "lat": 42.020, "km": 509,  "major": false },
-    { "id": "jh_hsb",  "name": "黑山北",   "lon": 122.110, "lat": 41.890, "km": 556,  "major": false },
-    { "id": "jh_syb",  "name": "沈阳北",   "lon": 123.428, "lat": 41.870, "km": 674,  "major": true },
-    { "id": "jh_tlx",  "name": "铁岭西",   "lon": 123.720, "lat": 42.230, "km": 712,  "major": false },
-    { "id": "jh_kyx",  "name": "开原西",   "lon": 123.840, "lat": 42.560, "km": 747,  "major": false },
-    { "id": "jh_ctx",  "name": "昌图西",   "lon": 123.960, "lat": 42.920, "km": 785,  "major": false },
-    { "id": "jh_spd",  "name": "四平东",   "lon": 124.370, "lat": 43.170, "km": 831,  "major": false },
-    { "id": "jh_ccx",  "name": "长春西",   "lon": 125.200, "lat": 43.840, "km": 925,  "major": true },
-    { "id": "jh_dhx",  "name": "德惠西",   "lon": 125.700, "lat": 44.530, "km": 999,  "major": false },
-    { "id": "jh_scb",  "name": "双城北",   "lon": 126.320, "lat": 45.380, "km": 1075, "major": false },
-    { "id": "jh_hrbx", "name": "哈尔滨西", "lon": 126.580, "lat": 45.680, "km": 1116, "major": true }
+    {
+      "id": "jh_bcy",
+      "name": "北京朝阳",
+      "lon": 116.516,
+      "lat": 39.927,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "jh_sy",
+      "name": "顺义西",
+      "lon": 116.728,
+      "lat": 40.152,
+      "km": 27,
+      "major": false
+    },
+    {
+      "id": "jh_hrn",
+      "name": "怀柔南",
+      "lon": 116.678,
+      "lat": 40.32,
+      "km": 47,
+      "major": false
+    },
+    {
+      "id": "jh_my",
+      "name": "密云",
+      "lon": 116.83,
+      "lat": 40.48,
+      "km": 68,
+      "major": false
+    },
+    {
+      "id": "jh_xlx",
+      "name": "兴隆县西",
+      "lon": 117.48,
+      "lat": 40.42,
+      "km": 115,
+      "major": false
+    },
+    {
+      "id": "jh_cdn",
+      "name": "承德南",
+      "lon": 117.94,
+      "lat": 40.9,
+      "km": 165,
+      "major": true
+    },
+    {
+      "id": "jh_pqb",
+      "name": "平泉北",
+      "lon": 118.68,
+      "lat": 41.01,
+      "km": 225,
+      "major": false
+    },
+    {
+      "id": "jh_nhl",
+      "name": "牛河梁",
+      "lon": 119.33,
+      "lat": 41.06,
+      "km": 284,
+      "major": false
+    },
+    {
+      "id": "jh_kz",
+      "name": "喀左",
+      "lon": 119.74,
+      "lat": 41.1,
+      "km": 322,
+      "major": false
+    },
+    {
+      "id": "jh_cy",
+      "name": "朝阳",
+      "lon": 120.45,
+      "lat": 41.57,
+      "km": 391,
+      "major": false
+    },
+    {
+      "id": "jh_fx",
+      "name": "阜新",
+      "lon": 121.66,
+      "lat": 42.02,
+      "km": 509,
+      "major": false
+    },
+    {
+      "id": "jh_hsb",
+      "name": "黑山北",
+      "lon": 122.11,
+      "lat": 41.89,
+      "km": 556,
+      "major": false
+    },
+    {
+      "id": "jh_syb",
+      "name": "沈阳北",
+      "lon": 123.428,
+      "lat": 41.87,
+      "km": 674,
+      "major": true
+    },
+    {
+      "id": "jh_tlx",
+      "name": "铁岭西",
+      "lon": 123.72,
+      "lat": 42.23,
+      "km": 712,
+      "major": false
+    },
+    {
+      "id": "jh_kyx",
+      "name": "开原西",
+      "lon": 123.84,
+      "lat": 42.56,
+      "km": 747,
+      "major": false
+    },
+    {
+      "id": "jh_ctx",
+      "name": "昌图西",
+      "lon": 123.96,
+      "lat": 42.92,
+      "km": 785,
+      "major": false
+    },
+    {
+      "id": "jh_spd",
+      "name": "四平东",
+      "lon": 124.37,
+      "lat": 43.17,
+      "km": 831,
+      "major": false
+    },
+    {
+      "id": "jh_ccx",
+      "name": "长春西",
+      "lon": 125.2,
+      "lat": 43.84,
+      "km": 925,
+      "major": true
+    },
+    {
+      "id": "jh_dhx",
+      "name": "德惠西",
+      "lon": 125.7,
+      "lat": 44.53,
+      "km": 999,
+      "major": false
+    },
+    {
+      "id": "jh_scb",
+      "name": "双城北",
+      "lon": 126.32,
+      "lat": 45.38,
+      "km": 1075,
+      "major": false
+    },
+    {
+      "id": "jh_hrbx",
+      "name": "哈尔滨西",
+      "lon": 126.58,
+      "lat": 45.68,
+      "km": 1116,
+      "major": true
+    }
   ],
   "geometry": [
-    [116.516, 39.927, "jh_bcy"],
-    [116.728, 40.152, "jh_sy"],
-    [116.678, 40.320, "jh_hrn"],
-    [116.830, 40.480, "jh_my"],
-    [117.480, 40.420, "jh_xlx"],
-    [117.940, 40.900, "jh_cdn"],
-    [118.680, 41.010, "jh_pqb"],
-    [119.330, 41.060, "jh_nhl"],
-    [119.740, 41.100, "jh_kz"],
-    [120.450, 41.570, "jh_cy"],
-    [121.660, 42.020, "jh_fx"],
-    [122.110, 41.890, "jh_hsb"],
-    [123.428, 41.870, "jh_syb"],
-    [123.720, 42.230, "jh_tlx"],
-    [123.840, 42.560, "jh_kyx"],
-    [123.960, 42.920, "jh_ctx"],
-    [124.370, 43.170, "jh_spd"],
-    [125.200, 43.840, "jh_ccx"],
-    [125.700, 44.530, "jh_dhx"],
-    [126.320, 45.380, "jh_scb"],
-    [126.580, 45.680, "jh_hrbx"]
-  ]
+    [
+      116.516,
+      39.927,
+      "jh_bcy"
+    ],
+    [
+      116.728,
+      40.152,
+      "jh_sy"
+    ],
+    [
+      116.678,
+      40.32,
+      "jh_hrn"
+    ],
+    [
+      116.83,
+      40.48,
+      "jh_my"
+    ],
+    [
+      117.48,
+      40.42,
+      "jh_xlx"
+    ],
+    [
+      117.94,
+      40.9,
+      "jh_cdn"
+    ],
+    [
+      118.68,
+      41.01,
+      "jh_pqb"
+    ],
+    [
+      119.33,
+      41.06,
+      "jh_nhl"
+    ],
+    [
+      119.74,
+      41.1,
+      "jh_kz"
+    ],
+    [
+      120.45,
+      41.57,
+      "jh_cy"
+    ],
+    [
+      121.66,
+      42.02,
+      "jh_fx"
+    ],
+    [
+      122.11,
+      41.89,
+      "jh_hsb"
+    ],
+    [
+      123.428,
+      41.87,
+      "jh_syb"
+    ],
+    [
+      123.72,
+      42.23,
+      "jh_tlx"
+    ],
+    [
+      123.84,
+      42.56,
+      "jh_kyx"
+    ],
+    [
+      123.96,
+      42.92,
+      "jh_ctx"
+    ],
+    [
+      124.37,
+      43.17,
+      "jh_spd"
+    ],
+    [
+      125.2,
+      43.84,
+      "jh_ccx"
+    ],
+    [
+      125.7,
+      44.53,
+      "jh_dhx"
+    ],
+    [
+      126.32,
+      45.38,
+      "jh_scb"
+    ],
+    [
+      126.58,
+      45.68,
+      "jh_hrbx"
+    ]
+  ],
+  "line_class": "hsr350"
 }
