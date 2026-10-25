@@ -85,39 +85,36 @@ func _y_of(km: float, pr: Rect2) -> float:
 	return pr.position.y + pr.size.y * (1.0 - clampf(km, 0.0, _km_max()) / _km_max())
 
 
-# 每趟车在图上的折线段：跨午夜处断开（传统运行图画法）
+# 每趟车在所选线路上的折线段：按腿取点，跨午夜处断开（传统运行图画法）
 func _train_segs(train: Dictionary, pr: Rect2) -> Array:
-	var line: Dictionary = _line()
-	var stops: Array = train["stops"]
-	var n := stops.size()
-	var pts := PackedVector2Array()
-	for i in range(n):
-		var sid: String = stops[i]["sid"]
-		var km: float = float(line["stations"][sid]["km"])
-		var y := _y_of(km, pr)
-		var x: float
-		if i == 0:
-			x = _x_of(stops[i]["dep_s"], pr)
-		elif i == n - 1:
-			x = _x_of(stops[i]["arr_s"], pr)
-		else:
-			x = _x_of(stops[i]["dep_s"], pr)
-		pts.append(Vector2(x, y))
-
 	var segs: Array = []
-	var cur := PackedVector2Array()
-	var prev_x := -1.0e18
-	for p in pts:
-		if p.x < prev_x - pr.size.x * 0.5:
-			if cur.size() >= 2:
-				segs.append(cur)
-			cur = PackedVector2Array()
-			prev_x = -1.0e18
-		if cur.size() == 0 or p.x >= prev_x:
-			cur.append(p)
-			prev_x = p.x
-	if cur.size() >= 2:
-		segs.append(cur)
+	for leg in train["legs"]:
+		if str(leg["line"]) != cur_line:
+			continue
+		var pts := PackedVector2Array()
+		var prev_x := -1.0e18
+		var lst: Array = leg["stops"]
+		var m := lst.size()
+		for i in range(m):
+			var km: float = float(_line()["stations"][lst[i]["sid"]]["km"])
+			var y := _y_of(km, pr)
+			var x: float
+			if i == 0:
+				x = _x_of(lst[i]["dep_s"], pr)
+			elif i == m - 1:
+				x = _x_of(lst[i]["arr_s"], pr)
+			else:
+				x = _x_of(lst[i]["dep_s"], pr)
+			if x < prev_x - pr.size.x * 0.5:
+				if pts.size() >= 2:
+					segs.append(pts)
+				pts = PackedVector2Array()
+				prev_x = -1.0e18
+			if pts.size() == 0 or x >= prev_x:
+				pts.append(Vector2(x, y))
+				prev_x = x
+		if pts.size() >= 2:
+			segs.append(pts)
 	return segs
 
 

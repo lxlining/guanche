@@ -135,38 +135,44 @@ func _load_trains() -> void:
 	if doc.is_empty():
 		data_warnings.append("缺少 data/timetables/all.json（运行 tools/build_from_12306.py 生成）")
 		return
-	var per_line: Dictionary = doc.get("lines", {})
-	for line_id in line_order:
-		var linedoc: Dictionary = per_line.get(line_id, {})
-		for tr in linedoc.get("trains", []):
-			var train := _parse_train(tr, line_id)
-			if train.is_empty():
-				continue
-			trains.append(train)
-			train_by_code[train["code"]] = train
-			if train.get("express", false):
-				express_codes.append(train["code"])
+	for tr in doc.get("trains", []):
+		var line_id: String = str(tr.get("line", ""))
+		if not lines.has(line_id):
+			continue
+		var train := _parse_train(tr, line_id)
+		if train.is_empty():
+			continue
+		trains.append(train)
+		train_by_code[train["code"]] = train
+		if train.get("express", false):
+			express_codes.append(train["code"])
 
 	trains.sort_custom(func(a, b): return a["start_s"] < b["start_s"])
 	print("DB: 已加载 %d 条线路、%d 趟列车" % [line_order.size(), trains.size()])
 
 
 func _parse_train(tr: Dictionary, line_id: String) -> Dictionary:
+	# line_id = 主线（最长腿所属，列表统计/筛选用）。
+	# 列车按真实路径跨线运行：legs 为同一线路上连续停站的区段（腿），
+	# 腿间通过 transfer（联络/跨线移动）衔接；网外首末站标记 off_map。
 	var code: String = tr.get("code", "")
-	if code == "" or not tr.has("stops") or tr["stops"].size() < 2:
+	var stops_raw: Array = tr.get("stops", [])
+	var legs_raw: Array = tr.get("legs", [])
+	if code == "" or stops_raw.size() < 2 or legs_raw.is_empty():
 		data_warnings.append("车次数据不完整：%s" % code)
 		return {}
-	var line: Dictionary = lines[line_id]
-	var stops_raw: Array = tr["stops"]
+
+	# 全程停站（运行顺序；arc 由停站所属线路换算，网外站 arc = -1）
 	var stops: Array = []
 	var offset := 0.0
 	var prev_abs := -1.0
-	for i in range(stops_raw.size()):
-		var sr: Dictionary = stops_raw[i]
+	for sr in stops_raw:
 		var sid: String = sr["sid"]
-		if not line["stations"].has(sid):
-			data_warnings.append("%s 引用线路 %s 未知车站 %s" % [code, line_id, sid])
-			return {}
+		var sl = sr.get("line")
+		var lid: String = str(sl) if sl != null and str(sl) != "" else ""
+		var arc := -1.0
+		if lid != "" and lines.has(lid) and lines[lid]["stations"].has(sid):
+			arc = float(lines[lid]["station_arc"][sid])
 		var arr_s := -1.0
 		var dep_s := -1.0
 		if sr.has("arr") and sr["arr"] != null:
@@ -186,53 +192,91 @@ func _parse_train(tr: Dictionary, line_id: String) -> Dictionary:
 		if dep_s < 0.0:
 			dep_s = arr_s
 		stops.append({
-			"sid": sid, "arr_s": arr_s, "dep_s": dep_s,
-			"arc": float(line["station_arc"][sid])
+			"sid": sid, "line": lid, "arr_s": arr_s, "dep_s": dep_s, "arc": arc,
+			"name": station_name(lid, sid) if lid != "" else sid
 		})
 
-	var start_s: float = stops[0]["dep_s"]
-	var end_s: float = stops[stops.size() - 1]["arr_s"]
+	# 腿解析：每腿内的停站弧长、区段（梯形速度包络参数）
+	var legs: Array = []
+	for lg in legs_raw:
+		var lid: String = str(lg["line"])
+		var i0: int = int(lg["i0"])
+		var i1: int = int(lg["i1"])
+		if not lines.has(lid) or i1 <= i0 or i1 >= stops.size():
+			data_warnings.append("%s 腿数据无效" % code)
+			return {}
+		var line: Dictionary = lines[lid]
+		var leg_stops: Array = []
+		for i in range(i0, i1 + 1):
+			var st: Dictionary = stops[i].duplicate()
+			st["arc"] = float(line["station_arc"][st["sid"]])
+			leg_stops.append(st)
+		var segs: Array = []
+		for k in range(leg_stops.size() - 1):
+			var a0: float = leg_stops[k]["arc"]
+			var a1: float = leg_stops[k + 1]["arc"]
+			var dur: float = leg_stops[k + 1]["arr_s"] - leg_stops[k]["dep_s"]
+			segs.append({
+				"arc0": a0, "arc1": a1, "len_m": absf(a1 - a0), "dur_s": dur,
+				"accel": clampf(6000.0 / maxf(absf(a1 - a0), 1.0), 0.04, 0.25)
+			})
+		legs.append({
+			"line": lid, "i0": i0, "i1": i1, "stops": leg_stops, "segs": segs,
+			"t0": leg_stops[0]["dep_s"], "t1": leg_stops[leg_stops.size() - 1]["arr_s"],
+			"arc0": leg_stops[0]["arc"], "arc1": leg_stops[leg_stops.size() - 1]["arc"]
+		})
+
+	var start_s: float = legs[0]["t0"]      # 进网/始发时刻
+	var end_s: float = legs[legs.size() - 1]["t1"]
 	if end_s <= start_s:
 		data_warnings.append("%s 时刻非单调" % code)
 		return {}
+	for leg in legs:
+		for st in leg["stops"]:
+			st["arr_rel"] = st["arr_s"] - start_s
+			st["dep_rel"] = st["dep_s"] - start_s
+		leg["t0_rel"] = leg["t0"] - start_s
+		leg["t1_rel"] = leg["t1"] - start_s
 
-	var segs: Array = []
-	for i in range(stops.size()):
-		stops[i]["arr_rel"] = stops[i]["arr_s"] - start_s
-		stops[i]["dep_rel"] = stops[i]["dep_s"] - start_s
-		if i > 0:
-			var arc0: float = stops[i - 1]["arc"]
-			var arc1: float = stops[i]["arc"]
-			var dur: float = stops[i]["arr_s"] - stops[i - 1]["dep_s"]
-			segs.append({
-				"arc0": arc0, "arc1": arc1,
-				"len_m": absf(arc1 - arc0),
-				"dur_s": dur,
-				"accel": clampf(6000.0 / maxf(absf(arc1 - arc0), 1.0), 0.04, 0.25)
-			})
+	# 腿间 transfer：跨线移动的直线插值（端点世界坐标预计算）
+	var transfers: Array = []
+	for k in range(legs.size() - 1):
+		var A: Dictionary = legs[k]
+		var B: Dictionary = legs[k + 1]
+		var t0r: float = A["t1_rel"]
+		var t1r: float = B["t0_rel"]
+		var pos_a: Vector2 = arc_point(A["line"], A["arc1"])["pos"]
+		var pos_b: Vector2 = arc_point(B["line"], B["arc0"])["pos"]
+		transfers.append({"t0_rel": t0r, "t1_rel": t1r, "pos_a": pos_a,
+				"pos_b": pos_b, "line": B["line"]})
 
-	var pass_counts: Array = []
-	var order: Array = line["order"]
-	for i in range(stops.size() - 1):
-		var i0 := order.find(stops[i]["sid"])
-		var i1 := order.find(stops[i + 1]["sid"])
-		pass_counts.append(absi(i1 - i0) - 1)
+	# 主线方向（显示兼容用）
+	var primary: Dictionary = lines[line_id]
+	var pl_legs: Array = []
+	for leg in legs:
+		if leg["line"] == line_id:
+			pl_legs.append(leg)
+	var dir_label := "down"
+	for leg in pl_legs:
+		if leg == pl_legs[0]:
+			dir_label = "down" if leg["arc1"] > leg["arc0"] else "up"
+			break
 
 	return {
 		"code": code,
 		"line": line_id,
+		"dir": dir_label,
 		"type": tr.get("type", "CR400AF"),
-		# 方向由停站弧长增减决定（down = 顺序方向），与箭头/dirv 逻辑同一套定义，
-		# 避免从线路中段始发/接入的列车方向标签翻转
-		"dir": "down" if stops[stops.size() - 1]["arc"] > stops[0]["arc"] else "up",
-		"from": tr.get("from", line["stations"][stops[0]["sid"]]["name"]),
-		"to": tr.get("to", line["stations"][stops[stops.size() - 1]["sid"]]["name"]),
+		"from": tr.get("from", stops[0]["name"]),
+		"to": tr.get("to", stops[stops.size() - 1]["name"]),
 		"off_map": bool(tr.get("off_map", false)),
 		"express": bool(tr.get("express", false)),
 		"generated": bool(tr.get("generated", false)),
+		"starts_on_net": int(legs[0]["i0"]) == 0,
+		"ends_on_net": int(legs[legs.size() - 1]["i1"]) == stops.size() - 1,
 		"stops": stops,
-		"segs": segs,
-		"pass_counts": pass_counts,
+		"legs": legs,
+		"transfers": transfers,
 		"start_s": start_s,
 		"end_s": end_s,
 		"run_dur": end_s - start_s

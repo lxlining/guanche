@@ -1,40 +1,41 @@
-[统计] 总入库 6669 趟 | 无详情 0 | 错误 270 | 不属任何线路 3692 | 重号 0
-  chenggui_hsr: 137 趟
-  chengyu_hsr: 94 趟
-  daxi_hsr: 147 趟
-  gsg_hsr: 242 趟
-  guiguang_hsr: 193 趟
-  hada_hsr: 243 趟
-  hainan_east: 62 趟
-  hangshen: 632 趟
-  hefu_hsr: 74 趟
-  huaishao_heng: 12 趟
-  hukun_hsr: 588 趟
-  huning_chengji: 239 趟
-  huyurong: 227 趟
-  jinggang_hsr: 210 趟
-  jingguang_conventional: 177 趟
-  jingguang_hsr: 595 趟
-  jingha_hsr: 181 趟
-  jinghu_conventional: 153 趟
-  jinghu_hsr: 457 趟
-  jinghu_jintong: 185 趟
-  jiqing_hsr: 71 趟
-  jizheng_hsr: 66 趟
-  lanxin_hsr: 103 趟
-  lianzhen_hsr: 62 趟
-  longhai: 100 趟
-  nanguang: 190 趟
-  ninghang_hsr: 67 趟
-  shanghang: 150 趟
-  xicheng_hsr: 208 趟
-  xiyin_hsr: 62 趟
-  xulan_hsr: 208 趟
-  xuyan_yantong: 132 趟
-  yugui: 104 趟
-  zhangjihuai: 36 趟
-  zhengfu_hsr: 107 趟
-  zhengyu_hsr: 155 趟
+[统计] 总入库 6216 趟 | 无详情 0 | 错误 270 | 无法成腿 4145 | 重号 0
+  主线 jingguang_hsr        615 趟
+  主线 hukun_hsr            577 趟
+  主线 hangshen             519 趟
+  主线 jinghu_hsr           432 趟
+  主线 xulan_hsr            267 趟
+  主线 gsg_hsr              263 趟
+  主线 huning_chengji       257 趟
+  主线 huyurong             227 趟
+  主线 hada_hsr             201 趟
+  主线 guiguang_hsr         199 趟
+  主线 jinggang_hsr         190 趟
+  主线 jingha_hsr           186 趟
+  主线 jinghu_jintong       182 趟
+  主线 jingguang_conventional   180 趟
+  主线 xicheng_hsr          167 趟
+  主线 nanguang             150 趟
+  主线 daxi_hsr             149 趟
+  主线 zhengyu_hsr          144 趟
+  主线 shanghang            127 趟
+  主线 yugui                115 趟
+  主线 jinghu_conventional   112 趟
+  主线 xuyan_yantong        112 趟
+  主线 chenggui_hsr          93 趟
+  主线 lanxin_hsr            86 趟
+  主线 zhengfu_hsr           81 趟
+  主线 ninghang_hsr          76 趟
+  主线 chengyu_hsr           70 趟
+  主线 hefu_hsr              63 趟
+  主线 longhai               63 趟
+  主线 lianzhen_hsr          59 趟
+  主线 xiyin_hsr             58 趟
+  主线 jiqing_hsr            54 趟
+  主线 hainan_east           54 趟
+  主线 jizheng_hsr           49 趟
+  主线 zhangjihuai           33 趟
+  主线 huaishao_heng          6 趟
+[统计] 跨线列车（多腿）2807 趟
   [警告] G701 区段 hd_ykd→hd_asx 均速 406 km/h 超限
   [警告] G702 区段 hd_asx→hd_ykd 均速 579 km/h 超限
   [警告] G702 区段 hd_ykd→hd_byq 均速 370 km/h 超限

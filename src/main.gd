@@ -16,7 +16,7 @@ var ui: CanvasLayer
 var selected := ""
 
 var follow_code := ""
-var _f_last_arc: float = NAN
+var _f_last_pos := Vector2(NAN, NAN)
 var _f_dist := 0.0
 var _f_started_at_departure := false
 var _f_full_line := false
@@ -91,8 +91,8 @@ func _shot_tick() -> void:
 					bad += 1
 					if bad <= 6:
 						var st2b: Dictionary = Simulation.state_for(train, t_s + 30.0)
-						print("DIAG-REVERSED %s line=%s dir=%s arc=%.0f->%.0f 首站=%s 末站=%s" % [
-							train["code"], train["line"], train["dir"], st["arc"], st2b["arc"],
+						print("DIAG-REVERSED %s line=%s dir=%s 首站=%s 末站=%s" % [
+							train["code"], train["line"], train["dir"],
 							train["stops"][0]["sid"], train["stops"][train["stops"].size() - 1]["sid"]])
 		print("DIAG-SUMMARY total=%d reversed=%d" % [total, bad])
 	if _shot_frame == 5:
@@ -253,7 +253,7 @@ func _start_follow(code: String) -> void:
 		_end_follow(false)
 	follow_code = code
 	_f_reported = false
-	_f_last_arc = NAN
+	_f_last_pos = Vector2(NAN, NAN)
 	_f_dist = 0.0
 	cam.follow_code = code
 	ui.detail.following = true
@@ -289,12 +289,12 @@ func _follow_tick() -> void:
 	if status != "run" and status != "stop" and status != "wait":
 		_end_follow(true)
 		return
-	var arc: float = st.get("arc", 0.0)
-	if is_nan(_f_last_arc):
-		_f_last_arc = arc
-	elif absf(arc - _f_last_arc) < 30000.0:
-		_f_dist += absf(arc - _f_last_arc)
-	_f_last_arc = arc
+	var pos_now: Vector2 = st.get("pos", Vector2.ZERO)
+	if is_nan(_f_last_pos.x):
+		_f_last_pos = pos_now
+	elif _f_last_pos.distance_to(pos_now) < 30000.0:
+		_f_dist += _f_last_pos.distance_to(pos_now)
+	_f_last_pos = pos_now
 	ui.set_follow_pill("正在跟随 %s · 已跟随 %d km · [Esc] 退出" % [follow_code, int(_f_dist / 1000.0)])
 
 	# 对向交会检测（每次跟随会话最多上报一次）
@@ -304,7 +304,7 @@ func _follow_tick() -> void:
 				continue
 			var ost: Dictionary = Simulation.states[oc]
 			if str(ost.get("status", "")) == "run" and str(ost.get("dir", "")) != str(st.get("dir", "")) \
-					and absf(float(ost.get("arc", 0.0)) - arc) < 2500.0:
+					and (ost["pos"] as Vector2).distance_to(st["pos"] as Vector2) < 2500.0:
 				Meta.report_cross_meet()
 				_cross_ready = false
 				break

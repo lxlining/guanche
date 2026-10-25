@@ -102,7 +102,7 @@ def main():
     details = load_jsonl(os.path.join("tools", "cache12306", "detail.jsonl"))
 
     warnings = []
-    per_line = {line_id: [] for line_id in lines}
+    trains_out = []
     used_codes = set()
     stats = {"no_detail": 0, "err": 0, "no_line": 0, "dup": 0}
 
@@ -124,77 +124,106 @@ def main():
             stats["dup" if code in used_codes else "err"] += 1
             continue
 
-        # 归属：本线停站数最多，并列取覆盖里程大者
-        best = None
-        for line_id, L in lines.items():
-            matched = [(name, a, d) for name, a, d in abs_stops if name in L["names"]]
-            if len(matched) < 2:
+        # 逐站归属：每个站名可能存在于多条线路（如南京南属京沪/宁杭/沿江）。
+        # 两遍贪心：第一遍按「上一站线路优先」选；第二遍对多线站做前向连续性
+        # 校正（优先选与下一站候选相交的线路），保证首腿从停站 0 开始。
+        # 腿（leg）= 同一线路上连续的停站区间；切换点即真实联络线接入站。
+        def cands_of(idx):
+            name = abs_stops[idx][0]
+            return [lid for lid, L in lines.items() if name in L["names"]]
+
+        cand_list = [cands_of(i) for i in range(len(abs_stops))]
+        N = len(abs_stops)
+        stop_line = [None] * N
+        for i in range(N):
+            cands = cand_list[i]
+            if not cands:
                 continue
-            idxs = [L["order"][L["names"][name]] for name, _, _ in matched]
-            if all(x < y for x, y in zip(idxs, idxs[1:])):
-                direction = "down"
-            elif all(x > y for x, y in zip(idxs, idxs[1:])):
-                direction = "up"
-            else:
+            choice = cands[0]
+            if i > 0 and stop_line[i - 1] in cands:
+                choice = stop_line[i - 1]  # 延续上一腿
+            elif i + 1 < N:
+                nxt = set(cand_list[i + 1])
+                shared = [c for c in cands if c in nxt]
+                if shared:
+                    choice = shared[0]  # 前向连续性
+            stop_line[i] = choice
+
+        legs = []  # {line_id, i0, i1}（闭区间，停站下标）
+        i = 0
+        while i < N:
+            if stop_line[i] is None:
+                i += 1
                 continue
-            covered = abs(L["station_arc"][L["names"][matched[-1][0]]]
-                          - L["station_arc"][L["names"][matched[0][0]]])
-            cand = (len(matched), covered, line_id, direction, matched)
-            if best is None or (cand[0], cand[1]) > (best[0], best[1]):
-                best = cand
-        if best is None:
+            j = i
+            while j + 1 < N and stop_line[j + 1] == stop_line[i]                     and abs_stops[j + 1][0] in lines[stop_line[i]]["names"]:
+                j += 1
+            if j > i:
+                legs.append({"line_id": stop_line[i], "i0": i, "i1": j})
+            i = j + 1
+
+        # 至少一条腿（≥2 连续同线停站）；允许真实首末站在网外——
+        # 列车从首个网内停靠站渲染到末个网内停靠站，网外部分标记 off_map。
+        if not legs:
             stats["no_line"] += 1
             continue
-        n, _, line_id, direction, matched = best
         used_codes.add(code)
 
-        L = lines[line_id]
+        # 主线 = 里程覆盖最大的腿（列表统计/筛选用）
+        def leg_cover(leg):
+            L = lines[leg["line_id"]]
+            sids = L["names"]
+            return abs(L["station_arc"][sids[abs_stops[leg["i1"]][0]]]
+                       - L["station_arc"][sids[abs_stops[leg["i0"]][0]]])
+        primary = max(legs, key=leg_cover)["line_id"]
+
         from_name = abs_stops[0][0]
         to_name = abs_stops[-1][0]
+        crosses = any(m >= 1440 for _, a, dd in abs_stops for m in (a or 0, dd or 0))
+
+        # 全程停站（按运行顺序，含所属线路）
         stops_json = []
-        for i, (name, a, d) in enumerate(matched):
+        for i, (name, a, dd) in enumerate(abs_stops):
             stops_json.append({
-                "sid": L["names"][name],
+                "sid": lines[stop_line[i]]["names"][name] if stop_line[i] else name,
+                "line": stop_line[i],
                 "arr": fmt_abs(a) if i > 0 else None,
-                "dep": fmt_abs(d) if i < n - 1 else None,
+                "dep": fmt_abs(dd) if i < N - 1 else None,
             })
 
-        # 转绝对秒做物理校验（处理 >24h 的跨日时刻）
-        norm = []
-        off = 0.0
-        prev = -1.0
-        for s in stops_json:
-            a = lib.parse_hhmm(s["arr"]) if s["arr"] else None
-            d = lib.parse_hhmm(s["dep"]) if s["dep"] else None
-            av = a if a is not None else d
-            dv = d if d is not None else a
-            if av is not None:
-                v = av + off
-                if v < prev:
-                    off += 86400.0
-                    v += 86400.0
-                prev = v
-                av = v
-            if dv is not None:
-                v = dv + off
-                if v < prev:
-                    off += 86400.0
-                    v += 86400.0
-                prev = v
-                dv = v
-            norm.append((s["sid"], av, dv))
-        lib.validate_schedule(norm, all_lines[line_id][2], code, warnings)
+        # 物理校验：逐腿校验区段均速
+        for leg in legs:
+            L = lines[leg["line_id"]]
+            norm = []
+            off = 0.0
+            prev = -1.0
+            for i in range(leg["i0"], leg["i1"] + 1):
+                _, a, dd = abs_stops[i]
+                av = a if a is not None else dd
+                dv = dd if dd is not None else a
+                for v in (av, dv):
+                    if v is None:
+                        continue
+                    w = v + off
+                    if w < prev:
+                        off += 1440.0  # 跨日（分钟）
+                        w += 1440.0
+                    prev = w
+                norm.append((L["names"][abs_stops[i][0]], (av + off) * 60 if av is not None else None,
+                             (dv + off) * 60 if dv is not None else None))
+            lib.validate_schedule(norm, all_lines[leg["line_id"]][2], code, warnings)
 
-        crosses = any(m >= 1440 for _, a, d in matched for m in (a or 0, d or 0))
-        per_line[line_id].append({
+        legs_json = [{"line": leg["line_id"], "i0": leg["i0"], "i1": leg["i1"]} for leg in legs]
+        n0 = legs[0]["i1"] - legs[0]["i0"] + 1
+        trains_out.append({
             "code": code,
-            "line": line_id,
-            "dir": direction,
-            "type": guess_type(code, n, crosses),
+            "line": primary,
+            "legs": legs_json,
+            "type": guess_type(code, n0, crosses),
             "from": from_name,
             "to": to_name,
-            "off_map": from_name not in L["names"] or to_name not in L["names"],
-            "express": n <= 4,  # 沿线停站 ≤4 站视为「大站车」
+            "off_map": stop_line[0] is None or stop_line[-1] is None                 or legs[0]["i0"] != 0 or legs[-1]["i1"] != N - 1,
+            "express": n0 <= 4,  # 首腿沿线停站 ≤4 站视为「大站车」
             "generated": False,
             "source": "12306",
             "date": "2026-10-29",
@@ -202,20 +231,22 @@ def main():
         })
 
     out = {"note": "12306 公开查询接口抓取的真实时刻表（查询日 2026-10-29），"
-                   "按线路归属分组；车型为推测标注。重新生成：tools/build_from_12306.py",
-           "lines": {}}
-    for line_id in sorted(per_line):
-        out["lines"][line_id] = {
-            "note": "线路 %s 的真实车次" % line_id,
-            "trains": per_line[line_id],
-        }
+                   "列车按真实路径分段跨线运行（legs）；车型为推测标注。"
+                   "重新生成：tools/build_from_12306.py",
+           "trains": trains_out}
     json.dump(out, sys.stdout, ensure_ascii=False, indent=2)
     print()
-    print("[统计] 总入库 %d 趟 | 无详情 %d | 错误 %d | 不属任何线路 %d | 重号 %d"
-          % (sum(len(v) for v in per_line.values()), stats["no_detail"], stats["err"],
+    per_line_stats = {}
+    for tr in trains_out:
+        pl = tr["line"]
+        per_line_stats[pl] = per_line_stats.get(pl, 0) + 1
+    print("[统计] 总入库 %d 趟 | 无详情 %d | 错误 %d | 无法成腿 %d | 重号 %d"
+          % (len(trains_out), stats["no_detail"], stats["err"],
              stats["no_line"], stats["dup"]), file=sys.stderr)
-    for line_id in sorted(per_line):
-        print("  %s: %d 趟" % (line_id, len(per_line[line_id])), file=sys.stderr)
+    for line_id in sorted(per_line_stats, key=lambda k: -per_line_stats[k]):
+        print("  主线 %-18s %5d 趟" % (line_id, per_line_stats[line_id]), file=sys.stderr)
+    cross = sum(1 for tr in trains_out if len(tr["legs"]) > 1)
+    print("[统计] 跨线列车（多腿）%d 趟" % cross, file=sys.stderr)
     for w in warnings[:40]:
         print("  [警告]", w, file=sys.stderr)
 

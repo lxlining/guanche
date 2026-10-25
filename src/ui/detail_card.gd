@@ -116,17 +116,19 @@ func _build_stops(train: Dictionary) -> void:
 		c.queue_free()
 	_rows.clear()
 	var tt: Dictionary = DB.train_types.get(train["type"], {})
-	var line_id: String = str(train.get("line", DB.line_order[0]))
 	for i in range(train["stops"].size()):
-		if i > 0 and train["pass_counts"][i - 1] > 0:
-			var pass_l := UIKit.label("　··· 途中通过 %d 站 ···" % int(train["pass_counts"][i - 1]), 11, Color(0.5, 0.56, 0.66, 0.7))
-			stops_box.add_child(pass_l)
 		var stop: Dictionary = train["stops"][i]
+		if i > 0 and stop.get("line", "") != "" and stop["line"] == train["stops"][i - 1].get("line", ""):
+			var order: Array = DB.line(str(stop["line"]))["order"]
+			var pass_n := absi(order.find(stop["sid"]) - order.find(train["stops"][i - 1]["sid"])) - 1
+			if pass_n > 0:
+				var pass_l := UIKit.label("　··· 途中通过 %d 站 ···" % pass_n, 11, Color(0.5, 0.56, 0.66, 0.7))
+				stops_box.add_child(pass_l)
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 8)
 		var first := i == 0
 		var last: bool = i == train["stops"].size() - 1
-		var name_l := UIKit.label(("　" if first else "") + DB.station_name(line_id, stop["sid"]), 13, UIKit.TEXT)
+		var name_l := UIKit.label(("　" if first else "") + str(stop.get("name", stop["sid"])), 13, UIKit.TEXT)
 		name_l.custom_minimum_size = Vector2(96, 0)
 		row.add_child(name_l)
 		var arr_l := UIKit.label("——" if first else GameTime.fmt_hhmm_abs(stop["arr_s"]), 13, UIKit.DIM)
@@ -168,21 +170,21 @@ func _tick_now() -> void:
 		"wait":
 			status_label.text = "始发待发 · %s 发车" % GameTime.fmt_hhmm_abs(start_t)
 			status_label.add_theme_color_override("font_color", UIKit.WARN)
-			next_label.text = "下一站：%s" % DB.station_name(train["line"], train["stops"][1]["sid"])
+			next_label.text = "下一站：%s" % str(train["stops"][1].get("name", ""))
 		"run":
 			status_label.text = "在途 · K%d · %d km/h" % [int(st.get("km", 0)), int(st.get("speed_kmh", 0.0))]
 			status_label.add_theme_color_override("font_color", UIKit.GOOD)
 			var nsid: String = st.get("next_sid", "")
 			if nsid != "":
-				next_label.text = "下一站：%s · %s 到" % [DB.station_name(train["line"], nsid), GameTime.fmt_hhmm_abs(st.get("next_arr_s", -1.0))]
+				next_label.text = "下一站：%s · %s 到" % [str(st.get("next_name", nsid)), GameTime.fmt_hhmm_abs(st.get("next_arr_s", -1.0))]
 		"stop":
 			var cur_i := int(st.get("stop_idx", 0))
-			status_label.text = "停站 %s" % DB.station_name(train["line"], train["stops"][cur_i]["sid"])
+			status_label.text = "停站 %s" % str(train["stops"][cur_i].get("name", ""))
 			status_label.add_theme_color_override("font_color", UIKit.ACCENT2)
 			if cur_i + 1 < train["stops"].size():
 				next_label.text = "%s 发车 · 下一站 %s" % [
 					GameTime.fmt_hhmm_abs(train["stops"][cur_i]["dep_s"]),
-					DB.station_name(train["line"], train["stops"][cur_i + 1]["sid"])]
+					str(train["stops"][cur_i + 1].get("name", ""))]
 		"done":
 			status_label.text = "已终到 %s" % train["to"]
 			status_label.add_theme_color_override("font_color", UIKit.DIM)
