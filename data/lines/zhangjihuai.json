@@ -1,0 +1,28 @@
+{
+  "id": "zhangjihuai",
+  "name": "张吉怀高速铁路",
+  "short": "张吉怀",
+  "from": "张家界西",
+  "to": "怀化南",
+  "length_km": 246,
+  "color": "#86efac",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "zjh_zjjsx", "name": "张家界西", "lon": 110.450, "lat": 29.130, "km": 0,   "major": true },
+    { "id": "zjh_frz",   "name": "芙蓉镇",   "lon": 110.070, "lat": 28.860, "km": 43,  "major": false },
+    { "id": "zjh_gzx",   "name": "古丈西",   "lon": 109.890, "lat": 28.620, "km": 74,  "major": false },
+    { "id": "zjh_jsd",   "name": "吉首东",   "lon": 109.760, "lat": 28.290, "km": 109, "major": true },
+    { "id": "zjh_fhgc",  "name": "凤凰古城", "lon": 109.540, "lat": 27.950, "km": 146, "major": false },
+    { "id": "zjh_myx",   "name": "麻阳西",   "lon": 109.740, "lat": 27.660, "km": 182, "major": false },
+    { "id": "zjh_hhn",   "name": "怀化南",   "lon": 109.970, "lat": 27.540, "km": 246, "major": true }
+  ],
+  "geometry": [
+    [110.450, 29.130, "zjh_zjjsx"],
+    [110.070, 28.860, "zjh_frz"],
+    [109.890, 28.620, "zjh_gzx"],
+    [109.760, 28.290, "zjh_jsd"],
+    [109.540, 27.950, "zjh_fhgc"],
+    [109.740, 27.660, "zjh_myx"],
+    [109.970, 27.540, "zjh_hhn"]
+  ]
+}

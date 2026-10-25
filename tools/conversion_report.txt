@@ -1,61 +1,77 @@
-[统计] 总入库 5158 趟 | 无详情 0 | 错误 270 | 不属任何线路 4023 | 重号 0
-  chengyu_hsr: 102 趟
-  gsg_hsr: 310 趟
-  guiguang_hsr: 350 趟
-  hada_hsr: 171 趟
-  hangshen: 709 趟
-  hukun_hsr: 590 趟
-  huning_chengji: 274 趟
-  huyurong: 247 趟
-  jingguang_conventional: 23 趟
-  jingguang_hsr: 657 趟
+[统计] 总入库 6669 趟 | 无详情 0 | 错误 270 | 不属任何线路 3692 | 重号 0
+  chenggui_hsr: 137 趟
+  chengyu_hsr: 94 趟
+  daxi_hsr: 147 趟
+  gsg_hsr: 242 趟
+  guiguang_hsr: 193 趟
+  hada_hsr: 243 趟
+  hainan_east: 62 趟
+  hangshen: 632 趟
+  hefu_hsr: 74 趟
+  huaishao_heng: 12 趟
+  hukun_hsr: 588 趟
+  huning_chengji: 239 趟
+  huyurong: 227 趟
+  jinggang_hsr: 210 趟
+  jingguang_conventional: 177 趟
+  jingguang_hsr: 595 趟
   jingha_hsr: 181 趟
-  jinghu_conventional: 25 趟
-  jinghu_hsr: 505 趟
+  jinghu_conventional: 153 趟
+  jinghu_hsr: 457 趟
   jinghu_jintong: 185 趟
-  jiqing_hsr: 85 趟
-  lanxin_hsr: 36 趟
-  longhai: 26 趟
-  xicheng_hsr: 217 趟
-  xulan_hsr: 304 趟
-  zhengyu_hsr: 161 趟
+  jiqing_hsr: 71 趟
+  jizheng_hsr: 66 趟
+  lanxin_hsr: 103 趟
+  lianzhen_hsr: 62 趟
+  longhai: 100 趟
+  nanguang: 190 趟
+  ninghang_hsr: 67 趟
+  shanghang: 150 趟
+  xicheng_hsr: 208 趟
+  xiyin_hsr: 62 趟
+  xulan_hsr: 208 趟
+  xuyan_yantong: 132 趟
+  yugui: 104 趟
+  zhangjihuai: 36 趟
+  zhengfu_hsr: 107 趟
+  zhengyu_hsr: 155 趟
   [警告] G701 区段 hd_ykd→hd_asx 均速 406 km/h 超限
   [警告] G702 区段 hd_asx→hd_ykd 均速 579 km/h 超限
   [警告] G702 区段 hd_ykd→hd_byq 均速 370 km/h 超限
   [警告] G703 区段 hd_dlb→hd_asx 均速 366 km/h 超限
-  [警告] G704 区段 hd_gzln→hd_tlx 均速 404 km/h 超限
   [警告] G704 区段 hd_asx→hd_byq 均速 450 km/h 超限
   [警告] G705 区段 hd_ykd→hd_asx 均速 406 km/h 超限
-  [警告] G705 区段 hd_ctx→hd_gzln 均速 439 km/h 超限
-  [警告] G706 区段 hd_spd→hd_tlx 均速 432 km/h 超限
   [警告] G706 区段 hd_asx→hd_ykd 均速 406 km/h 超限
-  [警告] G707 区段 hd_ctx→hd_gzln 均速 439 km/h 超限
-  [警告] G708 区段 hd_spd→hd_syb 均速 368 km/h 超限
   [警告] G708 区段 hd_hcx→hd_gzx 均速 382 km/h 超限
   [警告] G709 区段 hd_dlb→hd_asx 均速 366 km/h 超限
-  [警告] G709 区段 hd_ctx→hd_spd 均速 513 km/h 超限
   [警告] G711 区段 hd_byq→hd_asx 均速 465 km/h 超限
-  [警告] G711 区段 hd_tlx→hd_spd 均速 432 km/h 超限
-  [警告] G712 区段 hd_spd→hd_tlx 均速 432 km/h 超限
   [警告] G713 区段 hd_ykd→hd_ly 均速 385 km/h 超限
-  [警告] G719 区段 hd_tlx→hd_spd 均速 432 km/h 超限
   [警告] G720 区段 hd_ly→hd_ykd 均速 385 km/h 超限
   [警告] G720 区段 hd_ykd→hd_byq 均速 370 km/h 超限
   [警告] G721 区段 hd_byq→hd_gzx 均速 468 km/h 超限
-  [警告] G721 区段 hd_kyx→hd_spd 均速 509 km/h 超限
-  [警告] G722 区段 hd_gzln→hd_kyx 均速 448 km/h 超限
   [警告] G722 区段 hd_hcx→hd_ykd 均速 470 km/h 超限
   [警告] G727 区段 hd_ykd→hd_asx 均速 406 km/h 超限
   [警告] G729 区段 hd_byq→hd_hcx 均速 496 km/h 超限
-  [警告] G755 区段 hd_syb→hd_spd 均速 377 km/h 超限
-  [警告] G763 区段 hd_tlx→hd_spd 均速 432 km/h 超限
-  [警告] G764 区段 hd_spd→hd_kyx 均速 509 km/h 超限
   [警告] G767 区段 hd_byq→hd_ykd 均速 370 km/h 超限
   [警告] G767 区段 hd_ykd→hd_asx 均速 406 km/h 超限
-  [警告] G768 区段 hd_gzln→hd_ctx 均速 439 km/h 超限
   [警告] G769 区段 hd_byq→hd_ykd 均速 393 km/h 超限
   [警告] G769 区段 hd_ykd→hd_asx 均速 406 km/h 超限
   [警告] G772 区段 hd_ly→hd_byq 均速 429 km/h 超限
   [警告] G776 区段 hd_ykd→hd_hcx 均速 470 km/h 超限
-  [警告] G776 区段 hd_kyx→hd_gzln 均速 448 km/h 超限
-  [警告] G775 区段 hd_spd→hd_tlx 均速 432 km/h 超限
+  [警告] G775 区段 hd_hcx→hd_gzx 均速 382 km/h 超限
+  [警告] G8016 区段 hd_gzx→hd_byq 均速 468 km/h 超限
+  [警告] G8017 区段 hd_wfdx→hd_gzx 均速 365 km/h 超限
+  [警告] G8019 区段 hd_byq→hd_ykd 均速 370 km/h 超限
+  [警告] G8019 区段 hd_ykd→hd_hcx 均速 470 km/h 超限
+  [警告] G8020 区段 hd_asx→hd_byq 均速 450 km/h 超限
+  [警告] G8027 区段 hd_byq→hd_ykd 均速 370 km/h 超限
+  [警告] G8027 区段 hd_ykd→hd_ly 均速 385 km/h 超限
+  [警告] G8028 区段 hd_asx→hd_ykd 均速 406 km/h 超限
+  [警告] G8028 区段 hd_ykd→hd_byq 均速 370 km/h 超限
+  [警告] G8039 区段 hd_byq→hd_asx 均速 450 km/h 超限
+  [警告] G8040 区段 hd_asx→hd_ykd 均速 406 km/h 超限
+  [警告] G8046 区段 hd_ykd→hd_byq 均速 393 km/h 超限
+  [警告] G8059 区段 hd_ykd→hd_hcx 均速 470 km/h 超限
+  [警告] G8060 区段 hd_hcx→hd_ykd 均速 470 km/h 超限
+  [警告] G8061 区段 hd_ykd→hd_asx 均速 406 km/h 超限
+  [警告] G8063 区段 hd_byq→hd_gzx 均速 468 km/h 超限

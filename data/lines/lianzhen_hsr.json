@@ -1,0 +1,30 @@
+{
+  "id": "lianzhen_hsr",
+  "name": "连镇高速铁路",
+  "short": "连镇高铁",
+  "from": "连云港",
+  "to": "镇江",
+  "length_km": 305,
+  "color": "#67e8f9",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "lz_lyg",  "name": "连云港",   "lon": 119.230, "lat": 34.600, "km": 0,   "major": true },
+    { "id": "lz_gy",   "name": "灌云",     "lon": 119.290, "lat": 34.290, "km": 35,  "major": false },
+    { "id": "lz_gn",   "name": "灌南",     "lon": 119.350, "lat": 34.090, "km": 58,  "major": false },
+    { "id": "lz_ls",   "name": "涟水",     "lon": 119.270, "lat": 33.790, "km": 92,  "major": false },
+    { "id": "lz_had",  "name": "淮安东",   "lon": 119.090, "lat": 33.570, "km": 120, "major": true },
+    { "id": "lz_by",   "name": "宝应",     "lon": 119.360, "lat": 33.230, "km": 160, "major": false },
+    { "id": "lz_gy2",  "name": "高邮",     "lon": 119.460, "lat": 32.790, "km": 204, "major": false },
+    { "id": "lz_zj",   "name": "镇江",     "lon": 119.424, "lat": 32.204, "km": 305, "major": true }
+  ],
+  "geometry": [
+    [119.230, 34.600, "lz_lyg"],
+    [119.290, 34.290, "lz_gy"],
+    [119.350, 34.090, "lz_gn"],
+    [119.270, 33.790, "lz_ls"],
+    [119.090, 33.570, "lz_had"],
+    [119.360, 33.230, "lz_by"],
+    [119.460, 32.790, "lz_gy2"],
+    [119.424, 32.204, "lz_zj"]
+  ]
+}

@@ -4,35 +4,224 @@
   "short": "兰新高铁",
   "from": "兰州西",
   "to": "乌鲁木齐",
-  "length_km": 1776,
+  "length_km": 1707,
   "color": "#38bdf8",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
   "stations": [
-    { "id": "lx_lzx",    "name": "兰州西",   "lon": 103.730, "lat": 36.070, "km": 0,    "major": true },
-    { "id": "lx_ml",     "name": "民乐",     "lon": 100.800, "lat": 38.430, "km": 297,  "major": false },
-    { "id": "lx_zyx",    "name": "张掖西",   "lon": 100.450, "lat": 38.930, "km": 348,  "major": false },
-    { "id": "lx_lzn",    "name": "临泽南",   "lon": 100.160, "lat": 39.130, "km": 380,  "major": false },
-    { "id": "lx_jqn",    "name": "酒泉南",   "lon": 98.510,  "lat": 39.720, "km": 526,  "major": false },
-    { "id": "lx_jygn",   "name": "嘉峪关南", "lon": 98.290,  "lat": 39.760, "km": 549,  "major": false },
-    { "id": "lx_yd",     "name": "玉门",     "lon": 97.050,  "lat": 40.300, "km": 662,  "major": false },
-    { "id": "lx_ly",     "name": "柳园",     "lon": 95.030,  "lat": 41.100, "km": 854,  "major": false },
-    { "id": "lx_hm",     "name": "哈密",     "lon": 93.510,  "lat": 42.830, "km": 1064, "major": false },
-    { "id": "lx_ssb",    "name": "鄯善北",   "lon": 90.220,  "lat": 42.860, "km": 1352, "major": false },
-    { "id": "lx_tlf",    "name": "吐鲁番北", "lon": 89.180,  "lat": 43.010, "km": 1452, "major": false },
-    { "id": "lx_wlmq",   "name": "乌鲁木齐", "lon": 87.540,  "lat": 43.790, "km": 1625, "major": true }
+    {
+      "id": "lx_lzx",
+      "name": "兰州西",
+      "lon": 103.73,
+      "lat": 36.07,
+      "km": 0,
+      "major": true
+    },
+    {
+      "id": "lx_mhn",
+      "name": "民和南",
+      "lon": 102.8,
+      "lat": 36.32,
+      "km": 90,
+      "major": false
+    },
+    {
+      "id": "lx_hdx",
+      "name": "海东西",
+      "lon": 102.1,
+      "lat": 36.53,
+      "km": 159,
+      "major": false
+    },
+    {
+      "id": "lx_xn",
+      "name": "西宁",
+      "lon": 101.78,
+      "lat": 36.62,
+      "km": 197,
+      "major": true
+    },
+    {
+      "id": "lx_my",
+      "name": "门源",
+      "lon": 101.61,
+      "lat": 37.1,
+      "km": 248,
+      "major": false
+    },
+    {
+      "id": "lx_ml",
+      "name": "民乐",
+      "lon": 100.8,
+      "lat": 38.43,
+      "km": 379,
+      "major": false
+    },
+    {
+      "id": "lx_zyx",
+      "name": "张掖西",
+      "lon": 100.45,
+      "lat": 38.93,
+      "km": 430,
+      "major": false
+    },
+    {
+      "id": "lx_lzn",
+      "name": "临泽南",
+      "lon": 100.16,
+      "lat": 39.13,
+      "km": 462,
+      "major": false
+    },
+    {
+      "id": "lx_jqn",
+      "name": "酒泉南",
+      "lon": 98.51,
+      "lat": 39.72,
+      "km": 608,
+      "major": false
+    },
+    {
+      "id": "lx_jygn",
+      "name": "嘉峪关南",
+      "lon": 98.29,
+      "lat": 39.76,
+      "km": 631,
+      "major": false
+    },
+    {
+      "id": "lx_yd",
+      "name": "玉门",
+      "lon": 97.05,
+      "lat": 40.3,
+      "km": 744,
+      "major": false
+    },
+    {
+      "id": "lx_ly",
+      "name": "柳园",
+      "lon": 95.03,
+      "lat": 41.1,
+      "km": 936,
+      "major": false
+    },
+    {
+      "id": "lx_hm",
+      "name": "哈密",
+      "lon": 93.51,
+      "lat": 42.83,
+      "km": 1146,
+      "major": false
+    },
+    {
+      "id": "lx_ssb",
+      "name": "鄯善北",
+      "lon": 90.22,
+      "lat": 42.86,
+      "km": 1434,
+      "major": false
+    },
+    {
+      "id": "lx_tlf",
+      "name": "吐鲁番北",
+      "lon": 89.18,
+      "lat": 43.01,
+      "km": 1534,
+      "major": false
+    },
+    {
+      "id": "lx_wlmq",
+      "name": "乌鲁木齐",
+      "lon": 87.54,
+      "lat": 43.79,
+      "km": 1707,
+      "major": true
+    }
   ],
   "geometry": [
-    [103.730, 36.070, "lx_lzx"],
-    [100.800, 38.430, "lx_ml"],
-    [100.450, 38.930, "lx_zyx"],
-    [100.160, 39.130, "lx_lzn"],
-    [98.510, 39.720, "lx_jqn"],
-    [98.290, 39.760, "lx_jygn"],
-    [97.050, 40.300, "lx_yd"],
-    [95.030, 41.100, "lx_ly"],
-    [93.510, 42.830, "lx_hm"],
-    [90.220, 42.860, "lx_ssb"],
-    [89.180, 43.010, "lx_tlf"],
-    [87.540, 43.790, "lx_wlmq"]
+    [
+      103.73,
+      36.07,
+      "lx_lzx"
+    ],
+    [
+      102.8,
+      36.32,
+      "lx_mhn"
+    ],
+    [
+      102.1,
+      36.53,
+      "lx_hdx"
+    ],
+    [
+      101.78,
+      36.62,
+      "lx_xn"
+    ],
+    [
+      101.61,
+      37.1,
+      "lx_my"
+    ],
+    [
+      101.7,
+      37.4,
+      null
+    ],
+    [
+      100.8,
+      38.43,
+      "lx_ml"
+    ],
+    [
+      100.45,
+      38.93,
+      "lx_zyx"
+    ],
+    [
+      100.16,
+      39.13,
+      "lx_lzn"
+    ],
+    [
+      98.51,
+      39.72,
+      "lx_jqn"
+    ],
+    [
+      98.29,
+      39.76,
+      "lx_jygn"
+    ],
+    [
+      97.05,
+      40.3,
+      "lx_yd"
+    ],
+    [
+      95.03,
+      41.1,
+      "lx_ly"
+    ],
+    [
+      93.51,
+      42.83,
+      "lx_hm"
+    ],
+    [
+      90.22,
+      42.86,
+      "lx_ssb"
+    ],
+    [
+      89.18,
+      43.01,
+      "lx_tlf"
+    ],
+    [
+      87.54,
+      43.79,
+      "lx_wlmq"
+    ]
   ]
 }

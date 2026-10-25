@@ -1,0 +1,40 @@
+{
+  "id": "xuyan_yantong",
+  "name": "徐盐—盐通高铁",
+  "short": "徐盐盐通",
+  "from": "徐州东",
+  "to": "南通",
+  "length_km": 427,
+  "color": "#c4b5fd",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "yx_xzd",  "name": "徐州东",   "lon": 117.306, "lat": 34.262, "km": 0,   "major": true },
+    { "id": "yx_sn",   "name": "睢宁",     "lon": 117.950, "lat": 33.900, "km": 72,  "major": false },
+    { "id": "yx_sq",   "name": "宿迁",     "lon": 118.280, "lat": 33.960, "km": 107, "major": false },
+    { "id": "yx_sy",   "name": "泗阳",     "lon": 118.680, "lat": 33.720, "km": 147, "major": false },
+    { "id": "yx_had",  "name": "淮安东",   "lon": 119.090, "lat": 33.570, "km": 183, "major": true },
+    { "id": "yx_jh",   "name": "建湖",     "lon": 119.790, "lat": 33.470, "km": 252, "major": false },
+    { "id": "yx_yc",   "name": "盐城",     "lon": 120.160, "lat": 33.350, "km": 292, "major": true },
+    { "id": "yx_ydf",  "name": "盐城大丰", "lon": 120.450, "lat": 33.170, "km": 325, "major": false },
+    { "id": "yx_dt",   "name": "东台",     "lon": 120.320, "lat": 32.860, "km": 359, "major": false },
+    { "id": "yx_ha",   "name": "海安",     "lon": 120.470, "lat": 32.540, "km": 393, "major": false },
+    { "id": "yx_rgn",  "name": "如皋南",   "lon": 120.530, "lat": 32.360, "km": 413, "major": false },
+    { "id": "yx_ntx",  "name": "南通西",   "lon": 120.800, "lat": 32.050, "km": 452, "major": false },
+    { "id": "yx_nt",   "name": "南通",     "lon": 120.860, "lat": 31.980, "km": 462, "major": true }
+  ],
+  "geometry": [
+    [117.306, 34.262, "yx_xzd"],
+    [117.950, 33.900, "yx_sn"],
+    [118.280, 33.960, "yx_sq"],
+    [118.680, 33.720, "yx_sy"],
+    [119.090, 33.570, "yx_had"],
+    [119.790, 33.470, "yx_jh"],
+    [120.160, 33.350, "yx_yc"],
+    [120.450, 33.170, "yx_ydf"],
+    [120.320, 32.860, "yx_dt"],
+    [120.470, 32.540, "yx_ha"],
+    [120.530, 32.360, "yx_rgn"],
+    [120.800, 32.050, "yx_ntx"],
+    [120.860, 31.980, "yx_nt"]
+  ]
+}
