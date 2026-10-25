@@ -5,7 +5,7 @@ signal map_clicked(world_pos: Vector2)
 signal map_right_clicked(world_pos: Vector2)
 
 var min_zoom := 0.0006
-var max_zoom := 0.5
+var max_zoom := 2.0
 var follow_code := ""
 
 var _dragging := false
@@ -22,9 +22,9 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP and event.pressed:
-			_zoom_at(1.18)
+			_zoom_at(1.10)
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
-			_zoom_at(1.0 / 1.18)
+			_zoom_at(1.0 / 1.10)
 		elif event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
 				_dragging = true

@@ -1,5 +1,5 @@
-# 线路详情面板：点击线路体打开。显示线路概况、全部车次（可搜索）、车站序列。
-# 车次行点击 -> signal code_picked -> 联动地图选中与详情卡。
+# 线路页面（全屏）：左侧线路信息栏（概况 + 车站序列），
+# 右侧车次区（顶部大搜索框 + 全部车次列表）。点击车次联动地图与详情卡。
 extends Control
 
 signal code_picked(code: String)
@@ -10,9 +10,9 @@ var line_id := ""
 var search: LineEdit
 var trains_box: VBoxContainer
 var stations_box: VBoxContainer
-var tabs: TabContainer
 var title_label: Label
 var sub_label: Label
+var stats_grid: GridContainer
 var count_label: Label
 
 
@@ -21,81 +21,130 @@ func _ready() -> void:
 	visible = false
 
 	var dim := ColorRect.new()
-	dim.color = Color(0, 0, 0, 0.6)
+	dim.color = Color(0.02, 0.03, 0.05, 0.88)
 	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(dim)
 
-	var cc := CenterContainer.new()
-	cc.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(cc)
+	var main_vb := VBoxContainer.new()
+	main_vb.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 40)
+	main_vb.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	main_vb.grow_vertical = Control.GROW_DIRECTION_BOTH
+	add_child(main_vb)
 
-	var panel := UIKit.panel_container(UIKit.flat(UIKit.CARD, 14, UIKit.BORDER, 1, 16))
-	cc.add_child(panel)
-	var vb := VBoxContainer.new()
-	vb.custom_minimum_size = Vector2(860, 600)
-	vb.add_theme_constant_override("separation", 8)
-	panel.add_child(vb)
-
-	var head := HBoxContainer.new()
-	head.add_theme_constant_override("separation", 12)
-	vb.add_child(head)
-	title_label = UIKit.label("线路", 20, Color.WHITE)
-	head.add_child(title_label)
-	sub_label = UIKit.label("", 12, UIKit.DIM)
+	# 顶栏：标题 + 关闭
+	var top := HBoxContainer.new()
+	top.add_theme_constant_override("separation", 14)
+	main_vb.add_child(top)
+	title_label = UIKit.label("线路", 26, Color.WHITE)
+	top.add_child(title_label)
+	sub_label = UIKit.label("", 13, UIKit.DIM)
 	sub_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	head.add_child(sub_label)
+	top.add_child(sub_label)
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	head.add_child(sp)
-	head.add_child(UIKit.button("关闭 [Esc]", func(): visible = false))
+	top.add_child(sp)
+	var close_btn := UIKit.button("返回地图 [Esc]", func(): visible = false)
+	top.add_child(close_btn)
 
-	count_label = UIKit.label("", 12, UIKit.ACCENT2)
-	vb.add_child(count_label)
+	# 内容区：左栏（信息+车站） / 右栏（搜索+车次）
+	var cols := HBoxContainer.new()
+	cols.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	cols.add_theme_constant_override("separation", 16)
+	main_vb.add_child(cols)
 
-	search = LineEdit.new()
-	search.placeholder_text = "搜索车次（如 G1 / D901 / C）或始发终到站名"
-	search.clear_button_enabled = true
-	search.text_changed.connect(func(_t: String): _rebuild())
-	vb.add_child(search)
+	# —— 左栏 ——
+	var left_panel := UIKit.panel_container(UIKit.flat(UIKit.CARD, 12, UIKit.BORDER, 1, 14))
+	left_panel.custom_minimum_size = Vector2(340, 0)
+	left_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	cols.add_child(left_panel)
+	var lvb := VBoxContainer.new()
+	lvb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lvb.add_theme_constant_override("separation", 8)
+	left_panel.add_child(lvb)
 
-	tabs = TabContainer.new()
-	tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	tabs.add_theme_font_size_override("font_size", 14)
-	vb.add_child(tabs)
+	lvb.add_child(UIKit.label("线路概况", 14, UIKit.ACCENT2))
+	stats_grid = GridContainer.new()
+	stats_grid.columns = 2
+	stats_grid.add_theme_constant_override("h_separation", 12)
+	stats_grid.add_theme_constant_override("v_separation", 4)
+	lvb.add_child(stats_grid)
 
-	var tab1 := ScrollContainer.new()
-	tab1.name = "车次"
-	tabs.add_child(tab1)
-	trains_box = VBoxContainer.new()
-	trains_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	trains_box.add_theme_constant_override("separation", 3)
-	tab1.add_child(trains_box)
-
-	var tab2 := ScrollContainer.new()
-	tab2.name = "车站"
-	tabs.add_child(tab2)
+	lvb.add_child(UIKit.vspace(4))
+	lvb.add_child(UIKit.label("车站序列", 14, UIKit.ACCENT2))
+	var lsc := ScrollContainer.new()
+	lsc.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	lsc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lvb.add_child(lsc)
 	stations_box = VBoxContainer.new()
 	stations_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stations_box.add_theme_constant_override("separation", 2)
-	tab2.add_child(stations_box)
+	lsc.add_child(stations_box)
+
+	# —— 右栏 ——
+	var right_vb := VBoxContainer.new()
+	right_vb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right_vb.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	right_vb.add_theme_constant_override("separation", 8)
+	cols.add_child(right_vb)
+
+	# 搜索框（显眼置顶）
+	var search_wrap := UIKit.panel_container(UIKit.flat(Color("1a2332"), 10, UIKit.ACCENT, 1, 8))
+	right_vb.add_child(search_wrap)
+	var shb := HBoxContainer.new()
+	shb.add_theme_constant_override("separation", 10)
+	shb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	search_wrap.add_child(shb)
+	var icon := UIKit.label("🔍", 16, UIKit.ACCENT2)
+	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	shb.add_child(icon)
+	search = LineEdit.new()
+	search.placeholder_text = "搜索本线路车次：输入车次号（G1 / D901）或始发终到站名"
+	search.clear_button_enabled = true
+	search.custom_minimum_size = Vector2(0, 34)
+	search.add_theme_font_size_override("font_size", 15)
+	search.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	search.text_changed.connect(func(_t: String): _rebuild())
+	shb.add_child(search)
+
+	count_label = UIKit.label("", 12, UIKit.ACCENT2)
+	right_vb.add_child(count_label)
+
+	var rsc := ScrollContainer.new()
+	rsc.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	rsc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	right_vb.add_child(rsc)
+	trains_box = VBoxContainer.new()
+	trains_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	trains_box.add_theme_constant_override("separation", 3)
+	rsc.add_child(trains_box)
 
 
 func open(id: String) -> void:
 	line_id = id
 	visible = true
 	_refresh()
+	search.grab_focus()
 
 
 func _refresh() -> void:
 	var line: Dictionary = DB.line(line_id)
 	title_label.text = str(line["name"])
-	var cls_name: String = {"hsr350": "高铁 350", "hsr250": "高铁 200-250",
-			"intercity": "城际", "conventional": "普速"}.get(
-			DB.line_class(line_id), "铁路")
-	sub_label.text = "%s · %s — %s" % [cls_name, line["from"], line["to"]]
+	var cls_name: String = {"hsr350": "高铁 350km/h", "hsr250": "高铁 200-250km/h",
+			"intercity": "城际铁路", "conventional": "普速铁路",
+			"freight": "货运专线"}.get(DB.line_class(line_id), "铁路")
+	sub_label.text = cls_name
+	for c in stats_grid.get_children():
+		c.queue_free()
 	var trains := _line_trains()
-	count_label.text = "%d 座车站 · %.0f km · 日均 %d 趟车" % [
-			line["order"].size(), line["total_len_m"] / 1000.0, trains.size()]
+	var info := [
+		["起讫", "%s — %s" % [line["from"], line["to"]]],
+		["营业里程", "%.0f km" % (line["total_len_m"] / 1000.0)],
+		["车站数", "%d 座" % line["order"].size()],
+		["日均车次", "%d 趟" % trains.size()],
+	]
+	for kv in info:
+		stats_grid.add_child(UIKit.label(str(kv[0]), 12, UIKit.DIM))
+		stats_grid.add_child(UIKit.label(str(kv[1]), 13, UIKit.TEXT))
 	_rebuild()
 	_build_stations()
 
@@ -103,13 +152,10 @@ func _refresh() -> void:
 func _line_trains() -> Array:
 	var out: Array = []
 	for tr in DB.trains:
-		var hit := false
 		for leg in tr["legs"]:
 			if str(leg["line"]) == line_id:
-				hit = true
+				out.append(tr)
 				break
-		if hit:
-			out.append(tr)
 	return out
 
 
@@ -118,31 +164,27 @@ func _rebuild() -> void:
 		c.queue_free()
 	var filter := search.text.strip_edges().to_lower()
 	var shown := 0
+	var total := 0
 	for tr in _line_trains():
+		total += 1
 		var hay := (str(tr["code"]) + " " + str(tr["from"]) + " " + str(tr["to"])).to_lower()
 		if filter != "" and not hay.contains(filter):
 			continue
 		trains_box.add_child(_make_row(tr))
 		shown += 1
-	count_label.text = count_label.text.split(" · ")[0] + " · " + \
-			count_label.text.split(" · ")[1] + " · 日均 %d 趟车（显示 %d）" % [
-			_line_trains().size(), shown]
+	count_label.text = "共 %d 趟 · 当前显示 %d 趟" % [total, shown]
 
 
 func _make_row(tr: Dictionary) -> Button:
 	var st: Dictionary = Simulation.states.get(tr["code"], {})
 	var status_txt := ""
-	var status_col := UIKit.DIM
 	match st.get("status", "off"):
 		"run":
 			status_txt = "在途 %d km/h" % int(st.get("speed_kmh", 0.0))
-			status_col = UIKit.GOOD
 		"stop":
 			status_txt = "停站"
-			status_col = UIKit.ACCENT2
 		"wait":
 			status_txt = "待发"
-			status_col = UIKit.WARN
 		"done":
 			status_txt = "已终到"
 		_:
@@ -160,8 +202,9 @@ func _make_row(tr: Dictionary) -> Button:
 	b.add_theme_stylebox_override("hover", UIKit.flat(Color("202a3c"), 8, UIKit.ACCENT, 1, 8))
 	b.add_theme_stylebox_override("pressed", UIKit.flat(Color("202a3c"), 8, UIKit.ACCENT, 1, 8))
 	b.add_theme_font_size_override("font_size", 12)
-	b.add_theme_color_override("font_color", status_col if false else UIKit.TEXT)
+	b.add_theme_color_override("font_color", UIKit.TEXT)
 	b.add_theme_color_override("font_hover_color", Color.WHITE)
+	b.modulate = Color(1, 1, 1) if status_txt != "未上线" else Color(0.75, 0.75, 0.75)
 	b.pressed.connect(func(): code_picked.emit(tr["code"]))
 	return b
 
