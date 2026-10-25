@@ -116,7 +116,7 @@ def phase_search() -> None:
     cache_path = os.path.join("tools", "cache12306", "search.jsonl")
     done = load_search_cache(cache_path)
     planned = []
-    for letter in ("G", "D", "C"):
+    for letter in ("G", "D", "C", "K", "T", "Z"):
         for a in range(1, 10):
             kw0 = "%s%d" % (letter, a)
             planned.append(kw0)

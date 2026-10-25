@@ -1,0 +1,32 @@
+{
+  "id": "jiqing_hsr",
+  "name": "济青高速铁路",
+  "short": "济青高铁",
+  "from": "济南东",
+  "to": "青岛北",
+  "length_km": 308,
+  "color": "#c084fc",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "jq_jnd",  "name": "济南东",   "lon": 117.155, "lat": 36.700, "km": 0,   "major": true },
+    { "id": "jq_zqb",  "name": "章丘北",   "lon": 117.530, "lat": 36.760, "km": 33,  "major": false },
+    { "id": "jq_zb",   "name": "淄博北",   "lon": 118.060, "lat": 36.830, "km": 80,  "major": false },
+    { "id": "jq_lz",   "name": "临淄",     "lon": 118.320, "lat": 36.830, "km": 106, "major": false },
+    { "id": "jq_wf",   "name": "潍坊北",   "lon": 119.140, "lat": 37.000, "km": 178, "major": false },
+    { "id": "jq_gmw",  "name": "高密北",   "lon": 119.680, "lat": 36.760, "km": 228, "major": false },
+    { "id": "jq_jyw",  "name": "胶州北",   "lon": 120.010, "lat": 36.400, "km": 262, "major": false },
+    { "id": "jq_jgb",  "name": "机场",     "lon": 120.230, "lat": 36.370, "km": 285, "major": false },
+    { "id": "jq_qdb",  "name": "青岛北",   "lon": 120.370, "lat": 36.110, "km": 308, "major": true }
+  ],
+  "geometry": [
+    [117.155, 36.700, "jq_jnd"],
+    [117.530, 36.760, "jq_zqb"],
+    [118.060, 36.830, "jq_zb"],
+    [118.320, 36.830, "jq_lz"],
+    [119.140, 37.000, "jq_wf"],
+    [119.680, 36.760, "jq_gmw"],
+    [120.010, 36.400, "jq_jyw"],
+    [120.230, 36.370, "jq_jgb"],
+    [120.370, 36.110, "jq_qdb"]
+  ]
+}

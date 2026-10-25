@@ -30,13 +30,13 @@ func _draw() -> void:
 
 
 func _draw_graticule(px: float) -> void:
-	for lon in range(113, 125):
-		var a := GeoScript.lonlat_to_world(float(lon), 29.5)
-		var b := GeoScript.lonlat_to_world(float(lon), 41.0)
+	for lon in range(80, 133):
+		var a := GeoScript.lonlat_to_world(float(lon), 17.5)
+		var b := GeoScript.lonlat_to_world(float(lon), 54.0)
 		draw_line(a, b, COL_GRATICULE, maxf(px, 1.0), true)
-	for lat in range(30, 42):
-		var a := GeoScript.lonlat_to_world(112.5, float(lat))
-		var b := GeoScript.lonlat_to_world(124.5, float(lat))
+	for lat in range(18, 54):
+		var a := GeoScript.lonlat_to_world(79.0, float(lat))
+		var b := GeoScript.lonlat_to_world(133.0, float(lat))
 		draw_line(a, b, COL_GRATICULE, maxf(px, 1.0), true)
 
 

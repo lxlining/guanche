@@ -1,0 +1,38 @@
+{
+  "id": "lanxin_hsr",
+  "name": "兰新高速铁路",
+  "short": "兰新高铁",
+  "from": "兰州西",
+  "to": "乌鲁木齐",
+  "length_km": 1776,
+  "color": "#38bdf8",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "lx_lzx",    "name": "兰州西",   "lon": 103.730, "lat": 36.070, "km": 0,    "major": true },
+    { "id": "lx_ml",     "name": "民乐",     "lon": 100.800, "lat": 38.430, "km": 297,  "major": false },
+    { "id": "lx_zyx",    "name": "张掖西",   "lon": 100.450, "lat": 38.930, "km": 348,  "major": false },
+    { "id": "lx_lzn",    "name": "临泽南",   "lon": 100.160, "lat": 39.130, "km": 380,  "major": false },
+    { "id": "lx_jqn",    "name": "酒泉南",   "lon": 98.510,  "lat": 39.720, "km": 526,  "major": false },
+    { "id": "lx_jygn",   "name": "嘉峪关南", "lon": 98.290,  "lat": 39.760, "km": 549,  "major": false },
+    { "id": "lx_yd",     "name": "玉门",     "lon": 97.050,  "lat": 40.300, "km": 662,  "major": false },
+    { "id": "lx_ly",     "name": "柳园",     "lon": 95.030,  "lat": 41.100, "km": 854,  "major": false },
+    { "id": "lx_hm",     "name": "哈密",     "lon": 93.510,  "lat": 42.830, "km": 1064, "major": false },
+    { "id": "lx_ssb",    "name": "鄯善北",   "lon": 90.220,  "lat": 42.860, "km": 1352, "major": false },
+    { "id": "lx_tlf",    "name": "吐鲁番北", "lon": 89.180,  "lat": 43.010, "km": 1452, "major": false },
+    { "id": "lx_wlmq",   "name": "乌鲁木齐", "lon": 87.540,  "lat": 43.790, "km": 1625, "major": true }
+  ],
+  "geometry": [
+    [103.730, 36.070, "lx_lzx"],
+    [100.800, 38.430, "lx_ml"],
+    [100.450, 38.930, "lx_zyx"],
+    [100.160, 39.130, "lx_lzn"],
+    [98.510, 39.720, "lx_jqn"],
+    [98.290, 39.760, "lx_jygn"],
+    [97.050, 40.300, "lx_yd"],
+    [95.030, 41.100, "lx_ly"],
+    [93.510, 42.830, "lx_hm"],
+    [90.220, 42.860, "lx_ssb"],
+    [89.180, 43.010, "lx_tlf"],
+    [87.540, 43.790, "lx_wlmq"]
+  ]
+}

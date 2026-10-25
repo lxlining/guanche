@@ -1,0 +1,34 @@
+{
+  "id": "longhai",
+  "name": "陇海铁路",
+  "short": "陇海线",
+  "from": "连云港东",
+  "to": "兰州",
+  "length_km": 1759,
+  "color": "#94a3b8",
+  "note": "普速干线；站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "lh_lygd", "name": "连云港东", "lon": 119.470, "lat": 34.740, "km": 0,    "major": false },
+    { "id": "lh_lyg",  "name": "连云港",   "lon": 119.230, "lat": 34.600, "km": 25,   "major": false },
+    { "id": "lh_xz",   "name": "徐州",     "lon": 117.190, "lat": 34.270, "km": 223,  "major": true },
+    { "id": "lh_sq",   "name": "商丘",     "lon": 115.650, "lat": 34.440, "km": 402,  "major": false },
+    { "id": "lh_zz",   "name": "郑州",     "lon": 113.660, "lat": 34.750, "km": 572,  "major": true },
+    { "id": "lh_ly",   "name": "洛阳",     "lon": 112.440, "lat": 34.680, "km": 698,  "major": false },
+    { "id": "lh_xa",   "name": "西安",     "lon": 108.940, "lat": 34.260, "km": 1086, "major": true },
+    { "id": "lh_bj",   "name": "宝鸡",     "lon": 107.150, "lat": 34.360, "km": 1257, "major": false },
+    { "id": "lh_ts",   "name": "天水",     "lon": 105.720, "lat": 34.580, "km": 1420, "major": false },
+    { "id": "lh_lz",   "name": "兰州",     "lon": 103.820, "lat": 36.050, "km": 1740, "major": true }
+  ],
+  "geometry": [
+    [119.470, 34.740, "lh_lygd"],
+    [119.230, 34.600, "lh_lyg"],
+    [117.190, 34.270, "lh_xz"],
+    [115.650, 34.440, "lh_sq"],
+    [113.660, 34.750, "lh_zz"],
+    [112.440, 34.680, "lh_ly"],
+    [108.940, 34.260, "lh_xa"],
+    [107.150, 34.360, "lh_bj"],
+    [105.720, 34.580, "lh_ts"],
+    [103.820, 36.050, "lh_lz"]
+  ]
+}
