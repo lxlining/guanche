@@ -1,0 +1,25 @@
+{
+  "id": "changyichang_hsr",
+  "name": "常益长高速铁路",
+  "short": "常益长",
+  "from": "常德",
+  "to": "长沙西",
+  "length_km": 155,
+  "color": "#fbcfe8",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "cyc_cd",  "name": "常德",   "lon": 111.690, "lat": 29.030, "km": 0,   "major": true },
+    { "id": "cyc_hs",  "name": "汉寿",   "lon": 112.100, "lat": 28.930, "km": 45,  "major": false },
+    { "id": "cyc_yyn", "name": "益阳南", "lon": 112.350, "lat": 28.550, "km": 84,  "major": false },
+    { "id": "cyc_nxx", "name": "宁乡西", "lon": 112.600, "lat": 28.300, "km": 116, "major": false },
+    { "id": "cyc_csx", "name": "长沙西", "lon": 112.890, "lat": 28.250, "km": 155, "major": true }
+  ],
+  "geometry": [
+    [111.690, 29.030, "cyc_cd"],
+    [112.100, 28.930, "cyc_hs"],
+    [112.350, 28.550, "cyc_yyn"],
+    [112.600, 28.300, "cyc_nxx"],
+    [112.890, 28.250, "cyc_csx"]
+  ]
+}

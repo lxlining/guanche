@@ -1,0 +1,31 @@
+{
+  "id": "jiaoliu",
+  "name": "焦柳铁路",
+  "short": "焦柳线",
+  "from": "洛阳",
+  "to": "柳州",
+  "length_km": 1550,
+  "color": "#94a3b8",
+  "line_class": "conventional",
+  "note": "普速干线；站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "jl_ly",    "name": "洛阳",     "lon": 112.450, "lat": 34.660, "km": 0,    "major": true },
+    { "id": "jl_ny",    "name": "南阳",     "lon": 112.530, "lat": 32.990, "km": 205,  "major": false },
+    { "id": "jl_xy",    "name": "襄阳",     "lon": 112.120, "lat": 32.040, "km": 287,  "major": true },
+    { "id": "jl_jm",    "name": "荆门",     "lon": 112.200, "lat": 31.040, "km": 397,  "major": false },
+    { "id": "jl_smxb",  "name": "石门县北", "lon": 111.400, "lat": 29.650, "km": 517,  "major": false },
+    { "id": "jl_zjj",   "name": "张家界",   "lon": 110.480, "lat": 29.130, "km": 590,  "major": false },
+    { "id": "jl_hh",    "name": "怀化",     "lon": 109.960, "lat": 27.570, "km": 680,  "major": true },
+    { "id": "jl_lz",    "name": "柳州",     "lon": 109.420, "lat": 24.320, "km": 1140, "major": true }
+  ],
+  "geometry": [
+    [112.450, 34.660, "jl_ly"],
+    [112.530, 32.990, "jl_ny"],
+    [112.120, 32.040, "jl_xy"],
+    [112.200, 31.040, "jl_jm"],
+    [111.400, 29.650, "jl_smxb"],
+    [110.480, 29.130, "jl_zjj"],
+    [109.960, 27.570, "jl_hh"],
+    [109.420, 24.320, "jl_lz"]
+  ]
+}

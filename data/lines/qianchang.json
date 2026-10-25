@@ -1,0 +1,27 @@
+{
+  "id": "qianchang",
+  "name": "黔常铁路",
+  "short": "黔常线",
+  "from": "黔江",
+  "to": "张家界西",
+  "length_km": 230,
+  "color": "#93c5fd",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "qc_qj",   "name": "黔江",     "lon": 108.770, "lat": 29.530, "km": 0,   "major": true },
+    { "id": "qc_xf",   "name": "咸丰",     "lon": 109.140, "lat": 29.400, "km": 60,  "major": false },
+    { "id": "qc_lf",   "name": "来凤",     "lon": 109.390, "lat": 29.490, "km": 95,  "major": false },
+    { "id": "qc_lsb",  "name": "龙山北",   "lon": 109.630, "lat": 29.460, "km": 120, "major": false },
+    { "id": "qc_sz",   "name": "桑植",     "lon": 110.160, "lat": 29.400, "km": 190, "major": false },
+    { "id": "qc_zjjx", "name": "张家界西", "lon": 110.450, "lat": 29.130, "km": 230, "major": true }
+  ],
+  "geometry": [
+    [108.770, 29.530, "qc_qj"],
+    [109.140, 29.400, "qc_xf"],
+    [109.390, 29.490, "qc_lf"],
+    [109.630, 29.460, "qc_lsb"],
+    [110.160, 29.400, "qc_sz"],
+    [110.450, 29.130, "qc_zjjx"]
+  ]
+}

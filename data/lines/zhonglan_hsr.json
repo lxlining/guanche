@@ -1,0 +1,25 @@
+{
+  "id": "zhonglan_hsr",
+  "name": "中兰客专（银兰通道）",
+  "short": "银兰高铁",
+  "from": "银川",
+  "to": "兰州",
+  "length_km": 460,
+  "color": "#a5b4fc",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "zl_yc",   "name": "银川",   "lon": 106.230, "lat": 38.490, "km": 0,   "major": true },
+    { "id": "zl_wz",   "name": "吴忠",   "lon": 106.200, "lat": 37.990, "km": 55,  "major": false },
+    { "id": "zl_zw",   "name": "中卫",   "lon": 105.180, "lat": 37.510, "km": 160, "major": true },
+    { "id": "zl_byn",  "name": "白银南", "lon": 104.300, "lat": 36.700, "km": 330, "major": false },
+    { "id": "zl_lz",   "name": "兰州",   "lon": 103.820, "lat": 36.050, "km": 460, "major": true }
+  ],
+  "geometry": [
+    [106.230, 38.490, "zl_yc"],
+    [106.200, 37.990, "zl_wz"],
+    [105.180, 37.510, "zl_zw"],
+    [104.300, 36.700, "zl_byn"],
+    [103.820, 36.050, "zl_lz"]
+  ]
+}

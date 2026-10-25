@@ -1,0 +1,25 @@
+{
+  "id": "kunming_dali",
+  "name": "昆楚大丽通道",
+  "short": "昆楚大丽",
+  "from": "昆明",
+  "to": "丽江",
+  "length_km": 490,
+  "color": "#fda4af",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "kdl_km",  "name": "昆明",   "lon": 102.420, "lat": 25.040, "km": 0,   "major": true },
+    { "id": "kdl_lfn", "name": "禄丰南", "lon": 102.200, "lat": 25.150, "km": 45,  "major": false },
+    { "id": "kdl_cx",  "name": "楚雄",   "lon": 101.550, "lat": 25.040, "km": 110, "major": false },
+    { "id": "kdl_dl",  "name": "大理",   "lon": 100.270, "lat": 25.610, "km": 330, "major": true },
+    { "id": "kdl_lj",  "name": "丽江",   "lon": 100.230, "lat": 26.860, "km": 490, "major": true }
+  ],
+  "geometry": [
+    [102.420, 25.040, "kdl_km"],
+    [102.200, 25.150, "kdl_lfn"],
+    [101.550, 25.040, "kdl_cx"],
+    [100.270, 25.610, "kdl_dl"],
+    [100.230, 26.860, "kdl_lj"]
+  ]
+}

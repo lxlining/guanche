@@ -1,0 +1,27 @@
+{
+  "id": "changhun",
+  "name": "长珲城际铁路",
+  "short": "长珲城际",
+  "from": "长春",
+  "to": "珲春",
+  "length_km": 480,
+  "color": "#6ee7b7",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "ch_cc",   "name": "长春",   "lon": 125.324, "lat": 43.865, "km": 0,   "major": true },
+    { "id": "ch_jl",   "name": "吉林",   "lon": 126.550, "lat": 43.850, "km": 108, "major": true },
+    { "id": "ch_jhx",  "name": "蛟河西", "lon": 126.900, "lat": 43.700, "km": 146, "major": false },
+    { "id": "ch_dh",   "name": "敦化",   "lon": 128.230, "lat": 43.370, "km": 257, "major": false },
+    { "id": "ch_yjx",  "name": "延吉西", "lon": 129.400, "lat": 42.910, "km": 390, "major": false },
+    { "id": "ch_hc",   "name": "珲春",   "lon": 130.370, "lat": 42.870, "km": 480, "major": true }
+  ],
+  "geometry": [
+    [125.324, 43.865, "ch_cc"],
+    [126.550, 43.850, "ch_jl"],
+    [126.900, 43.700, "ch_jhx"],
+    [128.230, 43.370, "ch_dh"],
+    [129.400, 42.910, "ch_yjx"],
+    [130.370, 42.870, "ch_hc"]
+  ]
+}

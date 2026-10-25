@@ -1,0 +1,31 @@
+{
+  "id": "yuhuai",
+  "name": "渝怀铁路",
+  "short": "渝怀线",
+  "from": "重庆北",
+  "to": "怀化",
+  "length_km": 550,
+  "color": "#94a3b8",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "yh_cqb",  "name": "重庆北", "lon": 106.550, "lat": 29.580, "km": 0,   "major": true },
+    { "id": "yh_fl",   "name": "涪陵",   "lon": 107.390, "lat": 29.700, "km": 80,  "major": false },
+    { "id": "yh_wl",   "name": "武隆",   "lon": 107.760, "lat": 29.330, "km": 137, "major": false },
+    { "id": "yh_ps",   "name": "彭水",   "lon": 108.160, "lat": 29.290, "km": 180, "major": false },
+    { "id": "yh_qj",   "name": "黔江",   "lon": 108.770, "lat": 29.530, "km": 240, "major": true },
+    { "id": "yh_yy",   "name": "酉阳",   "lon": 108.780, "lat": 28.850, "km": 310, "major": false },
+    { "id": "yh_xs",   "name": "秀山",   "lon": 109.000, "lat": 28.450, "km": 350, "major": false },
+    { "id": "yh_hh",   "name": "怀化",   "lon": 109.960, "lat": 27.570, "km": 550, "major": true }
+  ],
+  "geometry": [
+    [106.550, 29.580, "yh_cqb"],
+    [107.390, 29.700, "yh_fl"],
+    [107.760, 29.330, "yh_wl"],
+    [108.160, 29.290, "yh_ps"],
+    [108.770, 29.530, "yh_qj"],
+    [108.780, 28.850, "yh_yy"],
+    [109.000, 28.450, "yh_xs"],
+    [109.960, 27.570, "yh_hh"]
+  ]
+}

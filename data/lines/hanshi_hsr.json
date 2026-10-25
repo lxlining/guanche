@@ -1,0 +1,39 @@
+{
+  "id": "hanshi_hsr",
+  "name": "汉十高速铁路",
+  "short": "汉十高铁",
+  "from": "汉口",
+  "to": "十堰东",
+  "length_km": 399,
+  "color": "#fca5a5",
+  "line_class": "hsr350",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "hs_hk",    "name": "汉口",     "lon": 114.272, "lat": 30.612, "km": 0,   "major": true },
+    { "id": "hs_hkw",   "name": "汉十东西湖", "lon": 114.150, "lat": 30.680, "km": 18, "major": false },
+    { "id": "hs_xcd",   "name": "孝感东",   "lon": 113.920, "lat": 30.920, "km": 58,  "major": false },
+    { "id": "hs_ycd",   "name": "云梦东",   "lon": 113.750, "lat": 31.020, "km": 85,  "major": false },
+    { "id": "hs_and",   "name": "安陆西",   "lon": 113.680, "lat": 31.260, "km": 110, "major": false },
+    { "id": "hs_sxn",   "name": "随州南",   "lon": 113.400, "lat": 31.670, "km": 165, "major": false },
+    { "id": "hs_zjdn",  "name": "枣阳",     "lon": 112.760, "lat": 32.130, "km": 240, "major": false },
+    { "id": "hs_xyd",   "name": "襄阳东",   "lon": 112.130, "lat": 32.080, "km": 300, "major": true },
+    { "id": "hs_gyx",   "name": "谷城北",   "lon": 111.650, "lat": 32.260, "km": 345, "major": false },
+    { "id": "hs_dyd",   "name": "丹江口",   "lon": 111.510, "lat": 32.540, "km": 370, "major": false },
+    { "id": "hs_wdn",   "name": "武当山西", "lon": 111.400, "lat": 32.600, "km": 385, "major": false },
+    { "id": "hs_syd",   "name": "十堰东",   "lon": 110.830, "lat": 32.680, "km": 399, "major": true }
+  ],
+  "geometry": [
+    [114.272, 30.612, "hs_hk"],
+    [114.150, 30.680, "hs_hkw"],
+    [113.920, 30.920, "hs_xcd"],
+    [113.750, 31.020, "hs_ycd"],
+    [113.680, 31.260, "hs_and"],
+    [113.400, 31.670, "hs_sxn"],
+    [112.760, 32.130, "hs_zjdn"],
+    [112.130, 32.080, "hs_xyd"],
+    [111.650, 32.260, "hs_gyx"],
+    [111.510, 32.540, "hs_dyd"],
+    [111.400, 32.600, "hs_wdn"],
+    [110.830, 32.680, "hs_syd"]
+  ]
+}

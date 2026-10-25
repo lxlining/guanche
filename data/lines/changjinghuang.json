@@ -1,0 +1,27 @@
+{
+  "id": "changjinghuang",
+  "name": "昌景黄高速铁路",
+  "short": "昌景黄",
+  "from": "南昌东",
+  "to": "黄山北",
+  "length_km": 289,
+  "color": "#fde047",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "cjg_ncd",  "name": "南昌东",   "lon": 115.980, "lat": 28.580, "km": 0,   "major": true },
+    { "id": "cjg_py",   "name": "鄱阳",     "lon": 116.680, "lat": 29.000, "km": 90,  "major": false },
+    { "id": "cjg_lpb",  "name": "乐平北",   "lon": 117.130, "lat": 28.980, "km": 135, "major": false },
+    { "id": "cjg_jdz",  "name": "景德镇北", "lon": 117.180, "lat": 29.300, "km": 165, "major": true },
+    { "id": "cjg_qmn",  "name": "祁门南",   "lon": 117.600, "lat": 29.750, "km": 225, "major": false },
+    { "id": "cjg_hsb",  "name": "黄山北",   "lon": 118.290, "lat": 29.740, "km": 289, "major": true }
+  ],
+  "geometry": [
+    [115.980, 28.580, "cjg_ncd"],
+    [116.680, 29.000, "cjg_py"],
+    [117.130, 28.980, "cjg_lpb"],
+    [117.180, 29.300, "cjg_jdz"],
+    [117.600, 29.750, "cjg_qmn"],
+    [118.290, 29.740, "cjg_hsb"]
+  ]
+}

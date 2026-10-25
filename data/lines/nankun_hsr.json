@@ -1,0 +1,27 @@
+{
+  "id": "nankun_hsr",
+  "name": "南昆客运专线",
+  "short": "南昆高铁",
+  "from": "南宁",
+  "to": "昆明南",
+  "length_km": 710,
+  "color": "#bef264",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "nk_nn",   "name": "南宁",   "lon": 108.320, "lat": 22.810, "km": 0,   "major": true },
+    { "id": "nk_bs",   "name": "百色",   "lon": 106.620, "lat": 23.900, "km": 240, "major": false },
+    { "id": "nk_fn",   "name": "富宁",   "lon": 105.630, "lat": 23.630, "km": 400, "major": false },
+    { "id": "nk_gnx",  "name": "广南县", "lon": 105.330, "lat": 24.050, "km": 460, "major": false },
+    { "id": "nk_ml",   "name": "弥勒",   "lon": 103.430, "lat": 24.400, "km": 620, "major": false },
+    { "id": "nk_kmn",  "name": "昆明南", "lon": 102.870, "lat": 24.880, "km": 710, "major": true }
+  ],
+  "geometry": [
+    [108.320, 22.810, "nk_nn"],
+    [106.620, 23.900, "nk_bs"],
+    [105.630, 23.630, "nk_fn"],
+    [105.330, 24.050, "nk_gnx"],
+    [103.430, 24.400, "nk_ml"],
+    [102.870, 24.880, "nk_kmn"]
+  ]
+}

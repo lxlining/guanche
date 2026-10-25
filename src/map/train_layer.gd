@@ -73,6 +73,15 @@ func _draw() -> void:
 	var zoom := cam.zoom.x if cam != null else DB.fit_zoom
 	var px := 1.0 / zoom
 
+	# 选中/悬停列车的跨线 transfer 路径（虚线示意联络线）
+	for code in [selected, hover]:
+		if code == "" or not DB.train_by_code.has(code):
+			continue
+		var train: Dictionary = DB.train_by_code[code]
+		for trf in train["transfers"]:
+			draw_line(trf["pos_a"], trf["pos_b"], Color(1, 1, 1, 0.35), 2.0 * px, true)
+			draw_line(trf["pos_a"], trf["pos_b"], Color(0.1, 0.1, 0.15, 0.8), 1.0 * px, true)
+
 	# LOD：全国视野用小圆点，中景小箭头，近景完整箭头
 	var dot_mode := zoom < 0.006
 	var small := zoom < 0.015

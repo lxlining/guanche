@@ -1,0 +1,23 @@
+{
+  "id": "hangwen_hsr",
+  "name": "杭温高速铁路",
+  "short": "杭温高铁",
+  "from": "杭州东",
+  "to": "温州北",
+  "length_km": 344,
+  "color": "#7dd3fc",
+  "line_class": "hsr350",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "hw_hzd",  "name": "杭州东", "lon": 120.213, "lat": 30.291, "km": 0,   "major": true },
+    { "id": "hw_yw",   "name": "义乌",   "lon": 120.075, "lat": 29.307, "km": 200, "major": true },
+    { "id": "hw_xj",   "name": "仙居",   "lon": 120.730, "lat": 28.850, "km": 278, "major": false },
+    { "id": "hw_wzb",  "name": "温州北", "lon": 120.580, "lat": 28.030, "km": 344, "major": true }
+  ],
+  "geometry": [
+    [120.213, 30.291, "hw_hzd"],
+    [120.075, 29.307, "hw_yw"],
+    [120.730, 28.850, "hw_xj"],
+    [120.580, 28.030, "hw_wzb"]
+  ]
+}

@@ -1,41 +1,70 @@
-[统计] 总入库 6216 趟 | 无详情 0 | 错误 270 | 无法成腿 4145 | 重号 0
-  主线 jingguang_hsr        615 趟
-  主线 hukun_hsr            577 趟
-  主线 hangshen             519 趟
-  主线 jinghu_hsr           432 趟
-  主线 xulan_hsr            267 趟
-  主线 gsg_hsr              263 趟
-  主线 huning_chengji       257 趟
-  主线 huyurong             227 趟
-  主线 hada_hsr             201 趟
-  主线 guiguang_hsr         199 趟
-  主线 jinggang_hsr         190 趟
-  主线 jingha_hsr           186 趟
-  主线 jinghu_jintong       182 趟
-  主线 jingguang_conventional   180 趟
-  主线 xicheng_hsr          167 趟
-  主线 nanguang             150 趟
-  主线 daxi_hsr             149 趟
-  主线 zhengyu_hsr          144 趟
-  主线 shanghang            127 趟
+[统计] 总入库 7214 趟 | 无详情 0 | 错误 270 | 无法成腿 3147 | 重号 0
+  主线 jingguang_hsr        600 趟
+  主线 hukun_hsr            547 趟
+  主线 hangshen             507 趟
+  主线 jinghu_hsr           419 趟
+  主线 xulan_hsr            262 趟
+  主线 gsg_hsr              260 趟
+  主线 huning_chengji       242 趟
+  主线 huyurong             219 趟
+  主线 guiguang_hsr         190 趟
+  主线 jingha_hsr           180 趟
+  主线 jinggang_hsr         178 趟
+  主线 hada_hsr             170 趟
+  主线 jinghu_jintong       169 趟
+  主线 xicheng_hsr          163 趟
+  主线 jingguang_conventional   161 趟
+  主线 nanguang             141 趟
+  主线 zhengyu_hsr          137 趟
+  主线 daxi_hsr             133 趟
+  主线 jinghu_hu            133 趟
   主线 yugui                115 趟
-  主线 jinghu_conventional   112 趟
-  主线 xuyan_yantong        112 趟
+  主线 shanghang            110 趟
+  主线 xuyan_yantong        109 趟
+  主线 jingjiu              107 趟
+  主线 jinghu_conventional   104 趟
   主线 chenggui_hsr          93 趟
-  主线 lanxin_hsr            86 趟
-  主线 zhengfu_hsr           81 趟
-  主线 ninghang_hsr          76 趟
-  主线 chengyu_hsr           70 趟
-  主线 hefu_hsr              63 趟
-  主线 longhai               63 趟
-  主线 lianzhen_hsr          59 趟
-  主线 xiyin_hsr             58 趟
-  主线 jiqing_hsr            54 趟
+  主线 guangzhu_chengji      89 趟
+  主线 jinqin_hsr            88 趟
+  主线 ningan_hsr            84 趟
+  主线 changhun              83 趟
+  主线 lanxin_hsr            82 趟
+  主线 zhengfu_hsr           80 趟
+  主线 kunming_dali          80 趟
+  主线 ninghang_hsr          74 趟
+  主线 chengyu_hsr           71 趟
+  主线 hanshi_hsr            68 趟
+  主线 xiyin_hsr             56 趟
+  主线 changyichang_hsr      56 趟
   主线 hainan_east           54 趟
-  主线 jizheng_hsr           49 趟
-  主线 zhangjihuai           33 趟
+  主线 lianzhen_hsr          53 趟
+  主线 hefu_hsr              52 趟
+  主线 longhai               52 趟
+  主线 jiqing_hsr            51 趟
+  主线 jizheng_hsr           48 趟
+  主线 zhengtai_hsr          47 趟
+  主线 haqi_hsr              47 趟
+  主线 nankun_hsr            42 趟
+  主线 hajia                 39 趟
+  主线 changjinghuang        37 趟
+  主线 husuhu                35 趟
+  主线 ganruilong            32 趟
+  主线 zhangjihuai           31 趟
+  主线 shiji                 30 趟
+  主线 mujia_hsr             27 趟
+  主线 yuhuai                26 趟
+  主线 hangwen_hsr           25 趟
+  主线 hamu_hsr              23 趟
+  主线 lanyu                 20 趟
+  主线 rilan_hsr             20 趟
+  主线 qianchang             17 趟
+  主线 qingzang              17 趟
+  主线 jiaoliu                9 趟
   主线 huaishao_heng          6 趟
-[统计] 跨线列车（多腿）2807 趟
+  主线 zhonglan_hsr           6 趟
+  主线 chengkun               4 趟
+  主线 changjiu               4 趟
+[统计] 跨线列车（多腿）3431 趟
   [警告] G701 区段 hd_ykd→hd_asx 均速 406 km/h 超限
   [警告] G702 区段 hd_asx→hd_ykd 均速 579 km/h 超限
   [警告] G702 区段 hd_ykd→hd_byq 均速 370 km/h 超限

@@ -1,0 +1,25 @@
+{
+  "id": "mujia_hsr",
+  "name": "牡佳高速铁路",
+  "short": "牡佳高铁",
+  "from": "牡丹江",
+  "to": "佳木斯",
+  "length_km": 372,
+  "color": "#c7d2fe",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "mj_mdj",   "name": "牡丹江",   "lon": 129.630, "lat": 44.550, "km": 0,   "major": true },
+    { "id": "mj_jxx",   "name": "鸡西西",   "lon": 130.700, "lat": 45.200, "km": 95,  "major": false },
+    { "id": "mj_qthx",  "name": "七台河西", "lon": 131.000, "lat": 45.770, "km": 165, "major": false },
+    { "id": "mj_sysx",  "name": "双鸭山西", "lon": 131.160, "lat": 46.350, "km": 240, "major": false },
+    { "id": "mj_jms",   "name": "佳木斯",   "lon": 130.320, "lat": 46.800, "km": 372, "major": true }
+  ],
+  "geometry": [
+    [129.630, 44.550, "mj_mdj"],
+    [130.700, 45.200, "mj_jxx"],
+    [131.000, 45.770, "mj_qthx"],
+    [131.160, 46.350, "mj_sysx"],
+    [130.320, 46.800, "mj_jms"]
+  ]
+}

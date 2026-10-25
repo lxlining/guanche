@@ -1,0 +1,25 @@
+{
+  "id": "haqi_hsr",
+  "name": "哈齐高速铁路",
+  "short": "哈齐高铁",
+  "from": "哈尔滨",
+  "to": "齐齐哈尔南",
+  "length_km": 275,
+  "color": "#5eead4",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "hq_hrb",  "name": "哈尔滨",     "lon": 126.630, "lat": 45.750, "km": 0,   "major": true },
+    { "id": "hq_zd",   "name": "肇东",       "lon": 125.990, "lat": 46.070, "km": 60,  "major": false },
+    { "id": "hq_ad",   "name": "安达",       "lon": 125.340, "lat": 46.410, "km": 130, "major": false },
+    { "id": "hq_dqd",  "name": "大庆东",     "lon": 125.200, "lat": 46.590, "km": 155, "major": false },
+    { "id": "hq_qqhn", "name": "齐齐哈尔南", "lon": 123.930, "lat": 47.160, "km": 275, "major": true }
+  ],
+  "geometry": [
+    [126.630, 45.750, "hq_hrb"],
+    [125.990, 46.070, "hq_zd"],
+    [125.340, 46.410, "hq_ad"],
+    [125.200, 46.590, "hq_dqd"],
+    [123.930, 47.160, "hq_qqhn"]
+  ]
+}

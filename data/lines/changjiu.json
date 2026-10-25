@@ -1,0 +1,25 @@
+{
+  "id": "changjiu",
+  "name": "昌九城际铁路",
+  "short": "昌九城际",
+  "from": "南昌西",
+  "to": "庐山",
+  "length_km": 131,
+  "color": "#67e8f9",
+  "line_class": "intercity",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "cj_ncx",  "name": "南昌西",   "lon": 115.805, "lat": 28.665, "km": 0,   "major": true },
+    { "id": "cj_lxx",  "name": "乐化",     "lon": 115.930, "lat": 28.830, "km": 25,  "major": false },
+    { "id": "cj_jxd",  "name": "共青城",   "lon": 115.810, "lat": 29.050, "km": 70,  "major": false },
+    { "id": "cj_dj",   "name": "德安",     "lon": 115.760, "lat": 29.300, "km": 95,  "major": false },
+    { "id": "cj_jjx",  "name": "九江站庐山", "lon": 115.990, "lat": 29.660, "km": 131, "major": true }
+  ],
+  "geometry": [
+    [115.805, 28.665, "cj_ncx"],
+    [115.930, 28.830, "cj_lxx"],
+    [115.810, 29.050, "cj_jxd"],
+    [115.760, 29.300, "cj_dj"],
+    [115.990, 29.660, "cj_jjx"]
+  ]
+}

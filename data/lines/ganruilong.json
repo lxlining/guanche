@@ -1,0 +1,29 @@
+{
+  "id": "ganruilong",
+  "name": "赣瑞龙铁路",
+  "short": "赣瑞龙",
+  "from": "赣州西",
+  "to": "龙岩",
+  "length_km": 270,
+  "color": "#86efac",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "grl_gzn",  "name": "赣州西", "lon": 114.790, "lat": 25.830, "km": 0,   "major": true },
+    { "id": "grl_ydx",  "name": "于都",   "lon": 115.410, "lat": 25.820, "km": 70,  "major": false },
+    { "id": "grl_hcx",  "name": "会昌北", "lon": 115.780, "lat": 25.600, "km": 120, "major": false },
+    { "id": "grl_rjj",  "name": "瑞金",   "lon": 116.030, "lat": 25.890, "km": 145, "major": false },
+    { "id": "grl_cgd",  "name": "长汀南", "lon": 116.360, "lat": 25.860, "km": 190, "major": false },
+    { "id": "grl_zp",   "name": "漳平西", "lon": 117.420, "lat": 25.290, "km": 290, "major": false },
+    { "id": "grl_ly",   "name": "龙岩",   "lon": 117.020, "lat": 25.100, "km": 320, "major": true }
+  ],
+  "geometry": [
+    [114.790, 25.830, "grl_gzn"],
+    [115.410, 25.820, "grl_ydx"],
+    [115.780, 25.600, "grl_hcx"],
+    [116.030, 25.890, "grl_rjj"],
+    [116.360, 25.860, "grl_cgd"],
+    [117.420, 25.290, "grl_zp"],
+    [117.020, 25.100, "grl_ly"]
+  ]
+}
