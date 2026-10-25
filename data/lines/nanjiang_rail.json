@@ -1,0 +1,29 @@
+{
+  "id": "nanjiang_rail",
+  "name": "南疆铁路（库喀段）",
+  "short": "南疆线",
+  "from": "库尔勒",
+  "to": "喀什",
+  "length_km": 990,
+  "color": "#a8a29e",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；塔里木盆地北缘干线。",
+  "stations": [
+    { "id": "nj_kel",  "name": "库尔勒", "lon": 86.150,  "lat": 41.760, "km": 0,   "major": true },
+    { "id": "nj_lt",   "name": "轮台",   "lon": 84.250,  "lat": 41.780, "km": 170, "major": false },
+    { "id": "nj_kc",   "name": "库车",   "lon": 82.970,  "lat": 41.720, "km": 280, "major": false },
+    { "id": "nj_aks",  "name": "阿克苏", "lon": 80.260,  "lat": 41.170, "km": 520, "major": true },
+    { "id": "nj_bc",   "name": "巴楚",   "lon": 78.550,  "lat": 39.780, "km": 700, "major": false },
+    { "id": "nj_at",   "name": "阿图什", "lon": 76.170,  "lat": 39.730, "km": 920, "major": false },
+    { "id": "nj_ks",   "name": "喀什",   "lon": 75.990,  "lat": 39.470, "km": 990, "major": true }
+  ],
+  "geometry": [
+    [86.150, 41.760, "nj_kel"],
+    [84.250, 41.780, "nj_lt"],
+    [82.970, 41.720, "nj_kc"],
+    [80.260, 41.170, "nj_aks"],
+    [78.550, 39.780, "nj_bc"],
+    [76.170, 39.730, "nj_at"],
+    [75.990, 39.470, "nj_ks"]
+  ]
+}

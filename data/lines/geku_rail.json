@@ -1,0 +1,30 @@
+{
+  "id": "geku_rail",
+  "name": "格库铁路",
+  "short": "格库线",
+  "from": "格尔木",
+  "to": "库尔勒",
+  "length_km": 1214,
+  "color": "#a8a29e",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；穿越阿尔金山的出疆新通道。",
+  "stations": [
+    { "id": "gk_gem",  "name": "格尔木",   "lon": 94.900, "lat": 36.400, "km": 0,    "major": true },
+    { "id": "gk_wtmr", "name": "乌图美仁", "lon": 93.100, "lat": 36.700, "km": 190,  "major": false },
+    { "id": "gk_htg",  "name": "花土沟",   "lon": 90.850, "lat": 38.380, "km": 600,  "major": false },
+    { "id": "gk_ml",   "name": "米兰",     "lon": 88.900, "lat": 39.200, "km": 850,  "major": false },
+    { "id": "gk_rq",   "name": "若羌",     "lon": 88.170, "lat": 39.020, "km": 920,  "major": true },
+    { "id": "gk_yl",   "name": "尉犁",     "lon": 86.260, "lat": 40.990, "km": 1130, "major": false },
+    { "id": "gk_kel",  "name": "库尔勒",   "lon": 86.150, "lat": 41.760, "km": 1214, "major": true }
+  ],
+  "geometry": [
+    [94.900, 36.400, "gk_gem"],
+    [93.100, 36.700, "gk_wtmr"],
+    [91.800, 37.500, null],
+    [90.850, 38.380, "gk_htg"],
+    [88.900, 39.200, "gk_ml"],
+    [88.170, 39.020, "gk_rq"],
+    [86.260, 40.990, "gk_yl"],
+    [86.150, 41.760, "gk_kel"]
+  ]
+}

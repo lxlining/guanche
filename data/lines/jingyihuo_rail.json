@@ -1,0 +1,25 @@
+{
+  "id": "jingyihuo_rail",
+  "name": "精伊霍铁路",
+  "short": "精伊霍线",
+  "from": "精河",
+  "to": "霍尔果斯",
+  "length_km": 286,
+  "color": "#a8a29e",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；西出伊犁河谷的国际通道。",
+  "stations": [
+    { "id": "jyh_jh",   "name": "精河",     "lon": 82.900, "lat": 44.600, "km": 0,   "major": true },
+    { "id": "jyh_nlk",  "name": "尼勒克",   "lon": 82.530, "lat": 43.800, "km": 100, "major": false },
+    { "id": "jyh_yn",   "name": "伊宁",     "lon": 81.280, "lat": 43.920, "km": 190, "major": true },
+    { "id": "jyh_hc",   "name": "霍城",     "lon": 80.900, "lat": 44.050, "km": 230, "major": false },
+    { "id": "jyh_hegs", "name": "霍尔果斯", "lon": 80.420, "lat": 44.200, "km": 286, "major": true }
+  ],
+  "geometry": [
+    [82.900, 44.600, "jyh_jh"],
+    [82.530, 43.800, "jyh_nlk"],
+    [81.280, 43.920, "jyh_yn"],
+    [80.900, 44.050, "jyh_hc"],
+    [80.420, 44.200, "jyh_hegs"]
+  ]
+}

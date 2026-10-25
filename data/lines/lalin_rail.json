@@ -1,0 +1,31 @@
+{
+  "id": "lalin_rail",
+  "name": "拉林铁路",
+  "short": "拉林线",
+  "from": "拉萨",
+  "to": "林芝",
+  "length_km": 435,
+  "color": "#d6d3d1",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；雅鲁藏布江沿江电气化铁路。",
+  "stations": [
+    { "id": "ll_ls",   "name": "拉萨",   "lon": 91.140, "lat": 29.650, "km": 0,   "major": true },
+    { "id": "ll_gg",   "name": "贡嘎",   "lon": 90.980, "lat": 29.290, "km": 60,  "major": false },
+    { "id": "ll_zn",   "name": "扎囊",   "lon": 91.670, "lat": 29.230, "km": 100, "major": false },
+    { "id": "ll_sn",   "name": "山南",   "lon": 91.770, "lat": 29.240, "km": 120, "major": true },
+    { "id": "ll_jc",   "name": "加查",   "lon": 92.590, "lat": 29.140, "km": 210, "major": false },
+    { "id": "ll_lx",   "name": "朗县",   "lon": 93.120, "lat": 29.040, "km": 260, "major": false },
+    { "id": "ll_ml",   "name": "米林",   "lon": 94.210, "lat": 29.210, "km": 350, "major": false },
+    { "id": "ll_lz",   "name": "林芝",   "lon": 94.360, "lat": 29.670, "km": 435, "major": true }
+  ],
+  "geometry": [
+    [91.140, 29.650, "ll_ls"],
+    [90.980, 29.290, "ll_gg"],
+    [91.670, 29.230, "ll_zn"],
+    [91.770, 29.240, "ll_sn"],
+    [92.590, 29.140, "ll_jc"],
+    [93.120, 29.040, "ll_lx"],
+    [94.210, 29.210, "ll_ml"],
+    [94.360, 29.670, "ll_lz"]
+  ]
+}

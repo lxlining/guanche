@@ -1,0 +1,25 @@
+{
+  "id": "kuibei_rail",
+  "name": "克塔铁路（奎北延伸）",
+  "short": "奎北克塔",
+  "from": "奎屯",
+  "to": "塔城",
+  "length_km": 570,
+  "color": "#a8a29e",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；北疆西北部通道。",
+  "stations": [
+    { "id": "kb_kt",   "name": "奎屯",     "lon": 84.890, "lat": 44.450, "km": 0,   "major": true },
+    { "id": "kb_klmy", "name": "克拉玛依", "lon": 84.870, "lat": 45.580, "km": 140, "major": true },
+    { "id": "kb_bt",   "name": "北屯",     "lon": 87.800, "lat": 47.350, "km": 420, "major": false },
+    { "id": "kb_tc",   "name": "塔城",     "lon": 82.980, "lat": 46.750, "km": 570, "major": true }
+  ],
+  "geometry": [
+    [84.890, 44.450, "kb_kt"],
+    [84.870, 45.580, "kb_klmy"],
+    [86.500, 46.500, null],
+    [87.800, 47.350, "kb_bt"],
+    [86.000, 47.000, null],
+    [82.980, 46.750, "kb_tc"]
+  ]
+}

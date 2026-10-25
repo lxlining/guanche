@@ -1,0 +1,30 @@
+{
+  "id": "binzhou_rail",
+  "name": "滨洲铁路",
+  "short": "滨洲线",
+  "from": "哈尔滨",
+  "to": "满洲里",
+  "length_km": 935,
+  "color": "#a8a29e",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；中东铁路遗产干线，通往最大陆路口岸。",
+  "stations": [
+    { "id": "bz_hrb",  "name": "哈尔滨",   "lon": 126.630, "lat": 45.750, "km": 0,   "major": true },
+    { "id": "bz_zd",   "name": "肇东",     "lon": 125.990, "lat": 46.070, "km": 63,  "major": false },
+    { "id": "bz_dq",   "name": "大庆",     "lon": 125.100, "lat": 46.590, "km": 160, "major": true },
+    { "id": "bz_zlt",  "name": "扎兰屯",   "lon": 122.740, "lat": 48.010, "km": 400, "major": false },
+    { "id": "bz_bkt",  "name": "博克图",   "lon": 121.920, "lat": 48.770, "km": 500, "major": false },
+    { "id": "bz_hle",  "name": "海拉尔",   "lon": 119.740, "lat": 49.220, "km": 750, "major": true },
+    { "id": "bz_mzl",  "name": "满洲里",   "lon": 117.380, "lat": 49.600, "km": 935, "major": true }
+  ],
+  "geometry": [
+    [126.630, 45.750, "bz_hrb"],
+    [125.990, 46.070, "bz_zd"],
+    [125.100, 46.590, "bz_dq"],
+    [124.300, 47.500, null],
+    [122.740, 48.010, "bz_zlt"],
+    [121.920, 48.770, "bz_bkt"],
+    [119.740, 49.220, "bz_hle"],
+    [117.380, 49.600, "bz_mzl"]
+  ]
+}

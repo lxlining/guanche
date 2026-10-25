@@ -1,0 +1,27 @@
+{
+  "id": "kahe_rail",
+  "name": "喀和铁路",
+  "short": "喀和线",
+  "from": "喀什",
+  "to": "和田",
+  "length_km": 485,
+  "color": "#a8a29e",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；塔里木盆地南缘干线。",
+  "stations": [
+    { "id": "kh_ks",  "name": "喀什",   "lon": 75.990, "lat": 39.470, "km": 0,   "major": true },
+    { "id": "kh_yjs", "name": "英吉沙", "lon": 76.170, "lat": 38.930, "km": 65,  "major": false },
+    { "id": "kh_sc",  "name": "莎车",   "lon": 77.250, "lat": 38.420, "km": 170, "major": false },
+    { "id": "kh_yc",  "name": "叶城",   "lon": 77.320, "lat": 37.890, "km": 240, "major": false },
+    { "id": "kh_ps",  "name": "皮山",   "lon": 78.280, "lat": 37.100, "km": 360, "major": false },
+    { "id": "kh_ht",  "name": "和田",   "lon": 79.920, "lat": 37.110, "km": 485, "major": true }
+  ],
+  "geometry": [
+    [75.990, 39.470, "kh_ks"],
+    [76.170, 38.930, "kh_yjs"],
+    [77.250, 38.420, "kh_sc"],
+    [77.320, 37.890, "kh_yc"],
+    [78.280, 37.100, "kh_ps"],
+    [79.920, 37.110, "kh_ht"]
+  ]
+}

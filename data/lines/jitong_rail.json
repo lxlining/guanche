@@ -1,0 +1,27 @@
+{
+  "id": "jitong_rail",
+  "name": "集通铁路",
+  "short": "集通线",
+  "from": "集宁",
+  "to": "通辽",
+  "length_km": 945,
+  "color": "#a8a29e",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；横贯内蒙古中部的普速干线（电气化改造中）。",
+  "stations": [
+    { "id": "jt_jn",   "name": "集宁",     "lon": 113.100, "lat": 40.990, "km": 0,   "major": true },
+    { "id": "jt_sd",   "name": "商都",     "lon": 113.530, "lat": 41.560, "km": 90,  "major": false },
+    { "id": "jt_sgd",  "name": "桑根达来", "lon": 115.800, "lat": 42.700, "km": 380, "major": false },
+    { "id": "jt_db",   "name": "大板",     "lon": 118.630, "lat": 43.530, "km": 640, "major": true },
+    { "id": "jt_lx",   "name": "林西",     "lon": 118.060, "lat": 43.600, "km": 700, "major": false },
+    { "id": "jt_tl",   "name": "通辽",     "lon": 122.260, "lat": 43.650, "km": 945, "major": true }
+  ],
+  "geometry": [
+    [113.100, 40.990, "jt_jn"],
+    [113.530, 41.560, "jt_sd"],
+    [115.800, 42.700, "jt_sgd"],
+    [118.630, 43.530, "jt_db"],
+    [118.060, 43.600, "jt_lx"],
+    [122.260, 43.650, "jt_tl"]
+  ]
+}
