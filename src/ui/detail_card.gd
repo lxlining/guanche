@@ -2,6 +2,7 @@
 extends PanelContainer
 
 signal follow_requested(code: String)
+signal station_info_requested(sname: String, line_id: String, sid: String, km: int)
 signal locate_requested(code: String)
 signal closed
 
@@ -105,6 +106,10 @@ func set_train(c: String) -> void:
 	_tick_now()
 
 
+func _open_station_info(sname: String, line_id: String, sid: String, km: int) -> void:
+	station_info_requested.emit(sname, line_id, sid, km)
+
+
 func _close() -> void:
 	visible = false
 	code = ""
@@ -128,17 +133,50 @@ func _build_stops(train: Dictionary) -> void:
 		row.add_theme_constant_override("separation", 8)
 		var first := i == 0
 		var last: bool = i == train["stops"].size() - 1
-		var name_l := UIKit.label(("　" if first else "") + str(stop.get("name", stop["sid"])), 13, UIKit.TEXT)
-		name_l.custom_minimum_size = Vector2(96, 0)
-		row.add_child(name_l)
+		# 线路色点（跨线车可看出换线处）
+		var stop_line: String = str(stop.get("line", ""))
+		var dot_col: Color = DB.line(stop_line)["color"] if stop_line != "" else UIKit.DIM
+		var dot := UIKit.label("●", 11, dot_col)
+		dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(dot)
+		# 站名（可点击 -> 站点信息卡）
+		var name_btn := Button.new()
+		name_btn.text = str(stop.get("name", stop["sid"]))
+		name_btn.flat = true
+		name_btn.focus_mode = Control.FOCUS_NONE
+		name_btn.add_theme_font_size_override("font_size", 13)
+		name_btn.add_theme_color_override("font_color", UIKit.TEXT)
+		name_btn.add_theme_color_override("font_hover_color", Color.WHITE)
+		name_btn.add_theme_color_override("font_pressed_color", Color.WHITE)
+		name_btn.custom_minimum_size = Vector2(96, 0)
+		var sname: String = str(stop.get("name", stop["sid"]))
+		var sline: String = stop_line
+		var skm: int = 0
+		if sline != "" and DB.line(sline)["stations"].has(stop["sid"]):
+			skm = int(DB.line(sline)["stations"][stop["sid"]]["km"])
+		name_btn.pressed.connect(_open_station_info.bind(sname, sline, stop["sid"], skm))
+		row.add_child(name_btn)
 		var arr_l := UIKit.label("——" if first else GameTime.fmt_hhmm_abs(stop["arr_s"]), 13, UIKit.DIM)
 		arr_l.custom_minimum_size = Vector2(64, 0)
 		row.add_child(arr_l)
 		var dep_l := UIKit.label("——" if last else GameTime.fmt_hhmm_abs(stop["dep_s"]) + " 发", 13, UIKit.DIM)
 		dep_l.custom_minimum_size = Vector2(72, 0)
 		row.add_child(dep_l)
-		var note_l := UIKit.label("始发" if first else ("终到" if last else ""), 11, UIKit.WARN)
+		# 停靠时长（中间站）
+		var dwell := "始发" if first else ("终到" if last else "")
+		if dwell == "" and stop["dep_s"] > stop["arr_s"]:
+			dwell = "停 %d 分" % int((stop["dep_s"] - stop["arr_s"]) / 60.0)
+		var note_l := UIKit.label(dwell, 11, UIKit.WARN)
+		note_l.custom_minimum_size = Vector2(52, 0)
 		row.add_child(note_l)
+		# 换线标记（跨线车：下一停靠站已属另一条线路）
+		if not last:
+			var next_line: String = str(train["stops"][i + 1].get("line", ""))
+			if next_line != "" and next_line != stop_line:
+				var sw := UIKit.label("→ 换 %s" % DB.line(next_line)["short"], 11,
+						DB.line(next_line)["color"])
+				sw.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+				row.add_child(sw)
 		stops_box.add_child(row)
 		_rows.append({"arr_l": arr_l, "dep_l": dep_l, "note_l": note_l,
 				"arr_s": stop["arr_rel"], "dep_s": stop["dep_rel"], "row": row})

@@ -53,6 +53,7 @@ func _ready() -> void:
 	trains_layer.connect("train_clicked", _on_train_clicked)
 	ui.train_list.connect("train_selected", _on_list_select)
 	ui.detail.connect("follow_requested", _toggle_follow)
+	ui.detail.connect("station_info_requested", _on_stop_station_click)
 	ui.detail.connect("locate_requested", _locate)
 	ui.detail.connect("closed", func(): _select(""))
 	cam.connect("map_clicked", _on_map_click)
@@ -124,6 +125,9 @@ func _shot_tick() -> void:
 				ui.toggle_diagram()
 			"list":
 				ui.toggle_list()
+			"detail":
+				_select("G1")
+				_locate("G1")
 	if _shot_frame >= 50:
 		var img := get_viewport().get_texture().get_image()
 		img.save_png(OS.get_environment("SHOT_PATH"))
@@ -205,6 +209,27 @@ func _on_map_click(world_pos: Vector2) -> void:
 		_select(code)
 	else:
 		_pick_station(world_pos)
+
+
+# 详情卡停站名点击 -> 站点信息卡
+func _on_stop_station_click(sname: String, line_id: String, sid: String, km: int) -> void:
+	var line_names: Array = []
+	for lid in DB.line_order:
+		var l2: Dictionary = DB.lines[lid]
+		for sid2 in l2["order"]:
+			if l2["stations"][sid2]["name"] == sname:
+				line_names.append(str(l2["short"]))
+				break
+	var stops_n := 0
+	for tr in DB.trains:
+		for stop in tr["stops"]:
+			if str(stop.get("name", "")) == sname:
+				stops_n += 1
+				break
+	var major := false
+	if line_id != "" and DB.line(line_id)["stations"].has(sid):
+		major = bool(DB.line(line_id)["stations"][sid]["major"])
+	ui.station_card.show_station(sname, line_names, km, stops_n, major)
 
 
 # 点击空白处：拾取附近车站显示信息卡
