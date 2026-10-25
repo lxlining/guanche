@@ -108,6 +108,10 @@ func _shot_tick() -> void:
 	if _shot_frame == 8 and _shot_mode == "zoom":
 		cam.position = DB.line("jinghu_hsr")["stations"]["jnx"]["pos"]
 		cam.zoom = Vector2(0.03, 0.03)
+	if _shot_frame == 8 and _shot_mode == "zoom2":
+		# 闽赣浙交界（用户圈注区域）
+		cam.position = Vector2((117.9 - 118.85) * 90627.0, -(27.9 - 35.5) * 110574.0)
+		cam.zoom = Vector2(0.004, 0.004)
 	if _shot_frame == 20:
 		match _shot_mode:
 			"diagram":

@@ -71,15 +71,26 @@ func _state_in_leg(train: Dictionary, leg: Dictionary, rel: float) -> Dictionary
 
 func _transfer_state(train: Dictionary, tr: Dictionary, rel: float,
 		next_leg: Dictionary) -> Dictionary:
+	# 沿铁路网真实路径（途经站折线）按弧长均匀插值
 	var span: float = maxf(tr["t1_rel"] - tr["t0_rel"], 1.0)
 	var f := clampf((rel - tr["t0_rel"]) / span, 0.0, 1.0)
-	var pos: Vector2 = tr["pos_a"].lerp(tr["pos_b"], f)
-	var dirv: Vector2 = (tr["pos_b"] - tr["pos_a"]).normalized()
+	var pts: PackedVector2Array = tr["pts"]
+	var total: float = maxf(tr["total_m"], 1.0)
+	var target: float = f * total
+	var acc := 0.0
+	var pos: Vector2 = pts[0]
+	var dirv := Vector2.RIGHT
+	for i in range(pts.size() - 1):
+		var seg := pts[i].distance_to(pts[i + 1])
+		if acc + seg >= target or i == pts.size() - 2:
+			var t := 0.0 if seg <= 0.0 else (target - acc) / seg
+			pos = pts[i].lerp(pts[i + 1], t)
+			dirv = (pts[i + 1] - pts[i]).normalized() if seg > 1.0 else dirv
+			break
+		acc += seg
 	if dirv.length_squared() < 0.5:
 		dirv = Vector2.RIGHT
-	var dist_km: float = tr["pos_a"].distance_to(tr["pos_b"]) / 1000.0
-	var dur_h: float = span / 3600.0
-	var v_kmh: float = dist_km / maxf(dur_h, 0.01)
+	var v_kmh: float = total / 1000.0 / maxf(span / 3600.0, 0.01)
 	var next_stop: Dictionary = train["stops"][next_leg["i0"]]
 	return _mk_state(train, str(next_stop.get("line", "")), "run", pos, dirv,
 			DB.km_at_arc(str(next_stop.get("line", "")), next_leg["arc0"]), rel,

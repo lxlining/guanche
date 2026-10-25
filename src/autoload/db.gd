@@ -33,6 +33,7 @@ func _ready() -> void:
 	achievements = ach_doc.get("achievements", [])
 
 	_load_lines()
+	_build_name_graph()
 	_build_background()
 	_load_trains()
 	_union_bounds()
@@ -239,17 +240,32 @@ func _parse_train(tr: Dictionary, line_id: String) -> Dictionary:
 		leg["t0_rel"] = leg["t0"] - start_s
 		leg["t1_rel"] = leg["t1"] - start_s
 
-	# 腿间 transfer：跨线移动的直线插值（端点世界坐标预计算）
+	# 腿间 transfer：沿铁路网真实路径移动（站名图最短路，启动时构建）
 	var transfers: Array = []
 	for k in range(legs.size() - 1):
 		var A: Dictionary = legs[k]
 		var B: Dictionary = legs[k + 1]
 		var t0r: float = A["t1_rel"]
 		var t1r: float = B["t0_rel"]
-		var pos_a: Vector2 = arc_point(A["line"], A["arc1"])["pos"]
-		var pos_b: Vector2 = arc_point(B["line"], B["arc0"])["pos"]
-		transfers.append({"t0_rel": t0r, "t1_rel": t1r, "pos_a": pos_a,
-				"pos_b": pos_b, "line": B["line"]})
+		var name_a: String = stops[A["i1"]]["name"]
+		var name_b: String = stops[B["i0"]]["name"]
+		var path := _name_path(name_a, name_b)
+		var pts := PackedVector2Array()
+		if not path.is_empty():
+			# 途经站世界坐标：优先取 A/B 端所在线路的站位，否则任一线路同名站
+			for nm in path:
+				var posv = _station_pos_any(nm)
+				if posv != null:
+					pts.append(posv)
+		if pts.size() < 2:
+			var pa: Vector2 = arc_point(A["line"], A["arc1"])["pos"]
+			var pb: Vector2 = arc_point(B["line"], B["arc0"])["pos"]
+			pts = PackedVector2Array([pa, pb])
+		var total := 0.0
+		for i in range(pts.size() - 1):
+			total += pts[i].distance_to(pts[i + 1])
+		transfers.append({"t0_rel": t0r, "t1_rel": t1r, "pts": pts,
+				"total_m": total, "line": B["line"]})
 
 	# 主线方向（显示兼容用）
 	var primary: Dictionary = lines[line_id]
@@ -282,6 +298,73 @@ func _parse_train(tr: Dictionary, line_id: String) -> Dictionary:
 		"end_s": end_s,
 		"run_dur": end_s - start_s
 	}
+
+
+var _name_graph: Dictionary = {}
+var _path_cache: Dictionary = {}
+
+
+func _build_name_graph() -> void:
+	# 节点=站名（跨线共站自动连通），边=同线相邻站对
+	for line_id in line_order:
+		var line: Dictionary = lines[line_id]
+		var order: Array = line["order"]
+		for i in range(order.size() - 1):
+			var na: String = line["stations"][order[i]]["name"]
+			var nb: String = line["stations"][order[i + 1]]["name"]
+			if na == nb:
+				continue
+			if not _name_graph.has(na):
+				_name_graph[na] = {}
+			if not _name_graph.has(nb):
+				_name_graph[nb] = {}
+			_name_graph[na][nb] = true
+			_name_graph[nb][na] = true
+
+
+func _name_path(a: String, b: String) -> PackedStringArray:
+	# BFS 最短路（站名图），带缓存；限制深度避免畸形路径
+	if a == b:
+		return PackedStringArray([a])
+	var key := a + "" + b
+	if _path_cache.has(key):
+		return _path_cache[key]
+	var out := PackedStringArray()
+	if not _name_graph.has(a) or not _name_graph.has(b):
+		_path_cache[key] = out
+		return out
+	var prev: Dictionary = {a: ""}
+	var queue: Array = [a]
+	var max_hops := 24
+	var hops := 0
+	while not queue.is_empty() and hops < max_hops:
+		var nxt: Array = []
+		for node in queue:
+			for nb in _name_graph.get(node, {}).keys():
+				if prev.has(nb):
+					continue
+				prev[nb] = node
+				if nb == b:
+					var cur: String = b
+					while cur != "":
+						out.insert(0, cur)
+						cur = prev[cur]
+					_path_cache[key] = out
+					return out
+				nxt.append(nb)
+		queue = nxt
+		hops += 1
+	_path_cache[key] = out
+	return out
+
+
+func _station_pos_any(name: String):
+	for line_id in line_order:
+		var line: Dictionary = lines[line_id]
+		for sid in line["order"]:
+			if line["stations"][sid]["name"] == name:
+				return line["stations"][sid]["pos"] as Vector2
+	return null
 
 
 func _union_bounds() -> void:
