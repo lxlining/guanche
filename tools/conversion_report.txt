@@ -1,107 +1,155 @@
-[统计] 总入库 7214 趟 | 无详情 0 | 错误 270 | 无法成腿 3147 | 重号 0
-  主线 jingguang_hsr        600 趟
-  主线 hukun_hsr            547 趟
-  主线 hangshen             507 趟
-  主线 jinghu_hsr           419 趟
-  主线 xulan_hsr            262 趟
-  主线 gsg_hsr              260 趟
-  主线 huning_chengji       242 趟
-  主线 huyurong             219 趟
-  主线 guiguang_hsr         190 趟
+[统计] 总入库 8508 趟 | 无详情 0 | 错误 270 | 无法成腿 1853 | 重号 0
+  主线 jingguang_hsr        565 趟
+  主线 hukun_hsr            436 趟
+  主线 jinghu_hsr           405 趟
+  主线 auto_01              347 趟
+  主线 hangshen             262 趟
+  主线 xulan_hsr            253 趟
   主线 jingha_hsr           180 趟
-  主线 jinggang_hsr         178 趟
-  主线 hada_hsr             170 趟
+  主线 auto_54              173 趟
+  主线 hada_hsr             169 趟
   主线 jinghu_jintong       169 趟
-  主线 xicheng_hsr          163 趟
-  主线 jingguang_conventional   161 趟
-  主线 nanguang             141 趟
-  主线 zhengyu_hsr          137 趟
+  主线 huyurong             164 趟
+  主线 guiguang_hsr         160 趟
+  主线 auto_10              155 趟
+  主线 gsg_hsr              148 趟
+  主线 jingguang_conventional   147 趟
+  主线 xicheng_hsr          143 趟
+  主线 huning_chengji       143 趟
+  主线 auto_02              138 趟
   主线 daxi_hsr             133 趟
-  主线 jinghu_hu            133 趟
-  主线 yugui                115 趟
-  主线 shanghang            110 趟
-  主线 xuyan_yantong        109 趟
-  主线 jingjiu              107 趟
-  主线 jinghu_conventional   104 趟
-  主线 chenggui_hsr          93 趟
-  主线 guangzhu_chengji      89 趟
-  主线 jinqin_hsr            88 趟
-  主线 ningan_hsr            84 趟
+  主线 auto_34              132 趟
+  主线 auto_11              132 趟
+  主线 jinghu_hu            131 趟
+  主线 zhengyu_hsr          122 趟
+  主线 auto_05              118 趟
+  主线 jinggang_hsr         118 趟
+  主线 nanguang             114 趟
+  主线 auto_04              114 趟
+  主线 auto_31              114 趟
+  主线 yugui                107 趟
+  主线 auto_41              106 趟
+  主线 auto_46              100 趟
+  主线 auto_32               99 趟
+  主线 jinghu_conventional    98 趟
+  主线 jingjiu               93 趟
+  主线 jinqin_hsr            84 趟
   主线 changhun              83 趟
-  主线 lanxin_hsr            82 趟
-  主线 zhengfu_hsr           80 趟
-  主线 kunming_dali          80 趟
-  主线 ninghang_hsr          74 趟
-  主线 chengyu_hsr           71 趟
-  主线 hanshi_hsr            68 趟
+  主线 lanxin_hsr            79 趟
+  主线 chenggui_hsr          76 趟
+  主线 auto_19               75 趟
+  主线 auto_25               73 趟
+  主线 auto_44               72 趟
+  主线 auto_20               70 趟
+  主线 hanshi_hsr            69 趟
+  主线 auto_14               69 趟
+  主线 zhengfu_hsr           63 趟
   主线 xiyin_hsr             56 趟
   主线 changyichang_hsr      56 趟
+  主线 auto_50               54 趟
   主线 hainan_east           54 趟
-  主线 lianzhen_hsr          53 趟
-  主线 hefu_hsr              52 趟
-  主线 longhai               52 趟
-  主线 jiqing_hsr            51 趟
-  主线 jizheng_hsr           48 趟
-  主线 zhengtai_hsr          47 趟
+  主线 shanghang             52 趟
+  主线 auto_09               51 趟
+  主线 auto_38               49 趟
+  主线 longhai               49 趟
   主线 haqi_hsr              47 趟
-  主线 nankun_hsr            42 趟
+  主线 kunming_dali          47 趟
+  主线 auto_39               47 趟
+  主线 xuyan_yantong         46 趟
+  主线 chengyu_hsr           45 趟
+  主线 ninghang_hsr          44 趟
+  主线 zhengtai_hsr          42 趟
+  主线 auto_52               42 趟
   主线 hajia                 39 趟
-  主线 changjinghuang        37 趟
-  主线 husuhu                35 趟
-  主线 ganruilong            32 趟
+  主线 nankun_hsr            35 趟
+  主线 auto_29               34 趟
+  主线 jizheng_hsr           33 趟
+  主线 auto_08               33 趟
+  主线 auto_37               31 趟
   主线 zhangjihuai           31 趟
-  主线 shiji                 30 趟
+  主线 hefu_hsr              31 趟
+  主线 auto_49               30 趟
+  主线 ningan_hsr            30 趟
+  主线 auto_55               29 趟
+  主线 changjinghuang        28 趟
+  主线 lianzhen_hsr          27 趟
   主线 mujia_hsr             27 趟
-  主线 yuhuai                26 趟
-  主线 hangwen_hsr           25 趟
+  主线 guangzhu_chengji      26 趟
+  主线 ganruilong            25 趟
+  主线 shiji                 25 趟
+  主线 yuhuai                24 趟
+  主线 auto_47               23 趟
   主线 hamu_hsr              23 趟
+  主线 auto_26               23 趟
+  主线 auto_30               22 趟
+  主线 auto_23               21 趟
   主线 lanyu                 20 趟
-  主线 rilan_hsr             20 趟
-  主线 qianchang             17 趟
+  主线 auto_24               20 趟
+  主线 qianchang             19 趟
+  主线 jiqing_hsr            18 趟
+  主线 auto_06               18 趟
+  主线 auto_17               17 趟
   主线 qingzang              17 趟
-  主线 jiaoliu                9 趟
-  主线 huaishao_heng          6 趟
+  主线 auto_42               15 趟
+  主线 auto_13               13 趟
+  主线 auto_22               10 趟
+  主线 auto_53               10 趟
+  主线 auto_48               10 趟
+  主线 rilan_hsr              9 趟
+  主线 auto_40                9 趟
+  主线 auto_16                9 趟
+  主线 auto_51                8 趟
+  主线 auto_21                8 趟
+  主线 auto_36                7 趟
+  主线 jiaoliu                7 趟
   主线 zhonglan_hsr           6 趟
-  主线 chengkun               4 趟
-  主线 changjiu               4 趟
-[统计] 跨线列车（多腿）3431 趟
-  [警告] G701 区段 hd_ykd→hd_asx 均速 406 km/h 超限
-  [警告] G702 区段 hd_asx→hd_ykd 均速 579 km/h 超限
-  [警告] G702 区段 hd_ykd→hd_byq 均速 370 km/h 超限
-  [警告] G703 区段 hd_dlb→hd_asx 均速 366 km/h 超限
-  [警告] G704 区段 hd_asx→hd_byq 均速 450 km/h 超限
-  [警告] G705 区段 hd_ykd→hd_asx 均速 406 km/h 超限
-  [警告] G706 区段 hd_asx→hd_ykd 均速 406 km/h 超限
-  [警告] G708 区段 hd_hcx→hd_gzx 均速 382 km/h 超限
-  [警告] G709 区段 hd_dlb→hd_asx 均速 366 km/h 超限
-  [警告] G711 区段 hd_byq→hd_asx 均速 465 km/h 超限
-  [警告] G713 区段 hd_ykd→hd_ly 均速 385 km/h 超限
-  [警告] G720 区段 hd_ly→hd_ykd 均速 385 km/h 超限
-  [警告] G720 区段 hd_ykd→hd_byq 均速 370 km/h 超限
-  [警告] G721 区段 hd_byq→hd_gzx 均速 468 km/h 超限
-  [警告] G722 区段 hd_hcx→hd_ykd 均速 470 km/h 超限
-  [警告] G727 区段 hd_ykd→hd_asx 均速 406 km/h 超限
-  [警告] G729 区段 hd_byq→hd_hcx 均速 496 km/h 超限
-  [警告] G767 区段 hd_byq→hd_ykd 均速 370 km/h 超限
-  [警告] G767 区段 hd_ykd→hd_asx 均速 406 km/h 超限
-  [警告] G769 区段 hd_byq→hd_ykd 均速 393 km/h 超限
-  [警告] G769 区段 hd_ykd→hd_asx 均速 406 km/h 超限
-  [警告] G772 区段 hd_ly→hd_byq 均速 429 km/h 超限
-  [警告] G776 区段 hd_ykd→hd_hcx 均速 470 km/h 超限
-  [警告] G775 区段 hd_hcx→hd_gzx 均速 382 km/h 超限
-  [警告] G8016 区段 hd_gzx→hd_byq 均速 468 km/h 超限
-  [警告] G8017 区段 hd_wfdx→hd_gzx 均速 365 km/h 超限
-  [警告] G8019 区段 hd_byq→hd_ykd 均速 370 km/h 超限
-  [警告] G8019 区段 hd_ykd→hd_hcx 均速 470 km/h 超限
-  [警告] G8020 区段 hd_asx→hd_byq 均速 450 km/h 超限
-  [警告] G8027 区段 hd_byq→hd_ykd 均速 370 km/h 超限
-  [警告] G8027 区段 hd_ykd→hd_ly 均速 385 km/h 超限
-  [警告] G8028 区段 hd_asx→hd_ykd 均速 406 km/h 超限
-  [警告] G8028 区段 hd_ykd→hd_byq 均速 370 km/h 超限
-  [警告] G8039 区段 hd_byq→hd_asx 均速 450 km/h 超限
-  [警告] G8040 区段 hd_asx→hd_ykd 均速 406 km/h 超限
-  [警告] G8046 区段 hd_ykd→hd_byq 均速 393 km/h 超限
-  [警告] G8059 区段 hd_ykd→hd_hcx 均速 470 km/h 超限
-  [警告] G8060 区段 hd_hcx→hd_ykd 均速 470 km/h 超限
-  [警告] G8061 区段 hd_ykd→hd_asx 均速 406 km/h 超限
-  [警告] G8063 区段 hd_byq→hd_gzx 均速 468 km/h 超限
+  主线 auto_43                5 趟
+  主线 auto_45                5 趟
+  主线 auto_33                4 趟
+  主线 huaishao_heng          3 趟
+  主线 changjiu               3 趟
+  主线 auto_18                2 趟
+  主线 auto_28                2 趟
+  主线 auto_35                1 趟
+  主线 auto_27                1 趟
+[统计] 跨线列车（多腿）4986 趟
+  [警告] G1002 区段 auto_02_s15→auto_02_s02 均速 1062 km/h 超限
+  [警告] G1005 区段 auto_02_s02→auto_02_s15 均速 1062 km/h 超限
+  [警告] G1006 区段 auto_02_s15→auto_02_s02 均速 994 km/h 超限
+  [警告] G1020 区段 auto_02_s03→auto_02_s15 均速 1334 km/h 超限
+  [警告] G1033 区段 auto_02_s15→auto_02_s02 均速 994 km/h 超限
+  [警告] G1033 区段 auto_02_s02→auto_02_s08 均速 658 km/h 超限
+  [警告] G1041 区段 auto_02_s15→auto_02_s02 均速 1062 km/h 超限
+  [警告] G1069 区段 auto_34_s05→auto_34_s08 均速 387 km/h 超限
+  [警告] G1072 区段 auto_34_s07→auto_34_s04 均速 388 km/h 超限
+  [警告] G1088 区段 auto_50_s04→auto_50_s08 均速 495 km/h 超限
+  [警告] G1092 区段 auto_50_s02→auto_50_s00 均速 409 km/h 超限
+  [警告] G1094 区段 auto_50_s03→auto_50_s08 均速 420 km/h 超限
+  [警告] G1099 区段 auto_50_s01→auto_50_s11 均速 615 km/h 超限
+  [警告] G1102 区段 auto_02_s15→auto_02_s02 均速 994 km/h 超限
+  [警告] G2 区段 auto_18_s04→auto_18_s00 均速 630 km/h 超限
+  [警告] G26 区段 auto_18_s04→auto_18_s00 均速 630 km/h 超限
+  [警告] G201 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G203 区段 auto_32_s04→auto_32_s10 均速 670 km/h 超限
+  [警告] G205 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G207 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G222 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G225 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G234 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G240 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G244 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G245 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G247 区段 auto_05_s02→auto_05_s12 均速 691 km/h 超限
+  [警告] G251 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G253 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G255 区段 auto_37_s06→auto_37_s03 均速 473 km/h 超限
+  [警告] G257 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G259 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G260 区段 auto_37_s03→auto_37_s06 均速 494 km/h 超限
+  [警告] G261 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G263 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G269 区段 auto_05_s02→auto_05_s12 均速 706 km/h 超限
+  [警告] G270 区段 auto_05_s12→auto_05_s02 均速 706 km/h 超限
+  [警告] G2033 区段 auto_34_s08→auto_34_s02 均速 523 km/h 超限
+  [警告] G2034 区段 auto_34_s02→auto_34_s08 均速 456 km/h 超限
+  [警告] G2071 区段 auto_34_s03→auto_34_s08 均速 611 km/h 超限
