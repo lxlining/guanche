@@ -478,6 +478,25 @@ func nearest_station(line_id: String, pos: Vector2, max_dist_m: float = 1.0e9) -
 	return best
 
 
+# 拾取距离 pos 最近的线路（折线段距离 < max_dist）
+func nearest_line(pos: Vector2, max_dist: float) -> String:
+	var best := ""
+	var best_d := max_dist
+	for line_id in line_order:
+		var pts: Array = lines[line_id]["geometry_pts"]
+		for i in range(pts.size() - 1):
+			var a: Vector2 = pts[i]["pos"]
+			var b: Vector2 = pts[i + 1]["pos"]
+			var ab := b - a
+			var l2 := ab.length_squared()
+			var t := clampf((pos - a).dot(ab) / l2, 0.0, 1.0) if l2 > 0.0 else 0.0
+			var d: float = pos.distance_to(a + ab * t)
+			if d < best_d:
+				best_d = d
+				best = line_id
+	return best
+
+
 func station_name(line_id: String, sid: String) -> String:
 	var line: Dictionary = line(line_id)
 	var st: Dictionary = line["stations"].get(sid, {})

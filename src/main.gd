@@ -58,6 +58,7 @@ func _ready() -> void:
 	cam.connect("map_clicked", _on_map_click)
 	cam.connect("map_right_clicked", _on_map_right_click)
 	ui.diagram.connect("train_picked", _on_diagram_pick)
+	ui.line_screen.connect("code_picked", _on_line_screen_pick)
 
 	if Meta.is_fresh:
 		ui.help_panel.visible = true
@@ -96,6 +97,11 @@ func _shot_tick() -> void:
 							train["stops"][0]["sid"], train["stops"][train["stops"].size() - 1]["sid"]])
 		print("DIAG-SUMMARY total=%d reversed=%d" % [total, bad])
 	if _shot_frame == 5:
+		if _shot_mode == "line":
+			ui.line_screen.open("jinghu_hsr")
+			ui.close_overlays.call_deferred() if false else null
+			ui.line_screen.visible = true
+			_shot_mode = "line"
 		match _shot_mode:
 			"help":
 				ui.help_panel.visible = true
@@ -216,6 +222,9 @@ func _pick_station(world_pos: Vector2) -> void:
 				best_line = line_id
 				best_sid = sid
 	if best_sid == "":
+		var lid: String = DB.nearest_line(world_pos, 22.0 / cam.zoom.x)
+		if lid != "":
+			ui.line_screen.open(lid)
 		return
 	var line: Dictionary = DB.lines[best_line]
 	var st: Dictionary = line["stations"][best_sid]
@@ -247,6 +256,12 @@ func _on_map_right_click(world_pos: Vector2) -> void:
 func _on_train_clicked(code: String) -> void:
 	# 由相机统一分发点击；此信号仅保留接口
 	_select(code)
+
+
+func _on_line_screen_pick(code: String) -> void:
+	ui.line_screen.visible = false
+	_select(code)
+	_locate(code)
 
 
 func _on_diagram_pick(code: String) -> void:
