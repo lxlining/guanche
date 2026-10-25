@@ -6,9 +6,11 @@ signal locate_requested(code: String)
 signal closed
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
+const EmuIllu := preload("res://src/ui/emu_illustration.gd")
 
 var code := ""
 var following := false
+var illu: Control
 
 var title_label: Label
 var badge_label: Label
@@ -51,6 +53,8 @@ func _ready() -> void:
 
 	route_label = UIKit.label("", 14, UIKit.TEXT)
 	vb.add_child(route_label)
+	illu = EmuIllu.new()
+	vb.add_child(illu)
 	status_label = UIKit.label("", 13, UIKit.GOOD)
 	vb.add_child(status_label)
 	next_label = UIKit.label("", 12, UIKit.DIM)
@@ -91,6 +95,7 @@ func set_train(c: String) -> void:
 	visible = true
 	var train: Dictionary = DB.train_by_code[c]
 	var tt: Dictionary = DB.train_types.get(train["type"], {})
+	illu.setup(tt, 46.0)
 	var line_short: String = str(DB.line(str(train.get("line", DB.line_order[0])))["short"])
 	title_label.text = train["code"]
 	badge_label.text = "%s · %s · %s" % [tt.get("name", "?"), tt.get("formation", ""), line_short]

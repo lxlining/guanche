@@ -2,6 +2,7 @@
 extends Control
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
+const EmuIllu := preload("res://src/ui/emu_illustration.gd")
 
 var tabs: TabContainer
 var types_grid: GridContainer
@@ -129,6 +130,10 @@ func _type_card(tt: Dictionary) -> PanelContainer:
 	var name_l := UIKit.label(str(tt["name"]) if found else "？？？", 16,
 			Color.WHITE if found else Color(0.4, 0.45, 0.54))
 	head.add_child(name_l)
+
+	var illu := EmuIllu.new()
+	illu.setup(tt, 58.0)
+	vb.add_child(illu)
 
 	vb.add_child(UIKit.label("%s · %s · %d km/h" % [
 			tt.get("family", ""), tt.get("formation", ""), int(tt.get("speed", 0))],

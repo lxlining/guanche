@@ -73,6 +73,28 @@ func _shot_tick() -> void:
 	if _shot_frame < 0:
 		return
 	_shot_frame += 1
+	if _shot_frame == 10 and _shot_mode == "diagnose":
+		var bad := 0
+		var total := 0
+		for t_s in [21600.0, 43200.0, 64800.0]:
+			for train in DB.trains:
+				var st: Dictionary = Simulation.state_for(train, t_s)
+				if str(st.get("status", "")) != "run":
+					continue
+				var st2: Dictionary = Simulation.state_for(train, t_s + 30.0)
+				var move: Vector2 = st2["pos"] - st["pos"]
+				if move.length() < 50.0:
+					continue
+				total += 1
+				var dot: float = move.normalized().dot(st["dirv"])
+				if dot < -0.5:
+					bad += 1
+					if bad <= 6:
+						var st2b: Dictionary = Simulation.state_for(train, t_s + 30.0)
+						print("DIAG-REVERSED %s line=%s dir=%s arc=%.0f->%.0f 首站=%s 末站=%s" % [
+							train["code"], train["line"], train["dir"], st["arc"], st2b["arc"],
+							train["stops"][0]["sid"], train["stops"][train["stops"].size() - 1]["sid"]])
+		print("DIAG-SUMMARY total=%d reversed=%d" % [total, bad])
 	if _shot_frame == 5:
 		match _shot_mode:
 			"help":

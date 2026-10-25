@@ -73,31 +73,44 @@ func _draw() -> void:
 	var zoom := cam.zoom.x if cam != null else DB.fit_zoom
 	var px := 1.0 / zoom
 
+	# LOD：全国视野用小圆点，中景小箭头，近景完整箭头
+	var dot_mode := zoom < 0.006
+	var small := zoom < 0.015
+
 	for code in Simulation.states:
 		var st: Dictionary = Simulation.states[code]
 		if not _is_active(st):
 			continue
 		var tt: Dictionary = DB.train_types.get(st["type"], {})
 		var col: Color = Color(tt.get("color", "#e5484d"))
-		var fmt: String = str(tt.get("formation", "8"))
-		var long_train: bool = "16" in fmt or "17" in fmt
-
 		var pos: Vector2 = st["pos"]
+
+		if dot_mode:
+			var c := col.lightened(0.15) if code == hover else col
+			draw_circle(pos, (4.5 if code == selected else 3.0) * px, c)
+			if code == selected:
+				draw_arc(pos, 7.0 * px, 0.0, TAU, 20, Color.WHITE, 1.6 * px, true)
+			continue
+
 		var ang: float = (st["dirv"] as Vector2).angle()
-		draw_set_transform(pos, ang, Vector2.ONE * px)
+		var sc: float = px * (0.7 if small else 1.0)
+		draw_set_transform(pos, ang, Vector2.ONE * sc)
 		var shape := PackedVector2Array([
 			Vector2(14, 0), Vector2(-9, 5.5), Vector2(-5, 0), Vector2(-9, -5.5)
-		]) if long_train else PackedVector2Array([
+		]) if long_train(tt) else PackedVector2Array([
 			Vector2(10, 0), Vector2(-6, 6), Vector2(-3, 0), Vector2(-6, -6)
 		])
-		var c := col
-		if code == hover and code != selected:
-			c = c.lightened(0.25)
-		draw_colored_polygon(shape, c)
+		var c2 := col.lightened(0.25) if code == hover and code != selected else col
+		draw_colored_polygon(shape, c2)
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 		if code == selected:
 			draw_arc(pos, 13.0 * px, 0.0, TAU, 28, Color.WHITE, 2.0 * px, true)
 		elif code == hover:
 			draw_arc(pos, 13.0 * px, 0.0, TAU, 28, Color(1, 1, 1, 0.45), 1.5 * px, true)
+
+
+func long_train(tt: Dictionary) -> bool:
+	var fmt: String = str(tt.get("formation", "8"))
+	return "16" in fmt or "17" in fmt
 		# 车次文字由 LabelLayer（屏幕空间）绘制

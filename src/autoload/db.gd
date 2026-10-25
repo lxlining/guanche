@@ -222,7 +222,9 @@ func _parse_train(tr: Dictionary, line_id: String) -> Dictionary:
 		"code": code,
 		"line": line_id,
 		"type": tr.get("type", "CR400AF"),
-		"dir": "down" if stops[0]["sid"] == order[0] else "up",
+		# 方向由停站弧长增减决定（down = 顺序方向），与箭头/dirv 逻辑同一套定义，
+		# 避免从线路中段始发/接入的列车方向标签翻转
+		"dir": "down" if stops[stops.size() - 1]["arc"] > stops[0]["arc"] else "up",
 		"from": tr.get("from", line["stations"][stops[0]["sid"]]["name"]),
 		"to": tr.get("to", line["stations"][stops[stops.size() - 1]["sid"]]["name"]),
 		"off_map": bool(tr.get("off_map", false)),

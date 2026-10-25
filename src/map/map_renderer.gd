@@ -23,9 +23,10 @@ func _draw() -> void:
 	var zoom := cam.zoom.x if cam != null else DB.fit_zoom
 	var px := 1.0 / zoom
 
+	var wf: float = clampf(zoom / 0.01, 0.55, 1.0)
 	_draw_graticule(px)
 	_draw_geography(px)
-	_draw_line(px)
+	_draw_line(px, wf)
 	_draw_stations(px)
 
 
@@ -62,14 +63,14 @@ func _draw_geography(px: float) -> void:
 		draw_circle(pos, (3.0 if major else 2.0) * px, Color(0.82, 0.87, 0.95, 0.75))
 
 
-func _draw_line(px: float) -> void:
+func _draw_line(px: float, wf: float) -> void:
 	for line_id in DB.line_order:
 		var line: Dictionary = DB.lines[line_id]
 		var pts := PackedVector2Array()
 		for p in line["geometry_pts"]:
 			pts.append(p["pos"])
-		draw_polyline(pts, COL_LINE_BASE, 11.0 * px, true)
-		draw_polyline(pts, line["color"], 5.5 * px, true)
+		draw_polyline(pts, COL_LINE_BASE, 11.0 * wf * px, true)
+		draw_polyline(pts, line["color"], 5.5 * wf * px, true)
 
 
 func _draw_stations(px: float) -> void:
