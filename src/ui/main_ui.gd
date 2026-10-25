@@ -78,7 +78,7 @@ func _build_clock() -> void:
 	var vb := VBoxContainer.new()
 	vb.add_theme_constant_override("separation", 0)
 	clock_label = UIKit.label("07:00", 30, Color.WHITE)
-	clock_sub = UIKit.label("60× · 京沪高铁 · %d 站" % DB.station_order.size(), 12, UIKit.DIM)
+	clock_sub = UIKit.label("60× · %d 条线路 · %d 站" % [DB.line_order.size(), DB.total_station_count()], 12, UIKit.DIM)
 	vb.add_child(clock_label)
 	vb.add_child(clock_sub)
 	p.add_child(vb)

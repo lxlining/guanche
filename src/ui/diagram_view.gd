@@ -25,15 +25,20 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	visible = false
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	cur_line = DB.line_order[0]
+	cur_line = "jinghu_hsr" if DB.lines.has("jinghu_hsr") else DB.line_order[0]
 
 	var selector := OptionButton.new()
-	for line_id in DB.line_order:
+	var default_idx := 0
+	for i in range(DB.line_order.size()):
+		var line_id: String = DB.line_order[i]
 		selector.add_item(DB.lines[line_id]["short"])
-		selector.set_item_metadata(selector.item_count - 1, line_id)
+		selector.set_item_metadata(i, line_id)
+		if line_id == cur_line:
+			default_idx = i
 	selector.item_selected.connect(func(idx: int):
 		cur_line = str(selector.get_item_metadata(idx))
 		queue_redraw())
+	selector.select(default_idx)
 	selector.add_theme_font_size_override("font_size", 12)
 	selector.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT, Control.PRESET_MODE_MINSIZE, 10)
 	selector.grow_horizontal = Control.GROW_DIRECTION_BEGIN
@@ -80,23 +85,40 @@ func _y_of(km: float, pr: Rect2) -> float:
 	return pr.position.y + pr.size.y * (1.0 - clampf(km, 0.0, _km_max()) / _km_max())
 
 
-# 每趟车在图上的折线（像素坐标）
-func _train_points(train: Dictionary, pr: Rect2) -> PackedVector2Array:
-	var pts := PackedVector2Array()
+# 每趟车在图上的折线段：跨午夜处断开（传统运行图画法）
+func _train_segs(train: Dictionary, pr: Rect2) -> Array:
+	var line: Dictionary = _line()
 	var stops: Array = train["stops"]
 	var n := stops.size()
-	var line: Dictionary = _line()
+	var pts := PackedVector2Array()
 	for i in range(n):
 		var sid: String = stops[i]["sid"]
 		var km: float = float(line["stations"][sid]["km"])
 		var y := _y_of(km, pr)
+		var x: float
 		if i == 0:
-			pts.append(Vector2(_x_of(stops[i]["dep_s"], pr), y))
+			x = _x_of(stops[i]["dep_s"], pr)
 		elif i == n - 1:
-			pts.append(Vector2(_x_of(stops[i]["arr_s"], pr), y))
+			x = _x_of(stops[i]["arr_s"], pr)
 		else:
-			pts.append(Vector2(_x_of(stops[i]["dep_s"], pr), y))
-	return pts
+			x = _x_of(stops[i]["dep_s"], pr)
+		pts.append(Vector2(x, y))
+
+	var segs: Array = []
+	var cur := PackedVector2Array()
+	var prev_x := -1.0e18
+	for p in pts:
+		if p.x < prev_x - pr.size.x * 0.5:
+			if cur.size() >= 2:
+				segs.append(cur)
+			cur = PackedVector2Array()
+			prev_x = -1.0e18
+		if cur.size() == 0 or p.x >= prev_x:
+			cur.append(p)
+			prev_x = p.x
+	if cur.size() >= 2:
+		segs.append(cur)
+	return segs
 
 
 func _seg_dist(p: Vector2, a: Vector2, b: Vector2) -> float:
@@ -117,12 +139,12 @@ func _pick_at(pos: Vector2) -> String:
 	for train in DB.trains:
 		if train["line"] != cur_line:
 			continue
-		var pts := _train_points(train, pr)
-		for i in range(pts.size() - 1):
-			var d := _seg_dist(pos, pts[i], pts[i + 1])
-			if d < best_d:
-				best_d = d
-				best = train["code"]
+		for pts in _train_segs(train, pr):
+			for i in range(pts.size() - 1):
+				var d := _seg_dist(pos, pts[i], pts[i + 1])
+				if d < best_d:
+					best_d = d
+					best = train["code"]
 	return best
 
 
@@ -186,11 +208,14 @@ func _draw() -> void:
 		var tt: Dictionary = DB.train_types.get(train["type"], {})
 		var col: Color = Color(tt.get("color", "#8fa3b8"))
 		col.a = 0.35
-		_draw_line_pts(_train_points(train, pr), col, 1.2)
+		for pts in _train_segs(train, pr):
+			_draw_line_pts(pts, col, 1.2)
 	if hover != "" and hover != selected and DB.train_by_code[hover]["line"] == cur_line:
-		_draw_line_pts(_train_points(DB.train_by_code[hover], pr), Color(1, 1, 1, 0.75), 2.0)
+		for pts in _train_segs(DB.train_by_code[hover], pr):
+			_draw_line_pts(pts, Color(1, 1, 1, 0.75), 2.0)
 	if selected != "" and DB.train_by_code[selected]["line"] == cur_line:
-		_draw_line_pts(_train_points(DB.train_by_code[selected], pr), Color.WHITE, 2.6)
+		for pts in _train_segs(DB.train_by_code[selected], pr):
+			_draw_line_pts(pts, Color.WHITE, 2.6)
 
 	# 当前时刻游标
 	var cx := _x_of(GameTime.t, pr)

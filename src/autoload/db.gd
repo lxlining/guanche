@@ -251,6 +251,30 @@ func _union_bounds() -> void:
 	fit_zoom = minf(1500.0 / maxf(map_size.x, 1.0), 830.0 / maxf(map_size.y, 1.0))
 
 
+func _build_background() -> void:
+	var wcoast: Array = []
+	for arr in background.get("coastlines", []):
+		wcoast.append(_to_world_list(arr))
+	background["wcoastlines"] = wcoast
+	for river in background.get("rivers", []):
+		river["wpts"] = _to_world_list(river.get("pts", []))
+	for lake in background.get("lakes", []):
+		lake["wpos"] = GeoScript.lonlat_to_world(float(lake["lon"]), float(lake["lat"]))
+		lake["wrx"] = float(lake["rx"]) * GeoScript.M_PER_DEG_LON
+		lake["wry"] = float(lake["ry"]) * GeoScript.M_PER_DEG_LAT
+	for pl in background.get("province_labels", []):
+		pl["wpos"] = GeoScript.lonlat_to_world(float(pl["lon"]), float(pl["lat"]))
+	for c in background.get("cities", []):
+		c["wpos"] = GeoScript.lonlat_to_world(float(c["lon"]), float(c["lat"]))
+
+
+func _to_world_list(arr: Array) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	for p in arr:
+		out.append(GeoScript.lonlat_to_world(float(p[0]), float(p[1])))
+	return out
+
+
 # ---------- 几何查询（per line） ----------
 
 func line(id: String) -> Dictionary:
