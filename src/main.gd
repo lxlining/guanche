@@ -195,7 +195,48 @@ func _on_map_click(world_pos: Vector2) -> void:
 		Meta.place_spot(world_pos)
 		return
 	var code: String = trains_layer.pick(world_pos, cam.zoom.x)
-	_select(code)
+	if code != "":
+		_select(code)
+	else:
+		_pick_station(world_pos)
+
+
+# 点击空白处：拾取附近车站显示信息卡
+func _pick_station(world_pos: Vector2) -> void:
+	var radius := 26.0 / cam.zoom.x
+	var best_d := radius
+	var best_line := ""
+	var best_sid := ""
+	for line_id in DB.line_order:
+		var line: Dictionary = DB.lines[line_id]
+		for sid in line["order"]:
+			var d: float = world_pos.distance_to(line["stations"][sid]["pos"])
+			if d < best_d:
+				best_d = d
+				best_line = line_id
+				best_sid = sid
+	if best_sid == "":
+		return
+	var line: Dictionary = DB.lines[best_line]
+	var st: Dictionary = line["stations"][best_sid]
+	var sname: String = st["name"]
+	# 所属线路（按站名跨线汇总）
+	var line_names: Array = []
+	for lid in DB.line_order:
+		var l2: Dictionary = DB.lines[lid]
+		for sid2 in l2["order"]:
+			if l2["stations"][sid2]["name"] == sname:
+				line_names.append(str(l2["short"]))
+				break
+	# 日均停靠车次（按站名）
+	var stops_n := 0
+	for tr in DB.trains:
+		for stop in tr["stops"]:
+			if str(stop.get("name", "")) == sname:
+				stops_n += 1
+				break
+	ui.station_card.show_station(sname, line_names, int(st["km"]), stops_n,
+			bool(st["major"]))
 
 
 func _on_map_right_click(world_pos: Vector2) -> void:

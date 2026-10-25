@@ -396,6 +396,21 @@ func _build_background() -> void:
 		pl["wpos"] = GeoScript.lonlat_to_world(float(pl["lon"]), float(pl["lat"]))
 	for c in background.get("cities", []):
 		c["wpos"] = GeoScript.lonlat_to_world(float(c["lon"]), float(c["lat"]))
+	# 省级行政边界（DataV GeoAtlas，抽稀后）
+	var province_polys: Array = []
+	if FileAccess.file_exists("res://data/map/provinces.json"):
+		var pf := FileAccess.open("res://data/map/provinces.json", FileAccess.READ)
+		var parsed = JSON.parse_string(pf.get_as_text())
+		if typeof(parsed) == TYPE_ARRAY:
+			for prov in parsed:
+				var wpolys: Array = []
+				for poly in prov.get("polys", []):
+					var wpts := PackedVector2Array()
+					for pt in poly:
+						wpts.append(GeoScript.lonlat_to_world(float(pt[0]), float(pt[1])))
+					wpolys.append(wpts)
+				province_polys.append({"name": prov.get("name", ""), "polys": wpolys})
+	background["provinces"] = province_polys
 
 
 func _to_world_list(arr: Array) -> PackedVector2Array:

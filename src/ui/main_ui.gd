@@ -8,6 +8,7 @@ const DetailCard := preload("res://src/ui/detail_card.gd")
 const DexScreen := preload("res://src/ui/dex_screen.gd")
 const AchievementsScreen := preload("res://src/ui/achievements_screen.gd")
 const DiagramView := preload("res://src/ui/diagram_view.gd")
+const StationCard := preload("res://src/ui/station_card.gd")
 
 var ui_root: Control
 var clock_label: Label
@@ -26,6 +27,7 @@ var train_list: Control
 var dex: Control
 var ach_screen: Control
 var diagram: Control
+var station_card: Control
 var help_panel: Control
 
 
@@ -49,6 +51,8 @@ func _ready() -> void:
 	ui_root.add_child(ach_screen)
 	diagram = DiagramView.new()
 	ui_root.add_child(diagram)
+	station_card = StationCard.new()
+	ui_root.add_child(station_card)
 	_build_help()
 
 	Meta.achievement_unlocked.connect(_on_achievement)

@@ -43,6 +43,13 @@ func _draw_graticule(px: float) -> void:
 
 func _draw_geography(px: float) -> void:
 	var bg := DB.background
+	# 省级行政边界：淡填充 + 细边线
+	for prov in bg.get("provinces", []):
+		for wpts in prov["polys"]:
+			if wpts.size() < 3:
+				continue
+			draw_colored_polygon(wpts, Color(0.10, 0.14, 0.21, 0.55))
+			draw_polyline(wpts, Color(0.32, 0.40, 0.52, 0.8), 1.1 * maxf(px, 1.0), true)
 	for coast in bg.get("wcoastlines", []):
 		draw_polyline(coast, Color(0.45, 0.58, 0.72, 0.5), 1.5 * px, true)
 
