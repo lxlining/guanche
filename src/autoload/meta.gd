@@ -140,7 +140,7 @@ func _eval(def: Dictionary) -> bool:
 		"cross_meet":
 			return cross_meet_done
 		"stations_all":
-			return visited.size() >= DB.station_order.size()
+			return visited.size() >= DB.total_station_count()
 		"screen_trains":
 			return screen_done
 	return false
@@ -187,7 +187,7 @@ func progress_text(def: Dictionary) -> String:
 		"follow_count":
 			return "%d/%d" % [followed_codes.size(), int(def.get("n", 1))]
 		"stations_all":
-			return "%d/%d" % [visited.size(), DB.station_order.size()]
+			return "%d/%d" % [visited.size(), DB.total_station_count()]
 	return ""
 
 

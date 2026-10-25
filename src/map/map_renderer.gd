@@ -63,19 +63,23 @@ func _draw_geography(px: float) -> void:
 
 
 func _draw_line(px: float) -> void:
-	var pts := PackedVector2Array()
-	for p in DB.geometry_pts:
-		pts.append(p["pos"])
-	draw_polyline(pts, COL_LINE_BASE, 11.0 * px, true)
-	draw_polyline(pts, COL_LINE_CORE, 5.5 * px, true)
+	for line_id in DB.line_order:
+		var line: Dictionary = DB.lines[line_id]
+		var pts := PackedVector2Array()
+		for p in line["geometry_pts"]:
+			pts.append(p["pos"])
+		draw_polyline(pts, COL_LINE_BASE, 11.0 * px, true)
+		draw_polyline(pts, line["color"], 5.5 * px, true)
 
 
 func _draw_stations(px: float) -> void:
-	for sid in DB.station_order:
-		var st: Dictionary = DB.stations[sid]
-		var pos: Vector2 = st["pos"]
-		var major: bool = st["major"]
-		var r := (5.0 if major else 3.2) * px
-		draw_circle(pos, r, COL_STATION_FILL)
-		draw_arc(pos, r, 0.0, TAU, 24, COL_STATION_RING, 1.4 * px, true)
+	for line_id in DB.line_order:
+		var line: Dictionary = DB.lines[line_id]
+		for sid in line["order"]:
+			var st: Dictionary = line["stations"][sid]
+			var pos: Vector2 = st["pos"]
+			var major: bool = st["major"]
+			var r := (5.0 if major else 3.2) * px
+			draw_circle(pos, r, COL_STATION_FILL)
+			draw_arc(pos, r, 0.0, TAU, 24, COL_STATION_RING, 1.4 * px, true)
 		# 站名由 LabelLayer（屏幕空间）绘制

@@ -235,8 +235,8 @@ func _build_help() -> void:
 func _process(_delta: float) -> void:
 	if clock_label != null:
 		clock_label.text = ("Ⅱ " if GameTime.paused else "") + GameTime.time_string_full()
-		clock_sub.text = "%s× · 京沪高铁 · %d 站 · 在图 %d 趟" % [
-			_fmt_speed(GameTime.speed), DB.station_order.size(), _active_count()]
+		clock_sub.text = "%s× · %d 条线路 · %d 站 · 在图 %d 趟" % [
+			_fmt_speed(GameTime.speed), DB.line_order.size(), DB.total_station_count(), _active_count()]
 
 
 func _active_count() -> int:

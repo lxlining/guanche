@@ -92,6 +92,7 @@ func refresh() -> void:
 	for code in codes:
 		var sp: Dictionary = Meta.spotted[code]
 		var train: Dictionary = DB.train_by_code.get(code, {})
+		var line: Dictionary = DB.line(str(train.get("line", DB.line_order[0])))
 		var tt: Dictionary = DB.train_types.get(train.get("type", ""), {})
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 10)
@@ -102,11 +103,11 @@ func refresh() -> void:
 		c2.custom_minimum_size = Vector2(120, 0)
 		row.add_child(c2)
 		var station: String = "—"
-		var st: Dictionary = DB.stations.get(DB.train_by_code.get(code, {}).get("stops", [{}])[0].get("sid", ""), {})
+		var st: Dictionary = line["stations"].get(train.get("stops", [{}])[0].get("sid", ""), {})
 		if not st.is_empty():
 			station = st["name"]
-		row.add_child(UIKit.label("首见 %s @ %s · 观测 %d 次" % [
-			GameTime.fmt_hhmm_abs(float(sp["first_t"])), station, int(sp["count"])], 12, UIKit.DIM))
+		row.add_child(UIKit.label("%s · 首见 %s @ %s · 观测 %d 次" % [
+			line["short"], GameTime.fmt_hhmm_abs(float(sp["first_t"])), station, int(sp["count"])], 12, UIKit.DIM))
 		trains_box.add_child(row)
 
 

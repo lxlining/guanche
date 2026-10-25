@@ -84,7 +84,7 @@ func _shot_tick() -> void:
 			_:
 				ui.close_overlays()
 	if _shot_frame == 8 and _shot_mode == "zoom":
-		cam.position = DB.stations["jnx"]["pos"]
+		cam.position = DB.line("jinghu_hsr")["stations"]["jnx"]["pos"]
 		cam.zoom = Vector2(0.03, 0.03)
 	if _shot_frame == 20:
 		match _shot_mode:
@@ -114,9 +114,11 @@ func _process(delta: float) -> void:
 	_station_accum += delta
 	if _station_accum > 0.5:
 		_station_accum = 0.0
-		for sid in DB.station_order:
-			if cam.position.distance_to(DB.stations[sid]["pos"]) < 7000.0:
-				Meta.visit_station(sid)
+		for line_id in DB.line_order:
+			var line: Dictionary = DB.lines[line_id]
+			for sid in line["order"]:
+				if cam.position.distance_to(line["stations"][sid]["pos"]) < 7000.0:
+					Meta.visit_station(sid)
 
 	if follow_code != "":
 		_follow_tick()
@@ -200,8 +202,9 @@ func _select(code: String) -> void:
 	var st: Dictionary = Simulation.states.get(code, {})
 	var status := str(st.get("status", "off"))
 	if status == "run" or status == "stop" or status == "wait":
-		var sid: String = DB.nearest_station(st.get("pos", DB.map_center))
-		Meta.observe(code, str(st.get("type", "")), GameTime.t, DB.stations[sid]["name"])
+		var line_id: String = str(st.get("line", DB.line_order[0]))
+		var sid: String = DB.nearest_station(line_id, st.get("pos", DB.map_center))
+		Meta.observe(code, str(st.get("type", "")), GameTime.t, DB.station_name(line_id, sid))
 
 
 func _locate(code: String) -> void:

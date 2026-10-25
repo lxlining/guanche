@@ -76,7 +76,11 @@ def has_conflict(direction, cand_stops, station_arc, existing):
 
 
 def load_line():
-    with open(data_path("lines", "jinghu_hsr.json"), encoding="utf-8") as f:
+    return load_line_doc("jinghu_hsr")
+
+
+def load_line_doc(line_id):
+    with open(data_path("lines", line_id + ".json"), encoding="utf-8") as f:
         line = json.load(f)
     pts = []
     for g in line["geometry"]:
@@ -221,3 +225,28 @@ def make_occupancy(trains, station_arc):
                 occ[direction].setdefault(mm, []).append((arc, code))
         dwell[code] = dwell_windows(stops)
     return occ, dwell
+
+
+def load_all_lines():
+    """加载 data/lines/ 下全部线路 -> {line_id: (doc, stations, station_arc, total_len)}"""
+    out = {}
+    lines_dir = os.path.join("data", "lines")
+    for fn in sorted(os.listdir(lines_dir)):
+        if not fn.endswith(".json"):
+            continue
+        with open(os.path.join(lines_dir, fn), encoding="utf-8") as f:
+            doc = json.load(f)
+        pts = []
+        for g in doc["geometry"]:
+            lon, lat = float(g[0]), float(g[1])
+            pts.append(((lon - LON0) * M_PER_DEG_LON, -(lat - LAT0) * M_PER_DEG_LAT))
+        cum = [0.0]
+        for i in range(1, len(pts)):
+            cum.append(cum[-1] + math.dist(pts[i - 1], pts[i]))
+        station_arc = {}
+        for g, c in zip(doc["geometry"], cum):
+            if len(g) > 2 and g[2]:
+                station_arc[g[2]] = c
+        stations = {s["id"]: s for s in doc["stations"]}
+        out[doc["id"]] = (doc, stations, station_arc, cum[-1])
+    return out

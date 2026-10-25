@@ -1,6 +1,7 @@
-# 时刻-距离运行图叠加层：全部列车按「到发时刻 × 里程」画成斜线，
+# 时刻-距离运行图叠加层：所选线路的全部列车按「到发时刻 × 里程」画成斜线，
 # 红色竖线为当前时刻游标（可左右拖动平移时间），点击车次线选中列车。
 # 纵轴用车站官方里程（真实公里标），斜线在站间取直线（传统运行图画法）。
+# 右上角可切换线路（各线里程体系独立）。
 extends Control
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
@@ -10,6 +11,7 @@ signal train_picked(code: String)
 
 var selected := ""
 var hover := ""
+var cur_line := ""
 
 var _scrubbing := false
 var _mouse := Vector2.ZERO
@@ -23,6 +25,19 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	visible = false
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	cur_line = DB.line_order[0]
+
+	var selector := OptionButton.new()
+	for line_id in DB.line_order:
+		selector.add_item(DB.lines[line_id]["short"])
+		selector.set_item_metadata(selector.item_count - 1, line_id)
+	selector.item_selected.connect(func(idx: int):
+		cur_line = str(selector.get_item_metadata(idx))
+		queue_redraw())
+	selector.add_theme_font_size_override("font_size", 12)
+	selector.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT, Control.PRESET_MODE_MINSIZE, 10)
+	selector.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	add_child(selector)
 
 
 func toggle() -> void:
@@ -42,8 +57,14 @@ func _process(_delta: float) -> void:
 		queue_redraw()
 
 
+func _line() -> Dictionary:
+	return DB.line(cur_line)
+
+
 func _km_max() -> float:
-	return float(DB.stations[DB.station_order[DB.station_order.size() - 1]]["km"])
+	var line: Dictionary = _line()
+	var order: Array = line["order"]
+	return float(line["stations"][order[order.size() - 1]]["km"])
 
 
 func _plot_rect() -> Rect2:
@@ -59,14 +80,15 @@ func _y_of(km: float, pr: Rect2) -> float:
 	return pr.position.y + pr.size.y * (1.0 - clampf(km, 0.0, _km_max()) / _km_max())
 
 
-# 每趟车在图上的折线（像素坐标）：[[(x,y), ...], 段列表]
+# 每趟车在图上的折线（像素坐标）
 func _train_points(train: Dictionary, pr: Rect2) -> PackedVector2Array:
 	var pts := PackedVector2Array()
 	var stops: Array = train["stops"]
 	var n := stops.size()
+	var line: Dictionary = _line()
 	for i in range(n):
 		var sid: String = stops[i]["sid"]
-		var km: float = float(DB.stations[sid]["km"])
+		var km: float = float(line["stations"][sid]["km"])
 		var y := _y_of(km, pr)
 		if i == 0:
 			pts.append(Vector2(_x_of(stops[i]["dep_s"], pr), y))
@@ -93,6 +115,8 @@ func _pick_at(pos: Vector2) -> String:
 	var best := ""
 	var best_d := 7.0
 	for train in DB.trains:
+		if train["line"] != cur_line:
+			continue
 		var pts := _train_points(train, pr)
 		for i in range(pts.size() - 1):
 			var d := _seg_dist(pos, pts[i], pts[i + 1])
@@ -129,6 +153,7 @@ func _gui_input(event: InputEvent) -> void:
 func _draw() -> void:
 	var font := FontLib.get_font()
 	var pr := _plot_rect()
+	var line: Dictionary = _line()
 
 	draw_rect(Rect2(Vector2.ZERO, size), Color(0.045, 0.055, 0.08, 0.97))
 
@@ -140,12 +165,12 @@ func _draw() -> void:
 		draw_string(font, Vector2(x - 20, pr.position.y + pr.size.y + 18),
 				"%02d:00" % (h % 24), HORIZONTAL_ALIGNMENT_CENTER, 40, 11, UIKit.DIM)
 	# 车站横线与站名
-	for sid in DB.station_order:
-		var st: Dictionary = DB.stations[sid]
+	for sid in line["order"]:
+		var st: Dictionary = line["stations"][sid]
 		var y := _y_of(float(st["km"]), pr)
 		var major: bool = st["major"]
 		draw_line(Vector2(pr.position.x, y), Vector2(pr.position.x + pr.size.x, y),
-				Color(1, 1, 1, 0.09 if major else 0.045), 1.0 if major else 1.0)
+				Color(1, 1, 1, 0.09 if major else 0.045), 1.0)
 		draw_string(font, Vector2(10, y + 4), "K%d" % int(st["km"]),
 				HORIZONTAL_ALIGNMENT_LEFT, 34, 9, Color(0.5, 0.56, 0.66))
 		draw_string(font, Vector2(48, y + 4), str(st["name"]), HORIZONTAL_ALIGNMENT_LEFT,
@@ -153,6 +178,8 @@ func _draw() -> void:
 
 	# 列车斜线（先普通后高亮）
 	for train in DB.trains:
+		if train["line"] != cur_line:
+			continue
 		var code: String = train["code"]
 		if code == selected or code == hover:
 			continue
@@ -160,9 +187,9 @@ func _draw() -> void:
 		var col: Color = Color(tt.get("color", "#8fa3b8"))
 		col.a = 0.35
 		_draw_line_pts(_train_points(train, pr), col, 1.2)
-	if hover != "" and hover != selected:
+	if hover != "" and hover != selected and DB.train_by_code[hover]["line"] == cur_line:
 		_draw_line_pts(_train_points(DB.train_by_code[hover], pr), Color(1, 1, 1, 0.75), 2.0)
-	if selected != "":
+	if selected != "" and DB.train_by_code[selected]["line"] == cur_line:
 		_draw_line_pts(_train_points(DB.train_by_code[selected], pr), Color.WHITE, 2.6)
 
 	# 当前时刻游标
@@ -175,6 +202,8 @@ func _draw() -> void:
 	# 每趟在线列车在游标上的当前位置
 	for code in Simulation.states:
 		var st: Dictionary = Simulation.states[code]
+		if str(st.get("line", "")) != cur_line:
+			continue
 		var s: String = st.get("status", "off")
 		if s != "run" and s != "stop" and s != "wait":
 			continue
@@ -187,7 +216,7 @@ func _draw() -> void:
 			draw_circle(pos, 2.4, col.lightened(0.2))
 
 	draw_string(font, Vector2(MARGIN_L, 30),
-			"运行图（时刻-距离图）· 拖动红色游标平移时刻 · 点击斜线选中列车 · [G] 关闭",
+			"运行图（时刻-距离图）· 右上角切换线路 · 拖动红色游标平移时刻 · 点击斜线选中列车 · [G] 关闭",
 			HORIZONTAL_ALIGNMENT_LEFT, 900, 12, UIKit.DIM)
 
 

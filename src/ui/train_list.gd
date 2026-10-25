@@ -8,6 +8,8 @@ const UIKit := preload("res://src/ui/ui_kit.gd")
 var search: LineEdit
 var rows_box: VBoxContainer
 var count_label: Label
+var line_filter_btn: OptionButton
+var line_filter := ""
 var _refresh_accum := 0.0
 
 
@@ -46,6 +48,18 @@ func _ready() -> void:
 	search.text_changed.connect(func(_t: String): _rebuild())
 	vb.add_child(search)
 
+	line_filter_btn = OptionButton.new()
+	line_filter_btn.add_item("全部线路")
+	line_filter_btn.set_item_metadata(0, "")
+	for line_id in DB.line_order:
+		line_filter_btn.add_item(DB.lines[line_id]["short"])
+		line_filter_btn.set_item_metadata(line_filter_btn.item_count - 1, line_id)
+	line_filter_btn.item_selected.connect(func(idx: int):
+		line_filter = str(line_filter_btn.get_item_metadata(idx))
+		_rebuild())
+	line_filter_btn.add_theme_font_size_override("font_size", 12)
+	vb.add_child(line_filter_btn)
+
 	var sc := ScrollContainer.new()
 	sc.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	sc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -79,6 +93,8 @@ func _rebuild() -> void:
 	var shown := 0
 	var active_count := 0
 	for train in DB.trains:
+		if line_filter != "" and train.get("line", "") != line_filter:
+			continue
 		var tt: Dictionary = DB.train_types.get(train["type"], {})
 		var hay := (str(train["code"]) + " " + str(tt.get("name", "")) + " " + str(tt.get("family", ""))).to_lower()
 		if filter != "" and not hay.contains(filter):
@@ -110,10 +126,11 @@ func _make_row(train: Dictionary, tt: Dictionary) -> Button:
 			status_txt = "未上线"
 
 	var dep_t: float = train["stops"][0]["dep_s"]
+	var line_short: String = str(DB.line(str(train.get("line", "")))["short"])
 	var line1 := "%s   %s 发   %s → %s" % [
 		train["code"], GameTime.fmt_hhmm_abs(dep_t), train["from"], train["to"]]
 	var source := "生成补充" if train.get("generated", false) else "12306 时刻"
-	var line2 := "%s · %s · %s" % [tt.get("name", "?"), status_txt, source]
+	var line2 := "%s · %s · %s · %s" % [tt.get("name", "?"), status_txt, line_short, source]
 
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE

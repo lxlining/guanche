@@ -44,18 +44,20 @@ func state_for(train: Dictionary, t: float) -> Dictionary:
 
 func _mk_state(train: Dictionary, status: String, arc: float, rel: float,
 		stop_idx: int, next_idx: int, v_kmh: float = 0.0) -> Dictionary:
-	var pt := DB.arc_point(arc)
+	var line_id: String = train["line"]
+	var pt := DB.arc_point(line_id, arc)
 	var dirv: Vector2 = pt["dir"]
 	var dir_sign := 1.0 if train["dir"] == "down" else -1.0
-	var pt2 := DB.arc_point(arc + 80.0 * dir_sign)
+	var pt2 := DB.arc_point(line_id, arc + 80.0 * dir_sign)
 	var dv: Vector2 = pt2["pos"] - pt["pos"]
 	if dv.length_squared() > 1.0:
 		dirv = dv.normalized()
 	var stops: Array = train["stops"]
 	var st := {
 		"code": train["code"], "type": train["type"], "dir": train["dir"],
+		"line": line_id,
 		"status": status, "arc": arc, "pos": pt["pos"], "dirv": dirv,
-		"speed_kmh": minf(v_kmh, 350.0), "km": DB.km_at_arc(arc),
+		"speed_kmh": minf(v_kmh, 350.0), "km": DB.km_at_arc(line_id, arc),
 		"rel": rel, "stop_idx": stop_idx
 	}
 	if next_idx >= 0 and next_idx < stops.size():

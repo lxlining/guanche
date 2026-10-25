@@ -35,18 +35,25 @@ func _ready() -> void:
 		var cl := _mk(14.0 if major else 11.0, Color(0.85, 0.89, 0.96, 0.6 if major else 0.42))
 		cl.text = c["name"]
 		_cities.append({"label": cl, "wpos": c["wpos"]})
-	for sid in DB.station_order:
-		var st: Dictionary = DB.stations[sid]
-		var sl := _mk(15.0 if st["major"] else 11.5,
-				Color("dbe2ee") if st["major"] else Color(0.72, 0.77, 0.86, 0.85),
-				st["major"])
-		sl.text = st["name"]
-		var kl := _mk(9.0, Color(0.6, 0.66, 0.76, 0.7), false)
-		kl.text = "K%d" % int(st["km"])
-		_stations.append({
-			"label": sl, "km": kl,
-			"wpos": st["pos"], "major": bool(st["major"])
-		})
+	var seen_stations := {}
+	for line_id in DB.line_order:
+		var line: Dictionary = DB.lines[line_id]
+		for sid in line["order"]:
+			var st: Dictionary = line["stations"][sid]
+			var key := "%s|%.0f|%.0f" % [st["name"], st["pos"].x, st["pos"].y]
+			if seen_stations.has(key):
+				continue  # 多线共站（如北京南）只标注一次
+			seen_stations[key] = true
+			var sl := _mk(15.0 if st["major"] else 11.5,
+					Color("dbe2ee") if st["major"] else Color(0.72, 0.77, 0.86, 0.85),
+					st["major"])
+			sl.text = st["name"]
+			var kl := _mk(9.0, Color(0.6, 0.66, 0.76, 0.7), false)
+			kl.text = "K%d" % int(st["km"])
+			_stations.append({
+				"label": sl, "km": kl,
+				"wpos": st["pos"], "major": bool(st["major"])
+			})
 	for i in range(160):
 		_trains.append(_mk(11.0, Color(0.95, 0.97, 1.0, 0.92)))
 	for i in range(6):

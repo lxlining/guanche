@@ -5,6 +5,7 @@
   "from": "北京南",
   "to": "上海虹桥",
   "length_km": 1302,
+  "color": "#6272e0",
   "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线（含少量途经点），后续可替换为 OpenStreetMap 精确线形。",
   "stations": [
     { "id": "bjn",  "name": "北京南",   "lon": 116.378, "lat": 39.865, "km": 0,    "major": true },

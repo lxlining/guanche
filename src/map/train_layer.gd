@@ -47,8 +47,8 @@ func _run_observation(zoom: float) -> void:
 			continue
 		for s in Meta.spots:
 			if st["pos"].distance_to(s["world"]) <= s["r_m"]:
-				var sid: String = DB.nearest_station(st["pos"])
-				Meta.observe(code, st["type"], t, DB.stations[sid]["name"])
+				var sid: String = DB.nearest_station(st["line"], st["pos"])
+				Meta.observe(code, st["type"], t, DB.station_name(st["line"], sid))
 	# 同屏列车数统计（成就用）
 	var vp := get_viewport_rect().size
 	var cam := get_viewport().get_camera_2d()

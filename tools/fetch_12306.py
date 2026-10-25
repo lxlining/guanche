@@ -116,7 +116,7 @@ def phase_search() -> None:
     cache_path = os.path.join("tools", "cache12306", "search.jsonl")
     done = load_search_cache(cache_path)
     planned = []
-    for letter in ("G", "D"):
+    for letter in ("G", "D", "C"):
         for a in range(1, 10):
             kw0 = "%s%d" % (letter, a)
             planned.append(kw0)
@@ -199,8 +199,11 @@ def phase_detail() -> None:
     print("[详情] 索引 %d 个，缓存已有 %d 个" % (len(trains), len(done)), file=sys.stderr)
 
     name2tc = load_station_map()
-    ours = json.load(open(os.path.join("data", "lines", "jinghu_hsr.json"), encoding="utf-8"))
-    our_names = {s["name"] for s in ours["stations"]}
+    our_names = set()
+    for fn in os.listdir(os.path.join("data", "lines")):
+        if fn.endswith(".json"):
+            ld = json.load(open(os.path.join("data", "lines", fn), encoding="utf-8"))
+            our_names.update(s["name"] for s in ld.get("stations", []))
 
     todo = [t for t in trains.values() if t["train_no"] not in done]
     todo.sort(key=lambda t: 0 if (t["from"] in our_names or t["to"] in our_names) else 1)
