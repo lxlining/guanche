@@ -150,7 +150,8 @@ func _make_row(tr: Dictionary) -> Button:
 	var line1 := "%s   %s 发   %s → %s" % [tr["code"],
 			GameTime.fmt_hhmm_abs(tr["start_s"]), tr["from"], tr["to"]]
 	var tt: Dictionary = DB.train_types.get(tr["type"], {})
-	var line2 := "%s · %s" % [tt.get("name", "?"), status_txt]
+	var tname: String = "货运示意" if bool(tr.get("freight", false)) else str(tt.get("name", "?"))
+	var line2 := "%s · %s" % [tname, status_txt]
 	var b := Button.new()
 	b.focus_mode = Control.FOCUS_NONE
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT

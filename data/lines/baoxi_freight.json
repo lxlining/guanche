@@ -1,0 +1,29 @@
+{
+  "id": "baoxi_freight",
+  "name": "包西铁路",
+  "short": "包西线",
+  "from": "包头",
+  "to": "西安",
+  "length_km": 801,
+  "color": "#9a3412",
+  "line_class": "freight",
+  "note": "客货共线干线（陕北能源通道）；货车为示意车流。",
+  "stations": [
+    { "id": "bx_bt",  "name": "包头",   "lon": 109.840, "lat": 40.580, "km": 0,   "major": true },
+    { "id": "bx_erd", "name": "鄂尔多斯", "lon": 109.780, "lat": 39.620, "km": 130, "major": false },
+    { "id": "bx_yulin","name": "榆林",  "lon": 109.730, "lat": 38.280, "km": 280, "major": false },
+    { "id": "bx_sx",  "name": "绥德",   "lon": 110.260, "lat": 37.500, "km": 400, "major": false },
+    { "id": "bx_yan", "name": "延安",   "lon": 109.490, "lat": 36.590, "km": 580, "major": false },
+    { "id": "bx_pch", "name": "蒲城",   "lon": 109.580, "lat": 34.960, "km": 760, "major": false },
+    { "id": "bx_xa",  "name": "西安",   "lon": 108.940, "lat": 34.260, "km": 900, "major": true }
+  ],
+  "geometry": [
+    [109.840, 40.580, "bx_bt"],
+    [109.780, 39.620, "bx_erd"],
+    [109.730, 38.280, "bx_yulin"],
+    [110.260, 37.500, "bx_sx"],
+    [109.490, 36.590, "bx_yan"],
+    [109.580, 34.960, "bx_pch"],
+    [108.940, 34.260, "bx_xa"]
+  ]
+}

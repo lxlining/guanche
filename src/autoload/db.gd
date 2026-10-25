@@ -149,8 +149,22 @@ func _load_trains() -> void:
 		if train.get("express", false):
 			express_codes.append(train["code"])
 
+	# 货运示意车流（独立文件）
+	var fdoc := _load_json("res://data/timetables/freight.json")
+	for tr in fdoc.get("trains", []):
+		var flid: String = str(tr.get("line", ""))
+		if not lines.has(flid):
+			continue
+		var ftrain := _parse_train(tr, flid)
+		if ftrain.is_empty():
+			continue
+		ftrain["freight"] = true
+		ftrain["note"] = str(tr.get("note", ""))
+		trains.append(ftrain)
+		train_by_code[ftrain["code"]] = ftrain
+
 	trains.sort_custom(func(a, b): return a["start_s"] < b["start_s"])
-	print("DB: 已加载 %d 条线路、%d 趟列车" % [line_order.size(), trains.size()])
+	print("DB: 已加载 %d 条线路、%d 趟列车（含货运示意）" % [line_order.size(), trains.size()])
 
 
 func _parse_train(tr: Dictionary, line_id: String) -> Dictionary:

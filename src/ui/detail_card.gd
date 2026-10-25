@@ -12,6 +12,7 @@ const EmuIllu := preload("res://src/ui/emu_illustration.gd")
 var code := ""
 var following := false
 var illu: Control
+var freight_hint: Label
 
 var title_label: Label
 var badge_label: Label
@@ -56,6 +57,10 @@ func _ready() -> void:
 	vb.add_child(route_label)
 	illu = EmuIllu.new()
 	vb.add_child(illu)
+	freight_hint = UIKit.label("※ 货运示意车流：12306 无货运数据，本列车时刻为程序生成，仅作路网演示。", 11, UIKit.WARN)
+	freight_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	freight_hint.visible = false
+	vb.add_child(freight_hint)
 	status_label = UIKit.label("", 13, UIKit.GOOD)
 	vb.add_child(status_label)
 	next_label = UIKit.label("", 12, UIKit.DIM)
@@ -97,6 +102,7 @@ func set_train(c: String) -> void:
 	var train: Dictionary = DB.train_by_code[c]
 	var tt: Dictionary = DB.train_types.get(train["type"], {})
 	illu.setup(tt, 46.0)
+	freight_hint.visible = bool(train.get("freight", false))
 	var line_short: String = str(DB.line(str(train.get("line", DB.line_order[0])))["short"])
 	title_label.text = train["code"]
 	badge_label.text = "%s · %s · %s" % [tt.get("name", "?"), tt.get("formation", ""), line_short]

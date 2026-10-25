@@ -1,0 +1,35 @@
+{
+  "id": "haoji_freight",
+  "name": "浩吉铁路",
+  "short": "浩吉线",
+  "from": "浩勒报吉",
+  "to": "吉安",
+  "length_km": 1815,
+  "color": "#92400e",
+  "line_class": "freight",
+  "note": "货运专线（北煤南运大通道，世界上一次性建成最长的重载铁路）；货车为示意车流。",
+  "stations": [
+    { "id": "hj_hlbj", "name": "浩勒报吉", "lon": 108.200, "lat": 38.700, "km": 0,    "major": true },
+    { "id": "hj_ych",  "name": "银川以东", "lon": 107.000, "lat": 37.800, "km": 170,  "major": false },
+    { "id": "hj_jc",   "name": "靖边东",   "lon": 108.800, "lat": 37.400, "km": 330,  "major": false },
+    { "id": "hj_yan",  "name": "延安东",   "lon": 109.700, "lat": 36.600, "km": 480,  "major": false },
+    { "id": "hj_hn",   "name": "韩城",     "lon": 110.440, "lat": 35.480, "km": 680,  "major": false },
+    { "id": "hj_xa",   "name": "襄州",     "lon": 112.150, "lat": 32.080, "km": 1080, "major": false },
+    { "id": "hj_jz",   "name": "荆州",     "lon": 112.240, "lat": 30.330, "km": 1420, "major": false },
+    { "id": "hj_yy",   "name": "岳阳",     "lon": 113.130, "lat": 29.360, "km": 1560, "major": false },
+    { "id": "hj_ja",   "name": "吉安",     "lon": 114.990, "lat": 27.110, "km": 1815, "major": true }
+  ],
+  "geometry": [
+    [108.200, 38.700, "hj_hlbj"],
+    [107.000, 37.800, "hj_ych"],
+    [108.800, 37.400, "hj_jc"],
+    [109.700, 36.600, "hj_yan"],
+    [110.440, 35.480, "hj_hn"],
+    [111.500, 33.500, null],
+    [112.150, 32.080, "hj_xa"],
+    [112.240, 30.330, "hj_jz"],
+    [113.130, 29.360, "hj_yy"],
+    [114.200, 28.100, null],
+    [114.990, 27.110, "hj_ja"]
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "wari_freight",
+  "name": "瓦日铁路",
+  "short": "瓦日线",
+  "from": "瓦塘",
+  "to": "日照",
+  "length_km": 1260,
+  "color": "#78350f",
+  "line_class": "freight",
+  "note": "货运专线（晋煤外运新通道，兼顾客运）；货车为示意车流。",
+  "stations": [
+    { "id": "wr_wt",  "name": "瓦塘",   "lon": 111.200, "lat": 38.600, "km": 0,    "major": true },
+    { "id": "wr_xz",  "name": "兴县",   "lon": 111.130, "lat": 38.460, "km": 60,   "major": false },
+    { "id": "wr_lm",  "name": "临县北", "lon": 110.990, "lat": 37.930, "km": 130,  "major": false },
+    { "id": "wr_cz",  "name": "长子南", "lon": 112.780, "lat": 36.100, "km": 480,  "major": false },
+    { "id": "wr_hebi","name": "鹤壁时丰", "lon": 114.200, "lat": 35.900, "km": 650, "major": false },
+    { "id": "wr_hz",  "name": "菏泽东", "lon": 115.500, "lat": 35.250, "km": 850,  "major": false },
+    { "id": "wr_qz",  "name": "曲阜东", "lon": 117.006, "lat": 35.584, "km": 1050, "major": false },
+    { "id": "wr_rz",  "name": "日照",   "lon": 119.530, "lat": 35.420, "km": 1260, "major": true }
+  ],
+  "geometry": [
+    [111.200, 38.600, "wr_wt"],
+    [111.130, 38.460, "wr_xz"],
+    [110.990, 37.930, "wr_lm"],
+    [111.800, 36.900, null],
+    [112.780, 36.100, "wr_cz"],
+    [114.200, 35.900, "wr_hebi"],
+    [115.500, 35.250, "wr_hz"],
+    [117.006, 35.584, "wr_qz"],
+    [118.500, 35.600, null],
+    [119.530, 35.420, "wr_rz"]
+  ]
+}

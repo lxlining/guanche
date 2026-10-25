@@ -1,0 +1,28 @@
+{
+  "id": "taizhongyin_freight",
+  "name": "太中银铁路",
+  "short": "太中银线",
+  "from": "太原",
+  "to": "中卫",
+  "length_km": 751,
+  "color": "#854d0e",
+  "line_class": "freight",
+  "note": "客货共线干线（晋煤西运与宁夏东出通道）；货车为示意车流。",
+  "stations": [
+    { "id": "tzy_ty",  "name": "太原",   "lon": 112.550, "lat": 37.870, "km": 0,   "major": true },
+    { "id": "tzy_qx",  "name": "清徐",   "lon": 112.350, "lat": 37.610, "km": 45,  "major": false },
+    { "id": "tzy_lls", "name": "吕梁",   "lon": 111.150, "lat": 37.520, "km": 165, "major": false },
+    { "id": "tzy_zz",  "name": "绥德东", "lon": 110.260, "lat": 37.510, "km": 330, "major": false },
+    { "id": "tzy_ychb","name": "银川南", "lon": 106.230, "lat": 38.400, "km": 600, "major": false },
+    { "id": "tzy_zw",  "name": "中卫",   "lon": 105.180, "lat": 37.510, "km": 751, "major": true }
+  ],
+  "geometry": [
+    [112.550, 37.870, "tzy_ty"],
+    [112.350, 37.610, "tzy_qx"],
+    [111.150, 37.520, "tzy_lls"],
+    [110.260, 37.510, "tzy_zz"],
+    [108.400, 37.700, null],
+    [106.230, 38.400, "tzy_ychb"],
+    [105.180, 37.510, "tzy_zw"]
+  ]
+}

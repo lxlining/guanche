@@ -98,6 +98,7 @@ const LEGEND_CLASSES := [
 	["hsr250", "高铁 200-250", "#fb923c"],
 	["intercity", "城际铁路", "#34d399"],
 	["conventional", "普速铁路", "#94a3b8"],
+	["freight", "货运专线（示意）", "#b45309"],
 ]
 
 var legend_buttons: Array = []

@@ -1,0 +1,26 @@
+{
+  "id": "daqin_freight",
+  "name": "大秦铁路",
+  "short": "大秦线",
+  "from": "大同",
+  "to": "秦皇岛",
+  "length_km": 653,
+  "color": "#b45309",
+  "line_class": "freight",
+  "note": "货运专线（运煤第一通道，年运量超 4 亿吨）；货车车次为程序生成的示意车流。",
+  "stations": [
+    { "id": "dq_dt",   "name": "大同",   "lon": 113.300, "lat": 40.080, "km": 0,   "major": true },
+    { "id": "dq_ymg",  "name": "阳高",   "lon": 113.750, "lat": 40.360, "km": 58,  "major": false },
+    { "id": "dq_zgt",  "name": "遵化北", "lon": 117.960, "lat": 40.180, "km": 470, "major": false },
+    { "id": "dq_qhd",  "name": "秦皇岛", "lon": 119.600, "lat": 39.940, "km": 653, "major": true }
+  ],
+  "geometry": [
+    [113.300, 40.080, "dq_dt"],
+    [113.750, 40.360, "dq_ymg"],
+    [114.800, 40.550, null],
+    [116.200, 40.500, null],
+    [117.960, 40.180, "dq_zgt"],
+    [118.600, 40.050, null],
+    [119.600, 39.940, "dq_qhd"]
+  ]
+}

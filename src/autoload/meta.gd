@@ -30,7 +30,7 @@ var visited: Dictionary = {}      # sid -> true
 
 var _last_observe: Dictionary = {}  # code -> 上次观测的游戏时刻
 var is_fresh: bool = true           # 从未存过档（用于首次引导）
-var class_visible: Dictionary = {"hsr350": true, "hsr250": true, "intercity": true, "conventional": true}
+var class_visible: Dictionary = {"hsr350": true, "hsr250": true, "intercity": true, "conventional": true, "freight": true}
 
 
 func set_class_visible(cls: String, on: bool) -> void:

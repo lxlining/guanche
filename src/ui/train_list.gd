@@ -129,7 +129,7 @@ func _make_row(train: Dictionary, tt: Dictionary) -> Button:
 	var line_short: String = str(DB.line(str(train.get("line", "")))["short"])
 	var line1 := "%s   %s 发   %s → %s" % [
 		train["code"], GameTime.fmt_hhmm_abs(dep_t), train["from"], train["to"]]
-	var source := "生成补充" if train.get("generated", false) else "12306 时刻"
+	var source := "货运示意" if train.get("freight", false) else ("生成补充" if train.get("generated", false) else "12306 时刻")
 	var line2 := "%s · %s · %s · %s" % [tt.get("name", "?"), status_txt, line_short, source]
 
 	var b := Button.new()

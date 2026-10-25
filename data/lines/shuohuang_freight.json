@@ -1,0 +1,26 @@
+{
+  "id": "shuohuang_freight",
+  "name": "朔黄铁路",
+  "short": "朔黄线",
+  "from": "朔州",
+  "to": "黄骅港",
+  "length_km": 594,
+  "color": "#a16207",
+  "line_class": "freight",
+  "note": "货运专线（神华煤运通道，西煤东运第二大通道）；货车为示意车流。",
+  "stations": [
+    { "id": "sh_sz",   "name": "朔州",   "lon": 112.430, "lat": 39.330, "km": 0,   "major": true },
+    { "id": "sh_yj",   "name": "原平西", "lon": 112.700, "lat": 38.900, "km": 90,  "major": false },
+    { "id": "sh_dz",   "name": "定州东", "lon": 115.000, "lat": 38.500, "km": 280, "major": false },
+    { "id": "sh_cz",   "name": "沧州西", "lon": 116.850, "lat": 38.300, "km": 480, "major": false },
+    { "id": "sh_hhg",  "name": "黄骅港", "lon": 117.900, "lat": 38.350, "km": 594, "major": true }
+  ],
+  "geometry": [
+    [112.430, 39.330, "sh_sz"],
+    [112.700, 38.900, "sh_yj"],
+    [113.800, 38.600, null],
+    [115.000, 38.500, "sh_dz"],
+    [116.850, 38.300, "sh_cz"],
+    [117.900, 38.350, "sh_hhg"]
+  ]
+}

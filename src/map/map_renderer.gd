@@ -70,7 +70,7 @@ func _draw_geography(px: float) -> void:
 		draw_circle(pos, (3.0 if major else 2.0) * px, Color(0.82, 0.87, 0.95, 0.75))
 
 
-const CLASS_WIDTH := {"hsr350": 5.5, "hsr250": 4.5, "intercity": 4.0, "conventional": 2.6}
+const CLASS_WIDTH := {"hsr350": 5.5, "hsr250": 4.5, "intercity": 4.0, "conventional": 2.6, "freight": 3.2}
 
 func _draw_line(px: float, wf: float) -> void:
 	for line_id in DB.line_order:

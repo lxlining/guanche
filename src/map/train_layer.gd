@@ -96,11 +96,28 @@ func _draw() -> void:
 		var col: Color = Color(tt.get("color", "#e5484d"))
 		var pos: Vector2 = st["pos"]
 
+		var is_freight: bool = bool(DB.train_by_code.get(code, {}).get("freight", false))
+		if is_freight:
+			col = Color("#c2833c")
+
 		if dot_mode:
 			var c := col.lightened(0.15) if code == hover else col
 			draw_circle(pos, (4.5 if code == selected else 3.0) * px, c)
 			if code == selected:
 				draw_arc(pos, 7.0 * px, 0.0, TAU, 20, Color.WHITE, 1.6 * px, true)
+			continue
+
+		if is_freight:
+			# 货车：方块标记（区别于客车箭头）
+			var sz := 9.0 * px * (0.7 if small else 1.0)
+			var ang_f: float = (st["dirv"] as Vector2).angle()
+			draw_set_transform(pos, ang_f, Vector2.ONE * px * (0.7 if small else 1.0))
+			var rect := Rect2(Vector2(-5, -4), Vector2(13, 8))
+			draw_rect(rect, col)
+			draw_rect(Rect2(Vector2(-8, -2.4), Vector2(3, 4.8)), col)
+			draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+			if code == selected:
+				draw_arc(pos, 13.0 * px, 0.0, TAU, 28, Color.WHITE, 2.0 * px, true)
 			continue
 
 		var ang: float = (st["dirv"] as Vector2).angle()

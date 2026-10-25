@@ -1,0 +1,2447 @@
+{
+  "note": "货运示意车流（程序生成，非真实时刻）",
+  "trains": [
+    {
+      "code": "H51001",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "大同",
+      "to": "秦皇岛",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_dt",
+          "arr": null,
+          "dep": "04:56"
+        },
+        {
+          "sid": "dq_zgt",
+          "arr": "07:06",
+          "dep": "07:31"
+        },
+        {
+          "sid": "dq_qhd",
+          "arr": "08:17",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51003",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "秦皇岛",
+      "to": "大同",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_qhd",
+          "arr": null,
+          "dep": "09:56"
+        },
+        {
+          "sid": "dq_ymg",
+          "arr": "12:35",
+          "dep": "13:00"
+        },
+        {
+          "sid": "dq_dt",
+          "arr": "13:17",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51005",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "大同",
+      "to": "秦皇岛",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_dt",
+          "arr": null,
+          "dep": "06:56"
+        },
+        {
+          "sid": "dq_zgt",
+          "arr": "09:06",
+          "dep": "09:31"
+        },
+        {
+          "sid": "dq_qhd",
+          "arr": "10:17",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51007",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "秦皇岛",
+      "to": "大同",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_qhd",
+          "arr": null,
+          "dep": "10:56"
+        },
+        {
+          "sid": "dq_ymg",
+          "arr": "13:35",
+          "dep": "14:00"
+        },
+        {
+          "sid": "dq_dt",
+          "arr": "14:17",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51009",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "大同",
+      "to": "秦皇岛",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_dt",
+          "arr": null,
+          "dep": "08:59"
+        },
+        {
+          "sid": "dq_zgt",
+          "arr": "11:09",
+          "dep": "11:34"
+        },
+        {
+          "sid": "dq_qhd",
+          "arr": "12:20",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51011",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "秦皇岛",
+      "to": "大同",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_qhd",
+          "arr": null,
+          "dep": "12:59"
+        },
+        {
+          "sid": "dq_ymg",
+          "arr": "15:38",
+          "dep": "16:03"
+        },
+        {
+          "sid": "dq_dt",
+          "arr": "16:20",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51013",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "大同",
+      "to": "秦皇岛",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_dt",
+          "arr": null,
+          "dep": "10:59"
+        },
+        {
+          "sid": "dq_zgt",
+          "arr": "13:09",
+          "dep": "13:34"
+        },
+        {
+          "sid": "dq_qhd",
+          "arr": "14:20",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51015",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "秦皇岛",
+      "to": "大同",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_qhd",
+          "arr": null,
+          "dep": "14:59"
+        },
+        {
+          "sid": "dq_ymg",
+          "arr": "17:38",
+          "dep": "18:03"
+        },
+        {
+          "sid": "dq_dt",
+          "arr": "18:20",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51017",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "大同",
+      "to": "秦皇岛",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_dt",
+          "arr": null,
+          "dep": "12:57"
+        },
+        {
+          "sid": "dq_zgt",
+          "arr": "15:07",
+          "dep": "15:32"
+        },
+        {
+          "sid": "dq_qhd",
+          "arr": "16:18",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51019",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "秦皇岛",
+      "to": "大同",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_qhd",
+          "arr": null,
+          "dep": "18:57"
+        },
+        {
+          "sid": "dq_ymg",
+          "arr": "21:36",
+          "dep": "22:01"
+        },
+        {
+          "sid": "dq_dt",
+          "arr": "22:18",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51021",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "大同",
+      "to": "秦皇岛",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_dt",
+          "arr": null,
+          "dep": "14:50"
+        },
+        {
+          "sid": "dq_zgt",
+          "arr": "17:00",
+          "dep": "17:25"
+        },
+        {
+          "sid": "dq_qhd",
+          "arr": "18:11",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51023",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "秦皇岛",
+      "to": "大同",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_qhd",
+          "arr": null,
+          "dep": "18:50"
+        },
+        {
+          "sid": "dq_ymg",
+          "arr": "21:29",
+          "dep": "21:54"
+        },
+        {
+          "sid": "dq_dt",
+          "arr": "22:11",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51025",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "大同",
+      "to": "秦皇岛",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_dt",
+          "arr": null,
+          "dep": "17:00"
+        },
+        {
+          "sid": "dq_zgt",
+          "arr": "19:10",
+          "dep": "19:35"
+        },
+        {
+          "sid": "dq_qhd",
+          "arr": "20:21",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51027",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "秦皇岛",
+      "to": "大同",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_qhd",
+          "arr": null,
+          "dep": "20:00"
+        },
+        {
+          "sid": "dq_ymg",
+          "arr": "22:39",
+          "dep": "23:04"
+        },
+        {
+          "sid": "dq_dt",
+          "arr": "23:21",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51029",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "大同",
+      "to": "秦皇岛",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_dt",
+          "arr": null,
+          "dep": "18:51"
+        },
+        {
+          "sid": "dq_zgt",
+          "arr": "21:01",
+          "dep": "21:26"
+        },
+        {
+          "sid": "dq_qhd",
+          "arr": "22:12",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51031",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "秦皇岛",
+      "to": "大同",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_qhd",
+          "arr": null,
+          "dep": "24:51"
+        },
+        {
+          "sid": "dq_ymg",
+          "arr": "27:30",
+          "dep": "27:55"
+        },
+        {
+          "sid": "dq_dt",
+          "arr": "28:12",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51033",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "大同",
+      "to": "秦皇岛",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_dt",
+          "arr": null,
+          "dep": "20:50"
+        },
+        {
+          "sid": "dq_zgt",
+          "arr": "23:00",
+          "dep": "23:25"
+        },
+        {
+          "sid": "dq_qhd",
+          "arr": "24:11",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51035",
+      "line": "daqin_freight",
+      "legs": [
+        {
+          "line": "daqin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "秦皇岛",
+      "to": "大同",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "单元万吨煤列（和谐 HXD1 + C80）",
+      "stops": [
+        {
+          "sid": "dq_qhd",
+          "arr": null,
+          "dep": "25:50"
+        },
+        {
+          "sid": "dq_ymg",
+          "arr": "28:29",
+          "dep": "28:54"
+        },
+        {
+          "sid": "dq_dt",
+          "arr": "29:11",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51037",
+      "line": "haoji_freight",
+      "legs": [
+        {
+          "line": "haoji_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "浩勒报吉",
+      "to": "吉安",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "重载煤列（和谐 HXD2 + C96）",
+      "stops": [
+        {
+          "sid": "hj_hlbj",
+          "arr": null,
+          "dep": "04:57"
+        },
+        {
+          "sid": "hj_hn",
+          "arr": "07:48",
+          "dep": "08:13"
+        },
+        {
+          "sid": "hj_ja",
+          "arr": "13:17",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51039",
+      "line": "haoji_freight",
+      "legs": [
+        {
+          "line": "haoji_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "吉安",
+      "to": "浩勒报吉",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "重载煤列（和谐 HXD2 + C96）",
+      "stops": [
+        {
+          "sid": "hj_ja",
+          "arr": null,
+          "dep": "07:57"
+        },
+        {
+          "sid": "hj_hn",
+          "arr": "13:01",
+          "dep": "13:26"
+        },
+        {
+          "sid": "hj_hlbj",
+          "arr": "16:17",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51041",
+      "line": "haoji_freight",
+      "legs": [
+        {
+          "line": "haoji_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "浩勒报吉",
+      "to": "吉安",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "重载煤列（和谐 HXD2 + C96）",
+      "stops": [
+        {
+          "sid": "hj_hlbj",
+          "arr": null,
+          "dep": "06:56"
+        },
+        {
+          "sid": "hj_hn",
+          "arr": "09:47",
+          "dep": "10:12"
+        },
+        {
+          "sid": "hj_ja",
+          "arr": "15:16",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51043",
+      "line": "haoji_freight",
+      "legs": [
+        {
+          "line": "haoji_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "吉安",
+      "to": "浩勒报吉",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "重载煤列（和谐 HXD2 + C96）",
+      "stops": [
+        {
+          "sid": "hj_ja",
+          "arr": null,
+          "dep": "09:56"
+        },
+        {
+          "sid": "hj_hn",
+          "arr": "15:00",
+          "dep": "15:25"
+        },
+        {
+          "sid": "hj_hlbj",
+          "arr": "18:16",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51045",
+      "line": "haoji_freight",
+      "legs": [
+        {
+          "line": "haoji_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "浩勒报吉",
+      "to": "吉安",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "重载煤列（和谐 HXD2 + C96）",
+      "stops": [
+        {
+          "sid": "hj_hlbj",
+          "arr": null,
+          "dep": "08:50"
+        },
+        {
+          "sid": "hj_hn",
+          "arr": "11:41",
+          "dep": "12:06"
+        },
+        {
+          "sid": "hj_ja",
+          "arr": "17:10",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51047",
+      "line": "haoji_freight",
+      "legs": [
+        {
+          "line": "haoji_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "吉安",
+      "to": "浩勒报吉",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "重载煤列（和谐 HXD2 + C96）",
+      "stops": [
+        {
+          "sid": "hj_ja",
+          "arr": null,
+          "dep": "12:50"
+        },
+        {
+          "sid": "hj_hn",
+          "arr": "17:54",
+          "dep": "18:19"
+        },
+        {
+          "sid": "hj_hlbj",
+          "arr": "21:10",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51049",
+      "line": "haoji_freight",
+      "legs": [
+        {
+          "line": "haoji_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "浩勒报吉",
+      "to": "吉安",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "重载煤列（和谐 HXD2 + C96）",
+      "stops": [
+        {
+          "sid": "hj_hlbj",
+          "arr": null,
+          "dep": "10:55"
+        },
+        {
+          "sid": "hj_hn",
+          "arr": "13:46",
+          "dep": "14:11"
+        },
+        {
+          "sid": "hj_ja",
+          "arr": "19:15",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51051",
+      "line": "haoji_freight",
+      "legs": [
+        {
+          "line": "haoji_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "吉安",
+      "to": "浩勒报吉",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "重载煤列（和谐 HXD2 + C96）",
+      "stops": [
+        {
+          "sid": "hj_ja",
+          "arr": null,
+          "dep": "16:55"
+        },
+        {
+          "sid": "hj_hn",
+          "arr": "21:59",
+          "dep": "22:24"
+        },
+        {
+          "sid": "hj_hlbj",
+          "arr": "25:15",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51053",
+      "line": "haoji_freight",
+      "legs": [
+        {
+          "line": "haoji_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "浩勒报吉",
+      "to": "吉安",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "重载煤列（和谐 HXD2 + C96）",
+      "stops": [
+        {
+          "sid": "hj_hlbj",
+          "arr": null,
+          "dep": "13:01"
+        },
+        {
+          "sid": "hj_hn",
+          "arr": "15:52",
+          "dep": "16:17"
+        },
+        {
+          "sid": "hj_ja",
+          "arr": "21:21",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51055",
+      "line": "haoji_freight",
+      "legs": [
+        {
+          "line": "haoji_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "吉安",
+      "to": "浩勒报吉",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "重载煤列（和谐 HXD2 + C96）",
+      "stops": [
+        {
+          "sid": "hj_ja",
+          "arr": null,
+          "dep": "19:01"
+        },
+        {
+          "sid": "hj_hn",
+          "arr": "24:05",
+          "dep": "24:30"
+        },
+        {
+          "sid": "hj_hlbj",
+          "arr": "27:21",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51057",
+      "line": "haoji_freight",
+      "legs": [
+        {
+          "line": "haoji_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "浩勒报吉",
+      "to": "吉安",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "重载煤列（和谐 HXD2 + C96）",
+      "stops": [
+        {
+          "sid": "hj_hlbj",
+          "arr": null,
+          "dep": "14:52"
+        },
+        {
+          "sid": "hj_hn",
+          "arr": "17:43",
+          "dep": "18:08"
+        },
+        {
+          "sid": "hj_ja",
+          "arr": "23:12",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51059",
+      "line": "haoji_freight",
+      "legs": [
+        {
+          "line": "haoji_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "吉安",
+      "to": "浩勒报吉",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "重载煤列（和谐 HXD2 + C96）",
+      "stops": [
+        {
+          "sid": "hj_ja",
+          "arr": null,
+          "dep": "20:52"
+        },
+        {
+          "sid": "hj_hn",
+          "arr": "25:56",
+          "dep": "26:21"
+        },
+        {
+          "sid": "hj_hlbj",
+          "arr": "29:12",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51061",
+      "line": "shuohuang_freight",
+      "legs": [
+        {
+          "line": "shuohuang_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "朔州",
+      "to": "黄骅港",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "神华重载煤列",
+      "stops": [
+        {
+          "sid": "sh_sz",
+          "arr": null,
+          "dep": "04:51"
+        },
+        {
+          "sid": "sh_dz",
+          "arr": "06:11",
+          "dep": "06:36"
+        },
+        {
+          "sid": "sh_hhg",
+          "arr": "07:55",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51063",
+      "line": "shuohuang_freight",
+      "legs": [
+        {
+          "line": "shuohuang_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "黄骅港",
+      "to": "朔州",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "神华重载煤列",
+      "stops": [
+        {
+          "sid": "sh_hhg",
+          "arr": null,
+          "dep": "08:51"
+        },
+        {
+          "sid": "sh_dz",
+          "arr": "10:10",
+          "dep": "10:35"
+        },
+        {
+          "sid": "sh_sz",
+          "arr": "11:55",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51065",
+      "line": "shuohuang_freight",
+      "legs": [
+        {
+          "line": "shuohuang_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "朔州",
+      "to": "黄骅港",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "神华重载煤列",
+      "stops": [
+        {
+          "sid": "sh_sz",
+          "arr": null,
+          "dep": "06:57"
+        },
+        {
+          "sid": "sh_dz",
+          "arr": "08:17",
+          "dep": "08:42"
+        },
+        {
+          "sid": "sh_hhg",
+          "arr": "10:01",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51067",
+      "line": "shuohuang_freight",
+      "legs": [
+        {
+          "line": "shuohuang_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "黄骅港",
+      "to": "朔州",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "神华重载煤列",
+      "stops": [
+        {
+          "sid": "sh_hhg",
+          "arr": null,
+          "dep": "09:57"
+        },
+        {
+          "sid": "sh_dz",
+          "arr": "11:16",
+          "dep": "11:41"
+        },
+        {
+          "sid": "sh_sz",
+          "arr": "13:01",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51069",
+      "line": "shuohuang_freight",
+      "legs": [
+        {
+          "line": "shuohuang_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "朔州",
+      "to": "黄骅港",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "神华重载煤列",
+      "stops": [
+        {
+          "sid": "sh_sz",
+          "arr": null,
+          "dep": "09:00"
+        },
+        {
+          "sid": "sh_dz",
+          "arr": "10:20",
+          "dep": "10:45"
+        },
+        {
+          "sid": "sh_hhg",
+          "arr": "12:04",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51071",
+      "line": "shuohuang_freight",
+      "legs": [
+        {
+          "line": "shuohuang_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "黄骅港",
+      "to": "朔州",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "神华重载煤列",
+      "stops": [
+        {
+          "sid": "sh_hhg",
+          "arr": null,
+          "dep": "14:00"
+        },
+        {
+          "sid": "sh_dz",
+          "arr": "15:19",
+          "dep": "15:44"
+        },
+        {
+          "sid": "sh_sz",
+          "arr": "17:04",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51073",
+      "line": "shuohuang_freight",
+      "legs": [
+        {
+          "line": "shuohuang_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "朔州",
+      "to": "黄骅港",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "神华重载煤列",
+      "stops": [
+        {
+          "sid": "sh_sz",
+          "arr": null,
+          "dep": "10:51"
+        },
+        {
+          "sid": "sh_dz",
+          "arr": "12:11",
+          "dep": "12:36"
+        },
+        {
+          "sid": "sh_hhg",
+          "arr": "13:55",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51075",
+      "line": "shuohuang_freight",
+      "legs": [
+        {
+          "line": "shuohuang_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "黄骅港",
+      "to": "朔州",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "神华重载煤列",
+      "stops": [
+        {
+          "sid": "sh_hhg",
+          "arr": null,
+          "dep": "13:51"
+        },
+        {
+          "sid": "sh_dz",
+          "arr": "15:10",
+          "dep": "15:35"
+        },
+        {
+          "sid": "sh_sz",
+          "arr": "16:55",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51077",
+      "line": "shuohuang_freight",
+      "legs": [
+        {
+          "line": "shuohuang_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "朔州",
+      "to": "黄骅港",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "神华重载煤列",
+      "stops": [
+        {
+          "sid": "sh_sz",
+          "arr": null,
+          "dep": "12:51"
+        },
+        {
+          "sid": "sh_dz",
+          "arr": "14:11",
+          "dep": "14:36"
+        },
+        {
+          "sid": "sh_hhg",
+          "arr": "15:55",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51079",
+      "line": "shuohuang_freight",
+      "legs": [
+        {
+          "line": "shuohuang_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "黄骅港",
+      "to": "朔州",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "神华重载煤列",
+      "stops": [
+        {
+          "sid": "sh_hhg",
+          "arr": null,
+          "dep": "17:51"
+        },
+        {
+          "sid": "sh_dz",
+          "arr": "19:10",
+          "dep": "19:35"
+        },
+        {
+          "sid": "sh_sz",
+          "arr": "20:55",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51081",
+      "line": "shuohuang_freight",
+      "legs": [
+        {
+          "line": "shuohuang_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "朔州",
+      "to": "黄骅港",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "神华重载煤列",
+      "stops": [
+        {
+          "sid": "sh_sz",
+          "arr": null,
+          "dep": "14:52"
+        },
+        {
+          "sid": "sh_dz",
+          "arr": "16:12",
+          "dep": "16:37"
+        },
+        {
+          "sid": "sh_hhg",
+          "arr": "17:56",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51083",
+      "line": "shuohuang_freight",
+      "legs": [
+        {
+          "line": "shuohuang_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "黄骅港",
+      "to": "朔州",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "神华重载煤列",
+      "stops": [
+        {
+          "sid": "sh_hhg",
+          "arr": null,
+          "dep": "18:52"
+        },
+        {
+          "sid": "sh_dz",
+          "arr": "20:11",
+          "dep": "20:36"
+        },
+        {
+          "sid": "sh_sz",
+          "arr": "21:56",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51085",
+      "line": "wari_freight",
+      "legs": [
+        {
+          "line": "wari_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "瓦塘",
+      "to": "日照",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "万吨煤列",
+      "stops": [
+        {
+          "sid": "wr_wt",
+          "arr": null,
+          "dep": "04:54"
+        },
+        {
+          "sid": "wr_hebi",
+          "arr": "07:12",
+          "dep": "07:37"
+        },
+        {
+          "sid": "wr_rz",
+          "arr": "10:08",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51087",
+      "line": "wari_freight",
+      "legs": [
+        {
+          "line": "wari_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "日照",
+      "to": "瓦塘",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "万吨煤列",
+      "stops": [
+        {
+          "sid": "wr_rz",
+          "arr": null,
+          "dep": "09:54"
+        },
+        {
+          "sid": "wr_cz",
+          "arr": "13:03",
+          "dep": "13:28"
+        },
+        {
+          "sid": "wr_wt",
+          "arr": "15:08",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51089",
+      "line": "wari_freight",
+      "legs": [
+        {
+          "line": "wari_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "瓦塘",
+      "to": "日照",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "万吨煤列",
+      "stops": [
+        {
+          "sid": "wr_wt",
+          "arr": null,
+          "dep": "07:05"
+        },
+        {
+          "sid": "wr_hebi",
+          "arr": "09:23",
+          "dep": "09:48"
+        },
+        {
+          "sid": "wr_rz",
+          "arr": "12:19",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51091",
+      "line": "wari_freight",
+      "legs": [
+        {
+          "line": "wari_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "日照",
+      "to": "瓦塘",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "万吨煤列",
+      "stops": [
+        {
+          "sid": "wr_rz",
+          "arr": null,
+          "dep": "12:05"
+        },
+        {
+          "sid": "wr_cz",
+          "arr": "15:14",
+          "dep": "15:39"
+        },
+        {
+          "sid": "wr_wt",
+          "arr": "17:19",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51093",
+      "line": "wari_freight",
+      "legs": [
+        {
+          "line": "wari_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "瓦塘",
+      "to": "日照",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "万吨煤列",
+      "stops": [
+        {
+          "sid": "wr_wt",
+          "arr": null,
+          "dep": "09:00"
+        },
+        {
+          "sid": "wr_hebi",
+          "arr": "11:18",
+          "dep": "11:43"
+        },
+        {
+          "sid": "wr_rz",
+          "arr": "14:14",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51095",
+      "line": "wari_freight",
+      "legs": [
+        {
+          "line": "wari_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "日照",
+      "to": "瓦塘",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "万吨煤列",
+      "stops": [
+        {
+          "sid": "wr_rz",
+          "arr": null,
+          "dep": "14:00"
+        },
+        {
+          "sid": "wr_cz",
+          "arr": "17:09",
+          "dep": "17:34"
+        },
+        {
+          "sid": "wr_wt",
+          "arr": "19:14",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51097",
+      "line": "wari_freight",
+      "legs": [
+        {
+          "line": "wari_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "瓦塘",
+      "to": "日照",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "万吨煤列",
+      "stops": [
+        {
+          "sid": "wr_wt",
+          "arr": null,
+          "dep": "11:05"
+        },
+        {
+          "sid": "wr_hebi",
+          "arr": "13:23",
+          "dep": "13:48"
+        },
+        {
+          "sid": "wr_rz",
+          "arr": "16:19",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51099",
+      "line": "wari_freight",
+      "legs": [
+        {
+          "line": "wari_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "日照",
+      "to": "瓦塘",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "万吨煤列",
+      "stops": [
+        {
+          "sid": "wr_rz",
+          "arr": null,
+          "dep": "14:05"
+        },
+        {
+          "sid": "wr_cz",
+          "arr": "17:14",
+          "dep": "17:39"
+        },
+        {
+          "sid": "wr_wt",
+          "arr": "19:19",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51101",
+      "line": "baoxi_freight",
+      "legs": [
+        {
+          "line": "baoxi_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "包头",
+      "to": "西安",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "bx_bt",
+          "arr": null,
+          "dep": "04:58"
+        },
+        {
+          "sid": "bx_sx",
+          "arr": "06:43",
+          "dep": "07:08"
+        },
+        {
+          "sid": "bx_xa",
+          "arr": "09:06",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51103",
+      "line": "baoxi_freight",
+      "legs": [
+        {
+          "line": "baoxi_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "西安",
+      "to": "包头",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "bx_xa",
+          "arr": null,
+          "dep": "09:58"
+        },
+        {
+          "sid": "bx_sx",
+          "arr": "11:56",
+          "dep": "12:21"
+        },
+        {
+          "sid": "bx_bt",
+          "arr": "14:06",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51105",
+      "line": "baoxi_freight",
+      "legs": [
+        {
+          "line": "baoxi_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "包头",
+      "to": "西安",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "bx_bt",
+          "arr": null,
+          "dep": "06:54"
+        },
+        {
+          "sid": "bx_sx",
+          "arr": "08:39",
+          "dep": "09:04"
+        },
+        {
+          "sid": "bx_xa",
+          "arr": "11:02",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51107",
+      "line": "baoxi_freight",
+      "legs": [
+        {
+          "line": "baoxi_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "西安",
+      "to": "包头",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "bx_xa",
+          "arr": null,
+          "dep": "09:54"
+        },
+        {
+          "sid": "bx_sx",
+          "arr": "11:52",
+          "dep": "12:17"
+        },
+        {
+          "sid": "bx_bt",
+          "arr": "14:02",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51109",
+      "line": "baoxi_freight",
+      "legs": [
+        {
+          "line": "baoxi_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "包头",
+      "to": "西安",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "bx_bt",
+          "arr": null,
+          "dep": "08:58"
+        },
+        {
+          "sid": "bx_sx",
+          "arr": "10:43",
+          "dep": "11:08"
+        },
+        {
+          "sid": "bx_xa",
+          "arr": "13:06",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51111",
+      "line": "baoxi_freight",
+      "legs": [
+        {
+          "line": "baoxi_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "西安",
+      "to": "包头",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "bx_xa",
+          "arr": null,
+          "dep": "14:58"
+        },
+        {
+          "sid": "bx_sx",
+          "arr": "16:56",
+          "dep": "17:21"
+        },
+        {
+          "sid": "bx_bt",
+          "arr": "19:06",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51113",
+      "line": "baoxi_freight",
+      "legs": [
+        {
+          "line": "baoxi_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "包头",
+      "to": "西安",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "bx_bt",
+          "arr": null,
+          "dep": "11:09"
+        },
+        {
+          "sid": "bx_sx",
+          "arr": "12:54",
+          "dep": "13:19"
+        },
+        {
+          "sid": "bx_xa",
+          "arr": "15:17",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51115",
+      "line": "baoxi_freight",
+      "legs": [
+        {
+          "line": "baoxi_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "西安",
+      "to": "包头",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "bx_xa",
+          "arr": null,
+          "dep": "16:09"
+        },
+        {
+          "sid": "bx_sx",
+          "arr": "18:07",
+          "dep": "18:32"
+        },
+        {
+          "sid": "bx_bt",
+          "arr": "20:17",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51117",
+      "line": "taizhongyin_freight",
+      "legs": [
+        {
+          "line": "taizhongyin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "太原",
+      "to": "中卫",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "tzy_ty",
+          "arr": null,
+          "dep": "05:00"
+        },
+        {
+          "sid": "tzy_zz",
+          "arr": "06:07",
+          "dep": "06:32"
+        },
+        {
+          "sid": "tzy_zw",
+          "arr": "09:05",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51119",
+      "line": "taizhongyin_freight",
+      "legs": [
+        {
+          "line": "taizhongyin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "中卫",
+      "to": "太原",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "tzy_zw",
+          "arr": null,
+          "dep": "10:00"
+        },
+        {
+          "sid": "tzy_lls",
+          "arr": "12:57",
+          "dep": "13:22"
+        },
+        {
+          "sid": "tzy_ty",
+          "arr": "14:05",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51121",
+      "line": "taizhongyin_freight",
+      "legs": [
+        {
+          "line": "taizhongyin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "太原",
+      "to": "中卫",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "tzy_ty",
+          "arr": null,
+          "dep": "07:05"
+        },
+        {
+          "sid": "tzy_zz",
+          "arr": "08:12",
+          "dep": "08:37"
+        },
+        {
+          "sid": "tzy_zw",
+          "arr": "11:10",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51123",
+      "line": "taizhongyin_freight",
+      "legs": [
+        {
+          "line": "taizhongyin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "中卫",
+      "to": "太原",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "tzy_zw",
+          "arr": null,
+          "dep": "11:05"
+        },
+        {
+          "sid": "tzy_lls",
+          "arr": "14:02",
+          "dep": "14:27"
+        },
+        {
+          "sid": "tzy_ty",
+          "arr": "15:10",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51125",
+      "line": "taizhongyin_freight",
+      "legs": [
+        {
+          "line": "taizhongyin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "太原",
+      "to": "中卫",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "tzy_ty",
+          "arr": null,
+          "dep": "08:57"
+        },
+        {
+          "sid": "tzy_zz",
+          "arr": "10:04",
+          "dep": "10:29"
+        },
+        {
+          "sid": "tzy_zw",
+          "arr": "13:02",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51127",
+      "line": "taizhongyin_freight",
+      "legs": [
+        {
+          "line": "taizhongyin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "中卫",
+      "to": "太原",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "tzy_zw",
+          "arr": null,
+          "dep": "12:57"
+        },
+        {
+          "sid": "tzy_lls",
+          "arr": "15:54",
+          "dep": "16:19"
+        },
+        {
+          "sid": "tzy_ty",
+          "arr": "17:02",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51129",
+      "line": "taizhongyin_freight",
+      "legs": [
+        {
+          "line": "taizhongyin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "太原",
+      "to": "中卫",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "tzy_ty",
+          "arr": null,
+          "dep": "10:52"
+        },
+        {
+          "sid": "tzy_zz",
+          "arr": "11:59",
+          "dep": "12:24"
+        },
+        {
+          "sid": "tzy_zw",
+          "arr": "14:57",
+          "dep": null
+        }
+      ]
+    },
+    {
+      "code": "H51131",
+      "line": "taizhongyin_freight",
+      "legs": [
+        {
+          "line": "taizhongyin_freight",
+          "i0": 0,
+          "i1": 2
+        }
+      ],
+      "type": "FREIGHT",
+      "from": "中卫",
+      "to": "太原",
+      "off_map": false,
+      "express": false,
+      "generated": true,
+      "freight": true,
+      "source": "generated_freight",
+      "note": "客货共线货车",
+      "stops": [
+        {
+          "sid": "tzy_zw",
+          "arr": null,
+          "dep": "15:52"
+        },
+        {
+          "sid": "tzy_lls",
+          "arr": "18:49",
+          "dep": "19:14"
+        },
+        {
+          "sid": "tzy_ty",
+          "arr": "19:57",
+          "dep": null
+        }
+      ]
+    }
+  ]
+}
