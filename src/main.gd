@@ -116,6 +116,13 @@ func _shot_tick() -> void:
 	if _shot_frame == 8 and _shot_mode == "zoom":
 		cam.position = DB.line("jinghu_hsr")["stations"]["jnx"]["pos"]
 		cam.zoom = Vector2(0.03, 0.03)
+	if _shot_frame == 8 and _shot_mode == "focus":
+		# 模拟点击沪昆高铁线体：专注模式
+		Meta.set_focus_line("hukun_hsr")
+		var line: Dictionary = DB.line("hukun_hsr")
+		cam.follow_code = ""
+		cam.position = line["center"]
+		cam.zoom = Vector2(line["fit_zoom"], line["fit_zoom"])
 	if _shot_frame == 8 and _shot_mode == "zoom2":
 		# 闽赣浙交界（用户圈注区域）
 		cam.position = Vector2((117.9 - 118.85) * 90627.0, -(27.9 - 35.5) * 110574.0)
@@ -252,6 +259,13 @@ func _pick_station(world_pos: Vector2) -> void:
 	if best_sid == "":
 		var lid: String = DB.nearest_line(world_pos, 22.0 / cam.zoom.x)
 		if lid != "":
+			# 点击线路：直接专注展示该线（地图放大+隐藏其他线），并打开线路页面
+			Meta.set_focus_line(lid if Meta.focus_line != lid else "")
+			if Meta.focus_line != "":
+				var line: Dictionary = DB.line(lid)
+				cam.follow_code = ""
+				cam.position = line["center"]
+				cam.zoom = Vector2(line["fit_zoom"], line["fit_zoom"])
 			ui.line_screen.open(lid)
 		return
 	var line: Dictionary = DB.lines[best_line]

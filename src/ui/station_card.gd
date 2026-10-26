@@ -1,13 +1,32 @@
-# 站点信息卡：点击车站显示简介（所属线路、公里标、日均停靠车次、
-# 大站附一句人工简介）。
+# 站点信息卡（可编辑版）：显示站点简介/图片，支持用户编辑文字与添加
+# 本地图片。用户内容保存在 user://station_content/<站名>.json，
+# 图片复制到 user://station_images/<站名>/，与内置 INTROS 合并展示。
 extends PanelContainer
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
+
+const CONTENT_DIR := "user://station_content"
+const IMG_DIR := "user://station_images"
 
 var title_label: Label
 var lines_label: Label
 var stats_label: Label
 var desc_label: RichTextLabel
+var images_row: HBoxContainer
+var edit_toggle_btn: Button
+var edit_box: VBoxContainer
+var text_edit: TextEdit
+var add_img_btn: Button
+var save_btn: Button
+
+var cur_name := ""
+var cur_lines: Array = []
+var cur_km := 0
+var cur_stops := 0
+var cur_major := false
+var user_text := ""
+var user_images: Array = []
+var editing := false
 
 
 const INTROS := {
@@ -48,7 +67,7 @@ func _ready() -> void:
 	add_theme_stylebox_override("panel", UIKit.flat(UIKit.BG, 12, UIKit.BORDER, 1, 14))
 	set_anchors_and_offsets_preset(Control.PRESET_CENTER_RIGHT, Control.PRESET_MODE_MINSIZE, 14)
 	grow_vertical = Control.GROW_DIRECTION_BOTH
-	custom_minimum_size = Vector2(360, 0)
+	custom_minimum_size = Vector2(370, 0)
 	visible = false
 
 	var vb := VBoxContainer.new()
@@ -63,6 +82,9 @@ func _ready() -> void:
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(sp)
+	var edit_btn := UIKit.button("✏ 编辑", func(): _toggle_edit())
+	edit_btn.custom_minimum_size = Vector2(64, 26)
+	head.add_child(edit_btn)
 	var close_btn := UIKit.button("×", func(): hide())
 	close_btn.custom_minimum_size = Vector2(30, 26)
 	head.add_child(close_btn)
@@ -72,24 +94,136 @@ func _ready() -> void:
 	vb.add_child(lines_label)
 	stats_label = UIKit.label("", 12, UIKit.TEXT)
 	vb.add_child(stats_label)
+
+	images_row = HBoxContainer.new()
+	images_row.add_theme_constant_override("separation", 6)
+	images_row.visible = false
+	vb.add_child(images_row)
+
 	desc_label = RichTextLabel.new()
 	desc_label.bbcode_enabled = true
 	desc_label.fit_content = true
-	desc_label.custom_minimum_size = Vector2(330, 0)
+	desc_label.custom_minimum_size = Vector2(340, 0)
 	desc_label.add_theme_color_override("default_color", UIKit.TEXT)
 	vb.add_child(desc_label)
+
+	edit_box = VBoxContainer.new()
+	edit_box.add_theme_constant_override("separation", 4)
+	edit_box.visible = false
+	vb.add_child(edit_box)
+	var hint := UIKit.label("输入你的介绍/拍车笔记（保存在本机，仅自己可见）：", 11, UIKit.DIM)
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	edit_box.add_child(hint)
+	text_edit = TextEdit.new()
+	text_edit.custom_minimum_size = Vector2(340, 90)
+	text_edit.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+	edit_box.add_child(text_edit)
+	var btns := HBoxContainer.new()
+	btns.add_theme_constant_override("separation", 8)
+	edit_box.add_child(btns)
+	add_img_btn = UIKit.button("📷 添加图片", func(): _pick_image())
+	btns.add_child(add_img_btn)
+	save_btn = UIKit.button("💾 保存", func(): _save_content(), "primary")
+	btns.add_child(save_btn)
 
 
 func show_station(station_name: String, line_names: Array, km: int,
 		daily_stops: int, major: bool) -> void:
-	title_label.text = station_name + ("　●枢纽" if major else "")
-	lines_label.text = "所属线路：" + "、".join(line_names)
-	stats_label.text = "公里标 K%d · 日均停靠约 %d 趟" % [km, daily_stops]
-	var intro: String = INTROS.get(station_name, "")
-	if intro != "":
-		desc_label.text = "[color=#8b96a8]" + intro + "[/color]"
-		desc_label.visible = true
-	else:
-		desc_label.text = ""
-		desc_label.visible = false
+	cur_name = station_name
+	cur_lines = line_names
+	cur_km = km
+	cur_stops = daily_stops
+	cur_major = major
+	_toggle_edit(false)
+	_reload()
 	visible = true
+
+
+func _reload() -> void:
+	title_label.text = cur_name + ("　●枢纽" if cur_major else "")
+	lines_label.text = ("所属线路：" + "、".join(cur_lines)) if not cur_lines.is_empty() else "所属线路：—"
+	stats_label.text = "公里标 K%d · 日均停靠约 %d 趟" % [cur_km, cur_stops]
+
+	user_text = ""
+	user_images = []
+	var upath := CONTENT_DIR + "/" + cur_name + ".json"
+	if FileAccess.file_exists(upath):
+		var parsed = JSON.parse_string(FileAccess.open(upath, FileAccess.READ).get_as_text())
+		if typeof(parsed) == TYPE_DICTIONARY:
+			user_text = str(parsed.get("text", ""))
+			for img in parsed.get("images", []):
+				user_images.append(str(img))
+
+	var intro: String = INTROS.get(cur_name, "")
+	var parts: Array = []
+	if intro != "":
+		parts.append("[color=#8b96a8]" + intro + "[/color]")
+	if user_text != "":
+		parts.append("[color=#dbe2ee]" + user_text + "[/color]")
+	desc_label.text = "\n".join(parts)
+	desc_label.visible = not parts.is_empty()
+
+	for c in images_row.get_children():
+		c.queue_free()
+	images_row.visible = not user_images.is_empty()
+	for img_path in user_images:
+		if not FileAccess.file_exists(img_path):
+			continue
+		var img := Image.load_from_file(img_path)
+		if img == null:
+			continue
+		var tex := ImageTexture.create_from_image(img)
+		var tr := TextureRect.new()
+		tr.texture = tex
+		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		tr.custom_minimum_size = Vector2(105, 78)
+		images_row.add_child(tr)
+	editing = false
+	edit_box.visible = false
+
+
+func _toggle_edit(force: bool = true) -> void:
+	editing = force if force != editing else not editing
+	edit_box.visible = editing
+	if editing:
+		text_edit.text = user_text if user_text != "" else INTROS.get(cur_name, "")
+
+
+func _save_content() -> void:
+	DirAccess.make_dir_recursive_absolute(CONTENT_DIR)
+	var path := CONTENT_DIR + "/" + cur_name + ".json"
+	var doc := {"text": text_edit.text, "images": user_images}
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	f.store_string(JSON.stringify(doc, "  "))
+	f.close()
+	_toggle_edit(false)
+	_reload()
+
+
+func _pick_image() -> void:
+	var fd := FileDialog.new()
+	fd.access = FileDialog.ACCESS_FILESYSTEM
+	fd.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	fd.filters = ["*.png ; PNG 图片", "*.jpg ; JPEG 图片", "*.jpeg ; JPEG 图片"]
+	add_child(fd)
+	fd.file_selected.connect(func(path: String):
+		var dir := IMG_DIR + "/" + cur_name
+		DirAccess.make_dir_recursive_absolute(dir)
+		var ext := path.get_extension()
+		var dest := dir + "/img_%d.%s" % [Time.get_ticks_msec(), ext]
+		var src := FileAccess.open(path, FileAccess.READ)
+		var dst := FileAccess.open(dest, FileAccess.WRITE)
+		dst.store_buffer(src.get_buffer(src.get_length()))
+		dst.close()
+		src.close()
+		user_images.append(dest)
+		DirAccess.make_dir_recursive_absolute(CONTENT_DIR)
+		var cpath := CONTENT_DIR + "/" + cur_name + ".json"
+		var f := FileAccess.open(cpath, FileAccess.WRITE)
+		f.store_string(JSON.stringify({"text": user_text, "images": user_images}, "  "))
+		f.close()
+		_toggle_edit(false)
+		_reload()
+		fd.queue_free())
+	fd.popup_centered(Vector2i(700, 500))
