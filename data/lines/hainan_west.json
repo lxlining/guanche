@@ -1,0 +1,33 @@
+{
+  "id": "hainan_west",
+  "name": "海南环岛高铁（西段）",
+  "short": "海南西环",
+  "from": "海口",
+  "to": "三亚",
+  "length_km": 345,
+  "color": "#22d3ee",
+  "line_class": "intercity",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。",
+  "stations": [
+    { "id": "hnw_hk",   "name": "海口",   "lon": 110.330, "lat": 20.030, "km": 0,   "major": true },
+    { "id": "hnw_fsc",  "name": "福山镇", "lon": 109.900, "lat": 19.900, "km": 48,  "major": false },
+    { "id": "hnw_lgn",  "name": "临高南", "lon": 109.690, "lat": 19.820, "km": 75,  "major": false },
+    { "id": "hnw_dz",   "name": "儋州",   "lon": 109.400, "lat": 19.730, "km": 120, "major": true },
+    { "id": "hnw_qzw",  "name": "棋子湾", "lon": 108.960, "lat": 19.520, "km": 180, "major": false },
+    { "id": "hnw_df",   "name": "东方",   "lon": 108.650, "lat": 19.090, "km": 224, "major": false },
+    { "id": "hnw_ld",   "name": "乐东",   "lon": 108.900, "lat": 18.730, "km": 280, "major": false },
+    { "id": "hnw_yz",   "name": "崖州",   "lon": 109.170, "lat": 18.330, "km": 320, "major": false },
+    { "id": "hnw_sy",   "name": "三亚",   "lon": 109.500, "lat": 18.290, "km": 345, "major": true }
+  ],
+  "geometry": [
+    [110.330, 20.030, "hnw_hk"],
+    [109.900, 19.900, "hnw_fsc"],
+    [109.690, 19.820, "hnw_lgn"],
+    [109.400, 19.730, "hnw_dz"],
+    [108.960, 19.520, "hnw_qzw"],
+    [108.650, 19.090, "hnw_df"],
+    [108.900, 18.730, "hnw_ld"],
+    [109.170, 18.330, "hnw_yz"],
+    [109.500, 18.290, "hnw_sy"]
+  ]
+}

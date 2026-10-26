@@ -1,0 +1,21 @@
+{
+  "id": "qinbei_rail",
+  "name": "钦北铁路",
+  "short": "钦北线",
+  "from": "钦州东",
+  "to": "北海",
+  "length_km": 100,
+  "color": "#a8a29e",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；北部湾沿海通道。",
+  "stations": [
+    { "id": "qb_qzd", "name": "钦州东", "lon": 108.650, "lat": 21.970, "km": 0,   "major": true },
+    { "id": "qb_hpx", "name": "合浦",   "lon": 109.180, "lat": 21.640, "km": 65,  "major": false },
+    { "id": "qb_bh",  "name": "北海",   "lon": 109.120, "lat": 21.480, "km": 100, "major": true }
+  ],
+  "geometry": [
+    [108.650, 21.970, "qb_qzd"],
+    [109.180, 21.640, "qb_hpx"],
+    [109.120, 21.480, "qb_bh"]
+  ]
+}

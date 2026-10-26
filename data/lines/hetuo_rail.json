@@ -1,0 +1,29 @@
+{
+  "id": "hetuo_rail",
+  "name": "和若铁路",
+  "short": "和若线",
+  "from": "和田",
+  "to": "若羌",
+  "length_km": 825,
+  "color": "#a8a29e",
+  "line_class": "conventional",
+  "note": "站点坐标与里程为公开资料整理的近似值；2022 年通车，世界首条环沙漠铁路环线（与格库、南疆闭合塔里木环）。",
+  "stations": [
+    { "id": "ht_ht",  "name": "和田",   "lon": 79.920, "lat": 37.110, "km": 0,   "major": true },
+    { "id": "ht_cl",  "name": "策勒",   "lon": 80.730, "lat": 36.990, "km": 90,  "major": false },
+    { "id": "ht_yt",  "name": "于田",   "lon": 81.670, "lat": 36.850, "km": 180, "major": false },
+    { "id": "ht_mf",  "name": "民丰",   "lon": 82.680, "lat": 37.060, "km": 290, "major": false },
+    { "id": "ht_qm",  "name": "且末",   "lon": 85.530, "lat": 38.140, "km": 530, "major": false },
+    { "id": "ht_yg",  "name": "依吞布拉克", "lon": 87.400, "lat": 38.600, "km": 700, "major": false },
+    { "id": "ht_rq",  "name": "若羌",   "lon": 88.170, "lat": 39.020, "km": 825, "major": true }
+  ],
+  "geometry": [
+    [79.920, 37.110, "ht_ht"],
+    [80.730, 36.990, "ht_cl"],
+    [81.670, 36.850, "ht_yt"],
+    [82.680, 37.060, "ht_mf"],
+    [85.530, 38.140, "ht_qm"],
+    [87.400, 38.600, "ht_yg"],
+    [88.170, 39.020, "ht_rq"]
+  ]
+}

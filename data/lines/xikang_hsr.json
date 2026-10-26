@@ -1,0 +1,25 @@
+{
+  "id": "xikang_hsr",
+  "name": "西康高速铁路",
+  "short": "西康高铁",
+  "from": "西安东",
+  "to": "安康西",
+  "length_km": 171,
+  "color": "#a5b4fc",
+  "line_class": "hsr250",
+  "note": "站点坐标与里程为公开资料整理的近似值；西渝高铁共线段。",
+  "stations": [
+    { "id": "xk_xad",  "name": "西安东",   "lon": 109.070, "lat": 34.280, "km": 0,   "major": true },
+    { "id": "xk_ltn",  "name": "蓝田",     "lon": 109.320, "lat": 34.150, "km": 30,  "major": false },
+    { "id": "xk_zax",  "name": "柞水西",   "lon": 109.110, "lat": 33.690, "km": 77,  "major": false },
+    { "id": "xk_ypx",  "name": "营盘西",   "lon": 108.990, "lat": 33.540, "km": 100, "major": false },
+    { "id": "xk_akx",  "name": "安康西",   "lon": 108.890, "lat": 32.700, "km": 171, "major": true }
+  ],
+  "geometry": [
+    [109.070, 34.280, "xk_xad"],
+    [109.320, 34.150, "xk_ltn"],
+    [109.110, 33.690, "xk_zax"],
+    [108.990, 33.540, "xk_ypx"],
+    [108.890, 32.700, "xk_akx"]
+  ]
+}
