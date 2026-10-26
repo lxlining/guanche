@@ -61,6 +61,9 @@ func _ready() -> void:
 	ui.diagram.connect("train_picked", _on_diagram_pick)
 	ui.line_screen.connect("code_picked", _on_line_screen_pick)
 	ui.train_search_picked.connect(_on_train_search_pick)
+	ui.cam_jump_requested.connect(func(wpos: Vector2):
+		cam.follow_code = ""
+		cam.position = wpos)
 
 	if Meta.is_fresh:
 		ui.help_panel.visible = true

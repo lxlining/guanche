@@ -18,16 +18,52 @@ func _process(_delta: float) -> void:
 	queue_redraw()
 
 
+# 天色因子：0=深夜 1=正午；根据游戏时刻计算
+static func daylight_factor(t: float) -> float:
+	var h := t / 3600.0  # 小时 0-24
+	if h >= 7.0 and h <= 17.0:
+		return 1.0
+	if h > 17.0 and h < 20.0:
+		return 1.0 - (h - 17.0) / 3.0  # 黄昏渐暗
+	if h >= 5.0 and h < 7.0:
+		return (h - 5.0) / 2.0  # 黎明渐亮
+	return 0.0
+
+
+func _sky_color(df: float) -> Color:
+	# 深夜 → 黎明 → 正午 → 黄昏
+	var night := Color(0.028, 0.036, 0.055)
+	var dawn := Color(0.10, 0.08, 0.10)
+	var noon := Color(0.075, 0.095, 0.135)
+	var dusk := Color(0.09, 0.065, 0.075)
+	if df >= 0.95:
+		return noon
+	if df >= 0.5:
+		return dawn.lerp(noon, (df - 0.5) / 0.45)
+	if df >= 0.15:
+		return dawn
+	return night.lerp(dawn, df / 0.15)
+
+
+func _dim_color(c: Color, df: float) -> Color:
+	# 线路/标注亮度随天色衰减（夜间暗淡但仍可见）
+	var k := 0.55 + 0.45 * df
+	return Color(c.r * k, c.g * k, c.b * k, c.a)
+
+
 func _draw() -> void:
 	var cam := get_viewport().get_camera_2d()
 	var zoom := cam.zoom.x if cam != null else DB.fit_zoom
 	var px := 1.0 / zoom
-
+	var df := daylight_factor(GameTime.t)
 	var wf: float = clampf(zoom / 0.01, 0.55, 1.0)
+	# 天空背景
+	var sky := _sky_color(df)
+	draw_rect(Rect2(Vector2(-2e6, -2e6), Vector2(6e6, 6e6)), sky)
 	_draw_graticule(px)
 	_draw_geography(px)
-	_draw_line(px, wf)
-	_draw_stations(px)
+	_draw_line(px, wf, df)
+	_draw_stations(px, df)
 
 
 func _draw_graticule(px: float) -> void:
@@ -72,7 +108,7 @@ func _draw_geography(px: float) -> void:
 
 const CLASS_WIDTH := {"hsr350": 5.5, "hsr250": 4.5, "intercity": 4.0, "conventional": 2.6, "freight": 3.2}
 
-func _draw_line(px: float, wf: float) -> void:
+func _draw_line(px: float, wf: float, df: float) -> void:
 	for line_id in DB.line_order:
 		if Meta.is_focus_line(line_id):
 			continue
@@ -83,11 +119,13 @@ func _draw_line(px: float, wf: float) -> void:
 		for p in line["geometry_pts"]:
 			pts.append(p["pos"])
 		var core: float = float(CLASS_WIDTH.get(DB.line_class(line_id), 4.5))
-		draw_polyline(pts, COL_LINE_BASE, (core + 5.0) * wf * px, true)
-		draw_polyline(pts, line["color"], core * wf * px, true)
+		var base_c := _dim_color(COL_LINE_BASE, df)
+		var line_c := _dim_color(line["color"], 0.4 + 0.6 * df)
+		draw_polyline(pts, base_c, (core + 5.0) * wf * px, true)
+		draw_polyline(pts, line_c, core * wf * px, true)
 
 
-func _draw_stations(px: float) -> void:
+func _draw_stations(px: float, df: float) -> void:
 	for line_id in DB.line_order:
 		if Meta.is_focus_line(line_id):
 			continue
@@ -100,6 +138,7 @@ func _draw_stations(px: float) -> void:
 			var pos: Vector2 = st["pos"]
 			var major: bool = st["major"]
 			var r := (5.0 if major else 3.2) * px
+			var ring_c := _dim_color(COL_STATION_RING, 0.35 + 0.65 * df)
 			draw_circle(pos, r, COL_STATION_FILL)
-			draw_arc(pos, r, 0.0, TAU, 24, COL_STATION_RING, 1.4 * px, true)
+			draw_arc(pos, r, 0.0, TAU, 24, ring_c, 1.4 * px, true)
 		# 站名由 LabelLayer（屏幕空间）绘制

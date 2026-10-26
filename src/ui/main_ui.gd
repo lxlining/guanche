@@ -2,6 +2,7 @@
 extends CanvasLayer
 
 signal train_search_picked(code: String)
+signal cam_jump_requested(world_pos: Vector2)
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
 const FontLib := preload("res://src/ui/font_lib.gd")
@@ -13,6 +14,7 @@ const DiagramView := preload("res://src/ui/diagram_view.gd")
 const StationCard := preload("res://src/ui/station_card.gd")
 const LineScreen := preload("res://src/ui/line_screen.gd")
 const GlobalSearch := preload("res://src/ui/global_search.gd")
+const MiniMap := preload("res://src/ui/mini_map.gd")
 
 var ui_root: Control
 var clock_label: Label
@@ -32,6 +34,7 @@ var dex: Control
 var ach_screen: Control
 var diagram: Control
 var station_card: Control
+var mini_map: Control
 var line_screen: Control
 var global_search: Control
 var focus_pill: PanelContainer
@@ -62,6 +65,13 @@ func _ready() -> void:
 	ui_root.add_child(diagram)
 	station_card = StationCard.new()
 	ui_root.add_child(station_card)
+	mini_map = MiniMap.new()
+	mini_map.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 14)
+	mini_map.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	mini_map.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	mini_map.jump_requested.connect(func(wpos: Vector2):
+		cam_jump_requested.emit(wpos))
+	ui_root.add_child(mini_map)
 	line_screen = LineScreen.new()
 	ui_root.add_child(line_screen)
 	_build_help()
