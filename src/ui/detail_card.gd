@@ -8,6 +8,7 @@ signal closed
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
 const EmuIllu := preload("res://src/ui/emu_illustration.gd")
+const Announcement := preload("res://src/ui/announcement.gd")
 
 var code := ""
 var following := false
@@ -87,6 +88,14 @@ func _ready() -> void:
 	follow_btn.pressed.connect(func(): follow_requested.emit(code))
 	btns.add_child(follow_btn)
 	btns.add_child(UIKit.button("定位", func(): locate_requested.emit(code)))
+	var tts_btn := UIKit.button("🔊 车站播报", func(): _play_arrival())
+	tts_btn.toggle_mode = true
+	tts_btn.toggled.connect(func(on: bool):
+		if on:
+			_play_arrival()
+		else:
+			DisplayServer.tts_stop())
+	btns.add_child(tts_btn)
 	var sp2 := Control.new()
 	sp2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	btns.add_child(sp2)
@@ -114,6 +123,39 @@ func set_train(c: String) -> void:
 
 func _open_station_info(sname: String, line_id: String, sid: String, km: int) -> void:
 	station_info_requested.emit(sname, line_id, sid, km)
+
+
+var _tts_voice := ""
+
+func _play_arrival() -> void:
+	if not DB.train_by_code.has(code):
+		return
+	var train: Dictionary = DB.train_by_code[code]
+	var bureau: String = Announcement.bureau_id_from_station(train["from"])
+	var text: String = Announcement.arrival_text(bureau, train["code"],
+			train["from"], train["to"], "")
+	# 停站状态下播报下一站
+	var st: Dictionary = Simulation.states.get(code, {})
+	if str(st.get("status", "")) == "stop":
+		var cur_i := int(st.get("stop_idx", 0))
+		if cur_i + 1 < train["stops"].size():
+			var next_name: String = str(train["stops"][cur_i + 1].get("name", ""))
+			text = Announcement.onboard_text(train["code"], next_name)
+	# TTS 播报
+	var voices := DisplayServer.tts_get_voices_for_language("zh")
+	if voices.is_empty():
+		voices = DisplayServer.tts_get_voices()
+	if voices.is_empty():
+		return
+	if _tts_voice == "":
+		for v in DisplayServer.tts_get_voices():
+			var vn: String = str(v.get("name", ""))
+			if "Huihui" in vn or "Kangkang" in vn or "Yaoyao" in vn or "zh" in str(v.get("language", "")):
+				_tts_voice = str(v.get("id", vn))
+				break
+		if _tts_voice == "" and not voices.is_empty():
+			_tts_voice = str(voices[0])
+	DisplayServer.tts_speak(text, _tts_voice, 100, 1.0)
 
 
 func _close() -> void:
