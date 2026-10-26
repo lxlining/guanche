@@ -1,6 +1,8 @@
 # 主 UI 外壳：时钟、时间控制条、顶部按钮、跟随/机位提示、成就弹窗、帮助与各子界面。
 extends CanvasLayer
 
+signal train_search_picked(code: String)
+
 const UIKit := preload("res://src/ui/ui_kit.gd")
 const FontLib := preload("res://src/ui/font_lib.gd")
 const TrainList := preload("res://src/ui/train_list.gd")
@@ -10,6 +12,7 @@ const AchievementsScreen := preload("res://src/ui/achievements_screen.gd")
 const DiagramView := preload("res://src/ui/diagram_view.gd")
 const StationCard := preload("res://src/ui/station_card.gd")
 const LineScreen := preload("res://src/ui/line_screen.gd")
+const GlobalSearch := preload("res://src/ui/global_search.gd")
 
 var ui_root: Control
 var clock_label: Label
@@ -30,6 +33,9 @@ var ach_screen: Control
 var diagram: Control
 var station_card: Control
 var line_screen: Control
+var global_search: Control
+var focus_pill: PanelContainer
+var focus_label: Label
 var help_panel: Control
 
 
@@ -37,6 +43,7 @@ func _ready() -> void:
 	layer = 10
 	_build_root()
 	_build_clock()
+	_build_global_search()
 	_build_legend()
 	_build_top_buttons()
 	_build_time_bar()
@@ -59,6 +66,14 @@ func _ready() -> void:
 	ui_root.add_child(line_screen)
 	_build_help()
 
+	focus_pill = UIKit.panel_container(UIKit.flat(Color("1a2230e6"), 10, UIKit.WARN, 1, 10))
+	focus_pill.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP, Control.PRESET_MODE_MINSIZE, 92)
+	focus_pill.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	focus_label = UIKit.label("", 13, UIKit.WARN)
+	focus_pill.add_child(focus_label)
+	focus_pill.visible = false
+	ui_root.add_child(focus_pill)
+	Meta.focus_line_changed.connect(_on_focus_changed)
 	Meta.achievement_unlocked.connect(_on_achievement)
 	Meta.type_discovered.connect(_on_type_discovered)
 	Meta.spot_mode_changed.connect(_on_spot_mode)
@@ -329,6 +344,52 @@ func _on_achievement(ach: Dictionary) -> void:
 func _on_type_discovered(type_id: String) -> void:
 	var tt: Dictionary = DB.train_types.get(type_id, {})
 	toast("图鉴更新", "首次发现 %s（%s）" % [tt.get("name", type_id), tt.get("family", "")], UIKit.GOOD)
+
+
+func _on_focus_changed() -> void:
+	if Meta.focus_line == "":
+		focus_pill.visible = false
+	else:
+		focus_pill.visible = true
+		focus_label.text = "线路专注：%s · 点击其他线路切换 · [Esc] 退出" % DB.line(Meta.focus_line)["short"]
+
+
+func open_station_by_name(sname: String) -> void:
+	for line_id in DB.line_order:
+		var line: Dictionary = DB.lines[line_id]
+		for sid in line["order"]:
+			if line["stations"][sid]["name"] == sname:
+				var lines_arr: Array = []
+				for lid2 in DB.line_order:
+					var l2: Dictionary = DB.lines[lid2]
+					for sid2 in l2["order"]:
+						if l2["stations"][sid2]["name"] == sname:
+							lines_arr.append(str(l2["short"]))
+							break
+				var stops_n := 0
+				for tr in DB.trains:
+					for stop in tr["stops"]:
+						if str(stop.get("name", "")) == sname:
+							stops_n += 1
+							break
+				station_card.show_station(sname, lines_arr, int(line["stations"][sid]["km"]), stops_n,
+						bool(line["stations"][sid]["major"]))
+				return
+
+
+func _build_global_search() -> void:
+	global_search = GlobalSearch.new()
+	global_search.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP, Control.PRESET_MODE_MINSIZE, 12)
+	global_search.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	ui_root.add_child(global_search)
+	global_search.train_picked.connect(func(code: String):
+		diagram.visible = false
+		line_screen.visible = false
+		train_search_picked.emit(code))
+	global_search.station_picked.connect(func(sname: String):
+		open_station_by_name(sname))
+	global_search.line_picked.connect(func(line_id: String):
+		line_screen.open(line_id))
 
 
 func _on_spot_mode(on: bool) -> void:

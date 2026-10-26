@@ -6,6 +6,7 @@ signal achievement_unlocked(ach: Dictionary)
 signal spots_changed
 signal spot_mode_changed(enabled: bool)
 signal class_visibility_changed
+signal focus_line_changed
 
 const GeoScript := preload("res://src/core/geo.gd")
 const SAVE_PATH := "user://savegame.json"
@@ -31,6 +32,16 @@ var visited: Dictionary = {}      # sid -> true
 var _last_observe: Dictionary = {}  # code -> 上次观测的游戏时刻
 var is_fresh: bool = true           # 从未存过档（用于首次引导）
 var class_visible: Dictionary = {"hsr350": true, "hsr250": true, "intercity": true, "conventional": true, "freight": true}
+var focus_line: String = ""
+
+
+func set_focus_line(line_id: String) -> void:
+	focus_line = line_id
+	focus_line_changed.emit()
+
+
+func is_focus_line(line_id: String) -> bool:
+	return focus_line != "" and focus_line != line_id
 
 
 func set_class_visible(cls: String, on: bool) -> void:

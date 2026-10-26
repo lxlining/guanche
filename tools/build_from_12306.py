@@ -97,6 +97,43 @@ def main():
             "short": doc.get("short", line_id),
         }
 
+    # 全网站名图：节点=站名，边=同线相邻站对（跨线共站自然连通）
+    name_graph = {}
+    for line_id, L in lines.items():
+        doc = all_lines[line_id][0]
+        seq = [s["name"] for s in doc["stations"]]
+        for a, b in zip(seq, seq[1:]):
+            if a == b:
+                continue
+            name_graph.setdefault(a, set()).add(b)
+            name_graph.setdefault(b, set()).add(a)
+
+    def shortest_path(a, b, max_hops=16):
+        if a == b:
+            return [a]
+        if a not in name_graph or b not in name_graph:
+            return None
+        prev = {a: None}
+        queue = [a]
+        hops = 0
+        while queue and hops < max_hops:
+            nxt = []
+            for node in queue:
+                for nb in name_graph.get(node, ()):
+                    if nb in prev:
+                        continue
+                    prev[nb] = node
+                    if nb == b:
+                        path = [b]
+                        while prev[path[-1]] is not None:
+                            path.append(prev[path[-1]])
+                        path.reverse()
+                        return path
+                    nxt.append(nb)
+            queue = nxt
+            hops += 1
+        return None
+
     with open(os.path.join("tools", "cache12306", "index.json"), encoding="utf-8") as f:
         index = json.load(f)
     details = load_jsonl(os.path.join("tools", "cache12306", "detail.jsonl"))
@@ -213,7 +250,17 @@ def main():
                              (dv + off) * 60 if dv is not None else None))
             lib.validate_schedule(norm, all_lines[leg["line_id"]][2], code, warnings)
 
-        legs_json = [{"line": leg["line_id"], "i0": leg["i0"], "i1": leg["i1"]} for leg in legs]
+        legs_json = []
+        for k in range(len(legs)):
+            leg = legs[k]
+            entry = {"line": leg["line_id"], "i0": leg["i0"], "i1": leg["i1"]}
+            if k + 1 < len(legs):
+                gap_a = abs_stops[leg["i1"]][0]
+                gap_b = abs_stops[legs[k + 1]["i0"]][0]
+                path = shortest_path(gap_a, gap_b)
+                if path and len(path) >= 2:
+                    entry["transfer_path"] = path
+            legs_json.append(entry)
         n0 = legs[0]["i1"] - legs[0]["i0"] + 1
         trains_out.append({
             "code": code,

@@ -74,6 +74,8 @@ const CLASS_WIDTH := {"hsr350": 5.5, "hsr250": 4.5, "intercity": 4.0, "conventio
 
 func _draw_line(px: float, wf: float) -> void:
 	for line_id in DB.line_order:
+		if Meta.is_focus_line(line_id):
+			continue
 		var line: Dictionary = DB.lines[line_id]
 		if not Meta.is_class_visible(DB.line_class(line_id)):
 			continue
@@ -87,11 +89,14 @@ func _draw_line(px: float, wf: float) -> void:
 
 func _draw_stations(px: float) -> void:
 	for line_id in DB.line_order:
-		if not Meta.is_class_visible(DB.line_class(line_id)):
+		if Meta.is_focus_line(line_id):
 			continue
 		var line: Dictionary = DB.lines[line_id]
+		if not Meta.is_class_visible(DB.line_class(line_id)):
+			continue
+		var line_st: Dictionary = line["stations"]
 		for sid in line["order"]:
-			var st: Dictionary = line["stations"][sid]
+			var st: Dictionary = line_st[sid]
 			var pos: Vector2 = st["pos"]
 			var major: bool = st["major"]
 			var r := (5.0 if major else 3.2) * px

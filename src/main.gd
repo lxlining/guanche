@@ -60,6 +60,7 @@ func _ready() -> void:
 	cam.connect("map_right_clicked", _on_map_right_click)
 	ui.diagram.connect("train_picked", _on_diagram_pick)
 	ui.line_screen.connect("code_picked", _on_line_screen_pick)
+	ui.train_search_picked.connect(_on_train_search_pick)
 
 	if Meta.is_fresh:
 		ui.help_panel.visible = true
@@ -176,7 +177,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				if selected != "":
 					_toggle_follow(selected)
 			KEY_ESCAPE:
-				if ui.any_overlay_open():
+				if Meta.focus_line != "":
+					Meta.set_focus_line("")
+				elif ui.any_overlay_open():
 					ui.close_overlays()
 				elif follow_code != "":
 					_end_follow(false)
@@ -283,10 +286,24 @@ func _on_train_clicked(code: String) -> void:
 	_select(code)
 
 
+func _on_train_search_pick(code: String) -> void:
+	_select(code)
+	_locate(code)
+
+
 func _on_line_screen_pick(code: String) -> void:
 	ui.line_screen.visible = false
 	_select(code)
 	_locate(code)
+
+
+func _on_focus_changed() -> void:
+	if Meta.focus_line == "":
+		return
+	var line: Dictionary = DB.line(Meta.focus_line)
+	cam.follow_code = ""
+	cam.position = line["center"]
+	cam.zoom = Vector2(line["fit_zoom"], line["fit_zoom"])
 
 
 func _on_diagram_pick(code: String) -> void:

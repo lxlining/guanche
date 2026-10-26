@@ -90,6 +90,8 @@ func _draw() -> void:
 		var st: Dictionary = Simulation.states[code]
 		if not _is_active(st):
 			continue
+		if Meta.is_focus_line(str(st.get("line", ""))):
+			continue
 		if not Meta.is_class_visible(DB.line_class(str(st.get("line", "")))):
 			continue
 		var tt: Dictionary = DB.train_types.get(st["type"], {})

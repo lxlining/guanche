@@ -37,9 +37,11 @@ func _ready() -> void:
 		_cities.append({"label": cl, "wpos": c["wpos"]})
 	var seen_stations := {}
 	for line_id in DB.line_order:
-		if not Meta.is_class_visible(DB.line_class(line_id)):
+		if Meta.is_focus_line(line_id):
 			continue
 		var line: Dictionary = DB.lines[line_id]
+		if not Meta.is_class_visible(DB.line_class(line_id)):
+			continue
 		for sid in line["order"]:
 			var st: Dictionary = line["stations"][sid]
 			var key := "%s|%.0f|%.0f" % [st["name"], st["pos"].x, st["pos"].y]
