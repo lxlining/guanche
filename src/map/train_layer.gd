@@ -6,6 +6,7 @@ signal train_clicked(code: String)
 
 var selected := ""
 var hover := ""
+var trail: Array = []  # 跟随列车尾迹（世界坐标）
 
 var _mouse_world := Vector2.ZERO
 
@@ -134,6 +135,12 @@ func _draw() -> void:
 		draw_colored_polygon(shape, c2)
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
+		# 跟随列车尾迹
+		if code == selected and trail.size() >= 2:
+			var tpts := PackedVector2Array()
+			for tp in trail:
+				tpts.append(tp)
+			draw_polyline(tpts, Color(1, 1, 1, 0.12), 4.0 * px, true)
 		if code == selected:
 			draw_arc(pos, 13.0 * px, 0.0, TAU, 28, Color.WHITE, 2.0 * px, true)
 		elif code == hover:

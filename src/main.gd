@@ -374,6 +374,7 @@ func _start_follow(code: String) -> void:
 	_f_reported = false
 	_f_last_pos = Vector2(NAN, NAN)
 	_f_dist = 0.0
+	trains_layer.trail.clear()
 	cam.follow_code = code
 	ui.detail.following = true
 
@@ -414,6 +415,10 @@ func _follow_tick() -> void:
 	elif _f_last_pos.distance_to(pos_now) < 30000.0:
 		_f_dist += _f_last_pos.distance_to(pos_now)
 	_f_last_pos = pos_now
+	if trains_layer.trail.is_empty() or trains_layer.trail[-1].distance_to(pos_now) > 500.0:
+		trains_layer.trail.append(pos_now)
+		if trains_layer.trail.size() > 80:
+			trains_layer.trail.pop_front()
 	ui.set_follow_pill("正在跟随 %s · 已跟随 %d km · [Esc] 退出" % [follow_code, int(_f_dist / 1000.0)])
 
 	# 对向交会检测（每次跟随会话最多上报一次）

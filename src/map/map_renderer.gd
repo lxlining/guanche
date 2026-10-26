@@ -62,8 +62,10 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2(-2e6, -2e6), Vector2(6e6, 6e6)), sky)
 	_draw_graticule(px)
 	_draw_geography(px)
-	_draw_line(px, wf, df)
-	_draw_stations(px, df)
+	var view := Rect2(cam.get_screen_center_position() - Vector2(1.5e6, 1.5e6) / zoom,
+			Vector2(3e6, 3e6) / zoom)
+	_draw_line(px, wf, df, view)
+	_draw_stations(px, df, view)
 
 
 func _draw_graticule(px: float) -> void:
@@ -108,12 +110,16 @@ func _draw_geography(px: float) -> void:
 
 const CLASS_WIDTH := {"hsr350": 5.5, "hsr250": 4.5, "intercity": 4.0, "conventional": 2.6, "freight": 3.2}
 
-func _draw_line(px: float, wf: float, df: float) -> void:
+func _draw_line(px: float, wf: float, df: float, view: Rect2) -> void:
 	for line_id in DB.line_order:
 		if Meta.is_focus_line(line_id):
 			continue
 		var line: Dictionary = DB.lines[line_id]
 		if not Meta.is_class_visible(DB.line_class(line_id)):
+			continue
+		# 视野剔除
+		var lb := Rect2(line["bbox_min"], line["bbox_max"] - line["bbox_min"])
+		if not lb.grow(100_000).intersects(view):
 			continue
 		var pts := PackedVector2Array()
 		for p in line["geometry_pts"]:
@@ -125,7 +131,7 @@ func _draw_line(px: float, wf: float, df: float) -> void:
 		draw_polyline(pts, line_c, core * wf * px, true)
 
 
-func _draw_stations(px: float, df: float) -> void:
+func _draw_stations(px: float, df: float, view: Rect2) -> void:
 	for line_id in DB.line_order:
 		if Meta.is_focus_line(line_id):
 			continue

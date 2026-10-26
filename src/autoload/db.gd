@@ -84,7 +84,8 @@ func _build_line(doc: Dictionary) -> Dictionary:
 		"stations": {}, "order": [], "geometry_pts": [],
 		"cum": PackedFloat64Array(), "total_len_m": 0.0,
 		"station_arc": {}, "arc_marks": [],
-		"center": Vector2.ZERO, "size": Vector2.ONE, "fit_zoom": 0.001
+		"center": Vector2.ZERO, "size": Vector2.ONE, "fit_zoom": 0.001,
+		"bbox_min": Vector2.ZERO, "bbox_max": Vector2.ZERO
 	}
 	for s in doc.get("stations", []):
 		line["stations"][s["id"]] = {
@@ -128,6 +129,8 @@ func _build_line(doc: Dictionary) -> Dictionary:
 
 	line["center"] = (min_p + max_p) * 0.5
 	line["size"] = max_p - min_p
+	line["bbox_min"] = min_p
+	line["bbox_max"] = max_p
 	line["fit_zoom"] = minf(1500.0 / maxf(line["size"].x, 1.0), 830.0 / maxf(line["size"].y, 1.0))
 	return line
 

@@ -8,11 +8,13 @@ signal closed
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
 const EmuIllu := preload("res://src/ui/emu_illustration.gd")
+const SpeedChart := preload("res://src/ui/speed_chart.gd")
 const Announcement := preload("res://src/ui/announcement.gd")
 
 var code := ""
 var following := false
 var illu: Control
+var speed_chart: Control
 var freight_hint: Label
 
 var title_label: Label
@@ -58,6 +60,9 @@ func _ready() -> void:
 	vb.add_child(route_label)
 	illu = EmuIllu.new()
 	vb.add_child(illu)
+	speed_chart = SpeedChart.new()
+	speed_chart.custom_minimum_size = Vector2(0, 60)
+	vb.add_child(speed_chart)
 	freight_hint = UIKit.label("※ 货运示意车流：12306 无货运数据，本列车时刻为程序生成，仅作路网演示。", 11, UIKit.WARN)
 	freight_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	freight_hint.visible = false
@@ -111,6 +116,7 @@ func set_train(c: String) -> void:
 	var train: Dictionary = DB.train_by_code[c]
 	var tt: Dictionary = DB.train_types.get(train["type"], {})
 	illu.setup(tt, 46.0)
+	speed_chart.setup(train)
 	freight_hint.visible = bool(train.get("freight", false))
 	var line_short: String = str(DB.line(str(train.get("line", DB.line_order[0])))["short"])
 	title_label.text = train["code"]
