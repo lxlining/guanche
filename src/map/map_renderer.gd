@@ -67,7 +67,7 @@ func _draw() -> void:
 	_draw_geography(px, df)
 	var view := Rect2(cam.get_screen_center_position() - Vector2(1.5e6, 1.5e6) / zoom,
 			Vector2(3e6, 3e6) / zoom)
-	_draw_line(px, wf, df, view)
+	_draw_line(px, wf, df, zoom, view)
 	_draw_stations(px, df, view)
 
 
@@ -142,7 +142,7 @@ func _draw_geography(px: float, df: float) -> void:
 
 const CLASS_WIDTH := {"hsr350": 5.5, "hsr250": 4.5, "intercity": 4.0, "conventional": 2.6, "freight": 3.2}
 
-func _draw_line(px: float, wf: float, df: float, view: Rect2) -> void:
+func _draw_line(px: float, wf: float, df: float, zoom: float, view: Rect2) -> void:
 	for line_id in DB.line_order:
 		if Meta.is_focus_line(line_id):
 			continue
@@ -153,14 +153,27 @@ func _draw_line(px: float, wf: float, df: float, view: Rect2) -> void:
 		var lb := Rect2(line["bbox_min"], line["bbox_max"] - line["bbox_min"])
 		if not lb.grow(100_000).intersects(view):
 			continue
+		var wpts: PackedVector2Array = line["wpts"]
+		# 缩放自适应抽稀：相邻保留点间距 >= ~2.5 屏幕像素（顶点静态缓存，
+		# 真实线形单线可达数千点，全国视野下全量绘制会掉帧）
+		var spacing_px: float = float(line["pt_spacing"]) * zoom
+		var step := 1
+		if spacing_px > 0.0 and spacing_px < 2.5:
+			step = mini(int(2.5 / spacing_px) + 1, 64)
 		var pts := PackedVector2Array()
-		for p in line["geometry_pts"]:
-			pts.append(p["pos"])
+		pts.resize((wpts.size() + step - 1) / step)
+		var n := 0
+		for i in range(0, wpts.size(), step):
+			pts[n] = wpts[i]
+			n += 1
+		pts.resize(n)
+		# 低倍速视野关抗锯齿（AA 线宽几何翻倍，全国视野无感知）
+		var aa := zoom > 0.004
 		var core: float = float(CLASS_WIDTH.get(DB.line_class(line_id), 4.5))
 		var base_c := _dim_color(COL_LINE_BASE, df)
 		var line_c := _dim_color(line["color"], 0.4 + 0.6 * df)
-		draw_polyline(pts, base_c, (core + 5.0) * wf * px, true)
-		draw_polyline(pts, line_c, core * wf * px, true)
+		draw_polyline(pts, base_c, (core + 5.0) * wf * px, aa)
+		draw_polyline(pts, line_c, core * wf * px, aa)
 
 
 func _draw_stations(px: float, df: float, view: Rect2) -> void:

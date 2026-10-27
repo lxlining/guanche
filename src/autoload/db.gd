@@ -132,6 +132,13 @@ func _build_line(doc: Dictionary) -> Dictionary:
 	line["bbox_min"] = min_p
 	line["bbox_max"] = max_p
 	line["fit_zoom"] = minf(1500.0 / maxf(line["size"].x, 1.0), 830.0 / maxf(line["size"].y, 1.0))
+	# 渲染缓存：世界坐标点列 + 平均点距（供地图层做缩放自适应抽稀）
+	var wpts := PackedVector2Array()
+	wpts.resize(pts.size())
+	for i in range(pts.size()):
+		wpts[i] = pts[i]["pos"]
+	line["wpts"] = wpts
+	line["pt_spacing"] = line["total_len_m"] / maxf(pts.size() - 1, 1.0)
 	return line
 
 
