@@ -409,6 +409,30 @@ func arc_point(line_id: String, arc: float) -> Dictionary:
 	return {"pos": pa.lerp(pb, f), "dir": dir}
 
 
+# 两弧长之间的几何点列（含精确端点插值），用于绘制列车全程走线
+func geometry_between(line_id: String, arc_a: float, arc_b: float) -> PackedVector2Array:
+	var ln: Dictionary = lines.get(line_id, {})
+	if ln.is_empty():
+		return PackedVector2Array()
+	var pts: Array = ln["geometry_pts"]
+	var cum: PackedFloat64Array = ln["cum"]
+	if pts.size() < 2:
+		return PackedVector2Array()
+	var lo := minf(arc_a, arc_b)
+	var hi := maxf(arc_a, arc_b)
+	var out := PackedVector2Array()
+	out.append(arc_point(line_id, arc_a)["pos"])
+	for i in range(pts.size()):
+		var c := cum[i]
+		if c <= lo + 0.5:
+			continue
+		if c >= hi - 0.5:
+			break
+		out.append(pts[i]["pos"])
+	out.append(arc_point(line_id, arc_b)["pos"])
+	return out
+
+
 func km_at_arc(line_id: String, arc: float) -> int:
 	var line: Dictionary = line(line_id)
 	var marks: Array = line["arc_marks"]

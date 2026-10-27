@@ -13,6 +13,8 @@ const COL_TEXT_DIM := Color(0.72, 0.77, 0.86, 0.85)
 const COL_WATER := Color(0.22, 0.34, 0.48, 0.55)
 const COL_GRATICULE := Color(1, 1, 1, 0.045)
 
+var _stars: Array = []  # 懒生成：{pos, size, phase, spd}
+
 
 func _process(_delta: float) -> void:
 	queue_redraw()
@@ -60,8 +62,9 @@ func _draw() -> void:
 	# 天空背景
 	var sky := _sky_color(df)
 	draw_rect(Rect2(Vector2(-2e6, -2e6), Vector2(6e6, 6e6)), sky)
+	_draw_stars(px, df)
 	_draw_graticule(px)
-	_draw_geography(px)
+	_draw_geography(px, df)
 	var view := Rect2(cam.get_screen_center_position() - Vector2(1.5e6, 1.5e6) / zoom,
 			Vector2(3e6, 3e6) / zoom)
 	_draw_line(px, wf, df, view)
@@ -79,7 +82,29 @@ func _draw_graticule(px: float) -> void:
 		draw_line(a, b, COL_GRATICULE, maxf(px, 1.0), true)
 
 
-func _draw_geography(px: float) -> void:
+# 夜间星空：世界坐标随机星点，亮度随天色渐入、轻微闪烁
+func _draw_stars(px: float, df: float) -> void:
+	if df > 0.32:
+		return
+	if _stars.is_empty():
+		var rng := RandomNumberGenerator.new()
+		rng.seed = 20260101
+		for i in range(260):
+			_stars.append({
+				"pos": GeoScript.lonlat_to_world(rng.randf_range(78.0, 134.0),
+						rng.randf_range(17.0, 54.0)),
+				"size": rng.randf_range(0.9, 2.3),
+				"phase": rng.randf_range(0.0, TAU),
+				"spd": rng.randf_range(0.4, 1.4),
+			})
+	var k: float = clampf((0.32 - df) / 0.32, 0.0, 1.0)
+	var t := GameTime.t
+	for s in _stars:
+		var tw: float = 0.72 + 0.28 * sin(t * s["spd"] + s["phase"])
+		draw_circle(s["pos"], s["size"] * px, Color(1, 1, 1, (0.20 + 0.55 * tw) * k))
+
+
+func _draw_geography(px: float, df: float) -> void:
 	var bg := DB.background
 	# 省级行政边界：淡填充 + 细边线
 	for prov in bg.get("provinces", []):
@@ -105,7 +130,14 @@ func _draw_geography(px: float) -> void:
 	for c in bg.get("cities", []):
 		var pos: Vector2 = c["wpos"]
 		var major: bool = c.get("major", false)
-		draw_circle(pos, (3.0 if major else 2.0) * px, Color(0.82, 0.87, 0.95, 0.75))
+		# 夜间城市灯火：暖色光晕，白天恢复普通灰白点
+		if df < 0.45:
+			var lk: float = (0.45 - df) / 0.45
+			var glow: float = (7.5 if major else 4.5) * px
+			draw_circle(pos, glow, Color(1.0, 0.80, 0.42, 0.10 * lk))
+			draw_circle(pos, glow * 0.45, Color(1.0, 0.84, 0.5, 0.28 * lk))
+		draw_circle(pos, (3.0 if major else 2.0) * px,
+				_dim_color(Color(0.82, 0.87, 0.95, 0.75), 0.35 + 0.65 * df))
 
 
 const CLASS_WIDTH := {"hsr350": 5.5, "hsr250": 4.5, "intercity": 4.0, "conventional": 2.6, "freight": 3.2}

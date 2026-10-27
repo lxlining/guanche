@@ -8,6 +8,11 @@ var selected := ""
 var hover := ""
 var trail: Array = []  # 跟随列车尾迹（世界坐标）
 
+# 选中列车全程走线缓存（切换选中时重建）：legs=各腿几何点列, stops=停站点
+var _route_for := ""
+var _route_legs: Array = []
+var _route_stops := PackedVector2Array()
+
 var _mouse_world := Vector2.ZERO
 
 
@@ -15,9 +20,31 @@ func _process(_delta: float) -> void:
 	_mouse_world = get_global_mouse_position()
 	var cam := get_viewport().get_camera_2d()
 	var zoom := cam.zoom.x if cam != null else DB.fit_zoom
+	if selected != _route_for:
+		_rebuild_route(selected)
 	_update_hover(zoom)
 	_run_observation(zoom)
 	queue_redraw()
+
+
+func _rebuild_route(code: String) -> void:
+	_route_for = code
+	_route_legs = []
+	_route_stops = PackedVector2Array()
+	if code == "" or not DB.train_by_code.has(code):
+		return
+	var train: Dictionary = DB.train_by_code[code]
+	for leg in train["legs"]:
+		var lid: String = str(leg["line"])
+		if not DB.lines.has(lid):
+			continue
+		var pts := DB.geometry_between(lid, leg["arc0"], leg["arc1"])
+		if pts.size() >= 2:
+			_route_legs.append({"pts": pts, "color": DB.lines[lid]["color"]})
+	for st in train["stops"]:
+		var lid: String = str(st.get("line", ""))
+		if lid != "" and st.get("arc", -1.0) >= 0.0:
+			_route_stops.append(DB.arc_point(lid, st["arc"])["pos"])
 
 
 func pick(world_pos: Vector2, zoom: float) -> String:
@@ -74,14 +101,27 @@ func _draw() -> void:
 	var zoom := cam.zoom.x if cam != null else DB.fit_zoom
 	var px := 1.0 / zoom
 
-	# 选中/悬停列车的跨线 transfer 路径（虚线示意联络线）
+	# 选中列车全程走线：各腿沿线发光 + 停站点圆环
+	if selected != "" and not _route_legs.is_empty():
+		for r in _route_legs:
+			var rc: Color = r["color"]
+			draw_polyline(r["pts"], Color(rc.r, rc.g, rc.b, 0.22), 12.0 * px, true)
+			draw_polyline(r["pts"], rc.lightened(0.62), 3.0 * px, true)
+		for sp in _route_stops:
+			draw_circle(sp, 2.2 * px, Color(0.08, 0.09, 0.12, 0.9))
+			draw_arc(sp, 4.5 * px, 0.0, TAU, 14, Color(1, 1, 1, 0.85), 1.4 * px, true)
+
+	# 选中/悬停列车的跨线 transfer 路径（沿联络线真实路径）
 	for code in [selected, hover]:
 		if code == "" or not DB.train_by_code.has(code):
 			continue
 		var train: Dictionary = DB.train_by_code[code]
 		for trf in train["transfers"]:
-			draw_line(trf["pos_a"], trf["pos_b"], Color(1, 1, 1, 0.35), 2.0 * px, true)
-			draw_line(trf["pos_a"], trf["pos_b"], Color(0.1, 0.1, 0.15, 0.8), 1.0 * px, true)
+			var tpts: PackedVector2Array = trf["pts"]
+			if tpts.size() < 2:
+				continue
+			draw_polyline(tpts, Color(1, 1, 1, 0.30), 2.4 * px, true)
+			draw_polyline(tpts, Color(0.1, 0.1, 0.15, 0.75), 1.0 * px, true)
 
 	# LOD：全国视野用小圆点，中景小箭头，近景完整箭头
 	var dot_mode := zoom < 0.006

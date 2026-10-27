@@ -114,6 +114,10 @@ func _shot_tick() -> void:
 				ui.toggle_dex()
 			"ach":
 				ui.toggle_ach()
+			"night":
+				GameTime.jump_to(23, 0)
+			"detail":
+				GameTime.jump_to(10, 0)
 			_:
 				ui.close_overlays()
 	if _shot_frame == 8 and _shot_mode == "zoom":
@@ -138,7 +142,13 @@ func _shot_tick() -> void:
 				ui.toggle_list()
 			"detail":
 				_select("G1")
-				_locate("G1")
+			"board":
+				GameTime.jump_to(8, 5)
+				_on_stop_station_click("北京南", "jinghu_hsr", "bjn", 0)
+	if _shot_frame == 30 and _shot_mode == "detail":
+		# 状态已按新时刻重算，再定位与放大
+		_locate("G1")
+		cam.zoom = Vector2(0.02, 0.02)
 	if _shot_frame >= 50:
 		var img := get_viewport().get_texture().get_image()
 		img.save_png(OS.get_environment("SHOT_PATH"))

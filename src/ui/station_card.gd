@@ -5,8 +5,11 @@ extends PanelContainer
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
 
+signal train_picked(code: String)
+
 const CONTENT_DIR := "user://station_content"
 const IMG_DIR := "user://station_images"
+const BOARD_MAX_ROWS := 48
 
 var title_label: Label
 var lines_label: Label
@@ -27,6 +30,16 @@ var cur_major := false
 var user_text := ""
 var user_images: Array = []
 var editing := false
+
+# 出发大屏
+var board_box: VBoxContainer
+var board_title: Label
+var board_clock: Label
+var board_rows: VBoxContainer
+var _board_entries: Array = []   # 当前站全部停靠车次数据
+var _board_rows_meta: Array = [] # 行控件引用（状态列就地刷新）
+var _board_hour := -1
+var _board_accum := 0.0
 
 
 const INTROS := {
@@ -67,6 +80,7 @@ func _ready() -> void:
 	add_theme_stylebox_override("panel", UIKit.flat(UIKit.BG, 12, UIKit.BORDER, 1, 14))
 	set_anchors_and_offsets_preset(Control.PRESET_CENTER_RIGHT, Control.PRESET_MODE_MINSIZE, 14)
 	grow_vertical = Control.GROW_DIRECTION_BOTH
+	grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	custom_minimum_size = Vector2(370, 0)
 	visible = false
 
@@ -126,6 +140,43 @@ func _ready() -> void:
 	save_btn = UIKit.button("💾 保存", func(): _save_content(), "primary")
 	btns.add_child(save_btn)
 
+	# ---- 出发大屏 ----
+	board_box = VBoxContainer.new()
+	board_box.add_theme_constant_override("separation", 4)
+	board_box.visible = false
+	vb.add_child(board_box)
+	var bhead := HBoxContainer.new()
+	board_box.add_child(bhead)
+	board_title = UIKit.label("📋 出发大屏", 14, Color.WHITE)
+	bhead.add_child(board_title)
+	var bsp := Control.new()
+	bsp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bhead.add_child(bsp)
+	board_clock = UIKit.label("", 12, UIKit.ACCENT2)
+	bhead.add_child(board_clock)
+	var bscroll := ScrollContainer.new()
+	bscroll.custom_minimum_size = Vector2(348, 240)
+	bscroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	board_box.add_child(bscroll)
+	board_rows = VBoxContainer.new()
+	board_rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	board_rows.add_theme_constant_override("separation", 1)
+	bscroll.add_child(board_rows)
+
+
+func _process(delta: float) -> void:
+	if not visible or cur_name == "" or not board_box.visible:
+		return
+	_board_accum += delta
+	if _board_accum < 1.0:
+		return
+	_board_accum = 0.0
+	var h := int(fposmod(GameTime.t, 86400.0) / 3600.0)
+	if h != _board_hour:
+		_rebuild_board()
+	else:
+		_refresh_board_status()
+
 
 func show_station(station_name: String, line_names: Array, km: int,
 		daily_stops: int, major: bool) -> void:
@@ -181,6 +232,142 @@ func _reload() -> void:
 		images_row.add_child(tr)
 	editing = false
 	edit_box.visible = false
+	if cur_name != "":
+		_rebuild_board()
+	else:
+		board_box.visible = false
+
+
+# ---------- 出发大屏 ----------
+
+# 站名 -> 全部停靠车次（懒构建缓存）
+static var _board_cache: Dictionary = {}
+
+# 发车时刻距 t_mod 的等待秒数（0~86400，越小越近）
+static func _dep_gap(e: Dictionary, t_mod: float) -> float:
+	return fposmod(e["dep"] - t_mod + 86400.0, 86400.0)
+
+static func _get_board_entries(sname: String) -> Array:
+	if _board_cache.has(sname):
+		return _board_cache[sname]
+	var list: Array = []
+	for train in DB.trains:
+		for st in train["stops"]:
+			if str(st["name"]) != sname:
+				continue
+			var tt: Dictionary = DB.train_types.get(str(train["type"]), {})
+			list.append({
+				"arr": fposmod(float(st["arr_s"]), 86400.0),
+				"dep": fposmod(float(st["dep_s"]), 86400.0),
+				"code": str(train["code"]),
+				"to": str(train["to"]),
+				"from": str(train["from"]),
+				"color": Color(str(tt.get("color", "#e5484d"))),
+				"freight": bool(train.get("freight", false)),
+			})
+			break
+	list.sort_custom(func(a, b): return a["dep"] < b["dep"])
+	_board_cache[sname] = list
+	return list
+
+
+func _rebuild_board() -> void:
+	_board_entries = _get_board_entries(cur_name)
+	board_box.visible = not _board_entries.is_empty()
+	if not board_box.visible:
+		return
+	_board_hour = int(fposmod(GameTime.t, 86400.0) / 3600.0)
+	_board_rows_meta = []
+	for c in board_rows.get_children():
+		c.queue_free()
+	var t_mod := fposmod(GameTime.t, 86400.0)
+	# 按距当前时刻的发车间隔排序（即将出发的在前）
+	var sorted: Array = _board_entries.duplicate()
+	sorted.sort_custom(func(a, b): return _dep_gap(a, t_mod) < _dep_gap(b, t_mod))
+	board_title.text = "📋 出发大屏 · 共 %d 趟" % sorted.size()
+	for e in sorted.slice(0, BOARD_MAX_ROWS):
+		_add_board_row(e)
+	_refresh_board_status()
+
+
+func _add_board_row(e: Dictionary) -> void:
+	var row := Button.new()
+	row.custom_minimum_size = Vector2(344, 24)
+	row.add_theme_stylebox_override("normal", UIKit.flat(Color(1, 1, 1, 0.03), 5))
+	row.add_theme_stylebox_override("hover", UIKit.flat(Color(1, 1, 1, 0.08), 5))
+	row.add_theme_stylebox_override("pressed", UIKit.flat(Color(1, 1, 1, 0.12), 5))
+	var code := str(e["code"])
+	row.pressed.connect(func(): train_picked.emit(code))
+	var hb := HBoxContainer.new()
+	hb.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	hb.add_theme_constant_override("separation", 6)
+	hb.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(hb)
+
+	var time_l := UIKit.label(_fmt_tod(e["dep"]), 12, UIKit.TEXT)
+	time_l.custom_minimum_size = Vector2(46, 0)
+	time_l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hb.add_child(time_l)
+	var code_l := UIKit.label(("🚃 " if e["freight"] else "") + code, 12, e["color"])
+	code_l.custom_minimum_size = Vector2(66, 0)
+	code_l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	code_l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	hb.add_child(code_l)
+	var to_l := UIKit.label(str(e["to"]), 12, UIKit.DIM)
+	to_l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	to_l.clip_text = true
+	to_l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hb.add_child(to_l)
+	var status_l := UIKit.label("", 11, UIKit.DIM)
+	status_l.custom_minimum_size = Vector2(72, 0)
+	status_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	status_l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hb.add_child(status_l)
+	board_rows.add_child(row)
+	_board_rows_meta.append({"entry": e, "status": status_l, "row": row})
+
+
+func _refresh_board_status() -> void:
+	if _board_rows_meta.is_empty():
+		return
+	var t_mod := fposmod(GameTime.t, 86400.0)
+	board_clock.text = "现在 " + _fmt_tod(t_mod)
+	for m in _board_rows_meta:
+		var e: Dictionary = m["entry"]
+		var until_arr: float = fposmod(e["arr"] - t_mod, 86400.0)
+		var until_dep: float = fposmod(e["dep"] - t_mod, 86400.0)
+		var dwell: float = fposmod(e["dep"] - e["arr"], 86400.0)
+		var since_arr: float = fposmod(t_mod - e["arr"], 86400.0)
+		var text := ""
+		var col := UIKit.DIM
+		if dwell > 0.0 and since_arr < dwell:
+			# 已到站、尚未发车
+			if e["to"] == cur_name:
+				text = "终到"
+				col = Color("#46d68c")
+			elif until_dep <= 120.0:
+				text = "即将发车"
+				col = Color("#ffb454")
+			else:
+				text = "停车上客"
+				col = Color("#46d68c")
+		elif until_arr <= 900.0:
+			text = "即将进站"
+			col = Color("#ffb454")
+		elif until_dep <= 1800.0:
+			text = "候车"
+			col = UIKit.DIM
+		var sl: Label = m["status"]
+		sl.text = text
+		sl.add_theme_color_override("font_color", col)
+	# 就地重排：即将发车的始终在顶部（不重建控件）
+	_board_rows_meta.sort_custom(func(a, b): return _dep_gap(a["entry"], t_mod) < _dep_gap(b["entry"], t_mod))
+	for i in range(_board_rows_meta.size()):
+		board_rows.move_child(_board_rows_meta[i]["row"], i)
+
+
+func _fmt_tod(sec: float) -> String:
+	return "%02d:%02d" % [int(sec / 3600.0), int(fmod(sec, 3600.0) / 60.0)]
 
 
 func _toggle_edit(force: bool = true) -> void:

@@ -233,7 +233,8 @@ func _build_stops(train: Dictionary) -> void:
 				row.add_child(sw)
 		stops_box.add_child(row)
 		_rows.append({"arr_l": arr_l, "dep_l": dep_l, "note_l": note_l,
-				"arr_s": stop["arr_rel"], "dep_s": stop["dep_rel"], "row": row})
+				"arr_s": float(stop["arr_s"]) - float(train["start_s"]),
+				"dep_s": float(stop["dep_s"]) - float(train["start_s"]), "row": row})
 
 
 func _process(delta: float) -> void:

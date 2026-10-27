@@ -64,6 +64,9 @@ func _ready() -> void:
 	diagram = DiagramView.new()
 	ui_root.add_child(diagram)
 	station_card = StationCard.new()
+	station_card.train_picked.connect(func(code: String):
+		station_card.hide()
+		train_search_picked.emit(code))
 	ui_root.add_child(station_card)
 	mini_map = MiniMap.new()
 	mini_map.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 14)
