@@ -9,6 +9,18 @@ LOG="$OSM/fetch.log"
 FAIL="$OSM/fetch_fail.txt"
 : > "$FAIL"
 
+# 单实例锁：已有存活实例（按 PID 探测）则直接退出，杜绝重复抓取
+LOCK="$OSM/running.lock"
+if [ -f "$LOCK" ]; then
+  oldpid=$(cat "$LOCK" 2>/dev/null)
+  if [ -n "$oldpid" ] && kill -0 "$oldpid" 2>/dev/null; then
+    echo "[$(date +%T)] instance $oldpid already running, exit" >> "$LOG"
+    exit 0
+  fi
+fi
+echo $$ > "$LOCK"
+trap 'rm -f "$LOCK"' EXIT
+
 fetch_one() {
   local id="$1" k="$2" out tmp
   if [ "$k" = "-" ]; then
