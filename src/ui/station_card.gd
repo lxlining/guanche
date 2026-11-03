@@ -193,7 +193,11 @@ func show_station(station_name: String, line_names: Array, km: int,
 func _reload() -> void:
 	title_label.text = cur_name + ("　●枢纽" if cur_major else "")
 	lines_label.text = ("所属线路：" + "、".join(cur_lines)) if not cur_lines.is_empty() else "所属线路：—"
-	stats_label.text = "公里标 K%d · 日均停靠约 %d 趟" % [cur_km, cur_stops]
+	var checkin_note := ""
+	if Meta.checkins.has(cur_name):
+		var rec: Dictionary = Meta.checkins[cur_name]
+		checkin_note = " · 📍已打卡×%d" % int(rec.get("n", 1))
+	stats_label.text = "公里标 K%d · 日均停靠约 %d 趟%s" % [cur_km, cur_stops, checkin_note]
 
 	user_text = ""
 	user_images = []

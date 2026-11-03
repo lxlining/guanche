@@ -30,14 +30,20 @@
       "name": "夕发朝至",
       "desc": "发现夜间动卧列车（CRH2E）——京沪高铁有 0:00–5:00 的天窗，它们清晨才会驶过。",
       "check": "types_include",
-      "list": ["CRH2E"]
+      "list": [
+        "CRH2E"
+      ]
     },
     {
       "id": "cr400_collector",
       "name": "复兴号收藏家",
       "desc": "集齐 CR400AF、CR400BF 与智能复兴号。",
       "check": "types_include",
-      "list": ["CR400AF", "CR400BF", "CR400AF-BZ"]
+      "list": [
+        "CR400AF",
+        "CR400BF",
+        "CR400AF-BZ"
+      ]
     },
     {
       "id": "ten_types",
@@ -103,6 +109,27 @@
       "desc": "累计观测 50 趟不同车次。",
       "check": "spots_min",
       "n": 50
+    },
+    {
+      "id": "checkin_10",
+      "name": "初打卡",
+      "desc": "打卡 10 座车站。",
+      "check": "checkins_min",
+      "n": 10
+    },
+    {
+      "id": "checkin_50",
+      "name": "站台常客",
+      "desc": "打卡 50 座车站。",
+      "check": "checkins_min",
+      "n": 50
+    },
+    {
+      "id": "checkin_200",
+      "name": "足迹遍布",
+      "desc": "打卡 200 座车站。",
+      "check": "checkins_min",
+      "n": 200
     }
   ]
 }

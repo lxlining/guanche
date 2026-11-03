@@ -20,6 +20,13 @@ var ui_root: Control
 var clock_label: Label
 var clock_sub: Label
 var follow_pill: PanelContainer
+var checkin_pill: PanelContainer
+var checkin_label: Label
+var checkin_btn: Button
+var checkin_book: PanelContainer
+var checkin_book_list: VBoxContainer
+var checkin_book_progress: Label
+var checkin_target := ""   # 当前可打卡站名（空 = 不可打卡）
 var follow_label: Label
 var spot_pill: PanelContainer
 var toast_box: VBoxContainer
@@ -49,6 +56,7 @@ func _ready() -> void:
 	_build_global_search()
 	_build_legend()
 	_build_top_buttons()
+	_build_checkin_ui()
 	_build_time_bar()
 	_build_pills()
 	_build_toasts()
@@ -175,12 +183,139 @@ func _build_top_buttons() -> void:
 	hb.add_theme_constant_override("separation", 8)
 	ui_root.add_child(hb)
 	hb.add_child(UIKit.button("运行图 [G]", func(): toggle_diagram()))
+	hb.add_child(UIKit.button("打卡簿 [J]", func(): toggle_checkin_book()))
 	hb.add_child(UIKit.button("车型图鉴 [D]", func(): toggle_dex()))
 	hb.add_child(UIKit.button("成就 [A]", func(): toggle_ach()))
 	var spot_btn := UIKit.button("机位模式 [P]", func(): Meta.toggle_spot_mode())
 	spot_btn.name = "SpotButton"
 	hb.add_child(spot_btn)
 	hb.add_child(UIKit.button("帮助 [F1]", func(): toggle_help()))
+
+
+func _build_checkin_ui() -> void:
+	# 打卡横幅（跟随横幅下方）
+	checkin_pill = UIKit.panel_container(UIKit.flat(Color("1a2230e6"), 10, UIKit.ACCENT, 1, 10))
+	checkin_pill.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP, Control.PRESET_MODE_MINSIZE, 44)
+	checkin_pill.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	var hbx := HBoxContainer.new()
+	hbx.add_theme_constant_override("separation", 10)
+	checkin_pill.add_child(hbx)
+	var icon := UIKit.label("📍", 15, UIKit.ACCENT2)
+	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	hbx.add_child(icon)
+	checkin_label = UIKit.label("", 14, UIKit.TEXT)
+	checkin_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	hbx.add_child(checkin_label)
+	checkin_btn = UIKit.button("打卡", func(): _do_checkin())
+	checkin_btn.custom_minimum_size = Vector2(72, 26)
+	hbx.add_child(checkin_btn)
+	checkin_pill.visible = false
+	ui_root.add_child(checkin_pill)
+
+	# 打卡簿面板（右侧，类似成就页）
+	checkin_book = UIKit.panel_container(UIKit.flat(UIKit.BG, 12, UIKit.BORDER, 1, 12))
+	checkin_book.set_anchors_and_offsets_preset(Control.PRESET_CENTER_RIGHT, Control.PRESET_MODE_MINSIZE, 14)
+	checkin_book.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	checkin_book.grow_vertical = Control.GROW_DIRECTION_BOTH
+	checkin_book.custom_minimum_size = Vector2(360, 0)
+	checkin_book.visible = false
+	var vb := VBoxContainer.new()
+	vb.add_theme_constant_override("separation", 6)
+	checkin_book.add_child(vb)
+	var head := HBoxContainer.new()
+	vb.add_child(head)
+	head.add_child(UIKit.label("📍 打卡簿", 18, Color.WHITE))
+	var sp := Control.new()
+	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_child(sp)
+	head.add_child(UIKit.button("×", func(): toggle_checkin_book()))
+	checkin_book_progress = UIKit.label("", 13, UIKit.ACCENT2)
+	vb.add_child(checkin_book_progress)
+	vb.add_child(UIKit.hspace(4))
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(336, 420)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	vb.add_child(scroll)
+	checkin_book_list = VBoxContainer.new()
+	checkin_book_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	checkin_book_list.add_theme_constant_override("separation", 2)
+	scroll.add_child(checkin_book_list)
+	Meta.checkin_made.connect(func(_sname: String, _total: int):
+		_refresh_checkin_book()
+		_sync_checkin_pill())
+	ui_root.add_child(checkin_book)
+
+
+func _do_checkin() -> void:
+	if checkin_target == "":
+		return
+	var first := Meta.checkin(checkin_target)
+	if first:
+		checkin_btn.text = "✓ 已打卡"
+		checkin_btn.disabled = true
+
+
+func set_checkin_target(sname: String, checked: bool) -> void:
+	checkin_target = sname
+	if sname == "":
+		checkin_pill.visible = false
+		return
+	checkin_pill.visible = true
+	checkin_label.text = "靠近 %s" % sname
+	if checked:
+		checkin_btn.text = "✓ 已打卡"
+		checkin_btn.disabled = true
+	else:
+		checkin_btn.text = "📍 打卡"
+		checkin_btn.disabled = false
+
+
+func toggle_checkin_book() -> void:
+	checkin_book.visible = not checkin_book.visible
+	if checkin_book.visible:
+		_refresh_checkin_book()
+
+
+func _refresh_checkin_book() -> void:
+	checkin_book_progress.text = "已打卡 %d / %d 站 · 足迹 %.1f%%" % [
+		Meta.checkin_total(), DB.total_station_count(),
+		100.0 * Meta.checkin_total() / maxf(DB.total_station_count(), 1)]
+	for c in checkin_book_list.get_children():
+		c.queue_free()
+	var rows: Array = []
+	for sname in Meta.checkins:
+		var rec: Dictionary = Meta.checkins[sname]
+		rows.append([float(rec.get("t", 0.0)), sname, int(rec.get("n", 1))])
+	rows.sort_custom(func(a, b): return a[0] > b[0])
+	for r in rows:
+		var t: float = r[0]
+		var sname: String = r[1]
+		var hh := int(fmod(t / 3600.0, 24.0))
+		var mm := int(fmod(t / 60.0, 60.0))
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		b.text = "📍 %s    %02d:%02d 打卡%s" % [sname, hh, mm,
+				"（%d 次）" % r[2] if r[2] > 1 else ""]
+		b.flat = true
+		b.add_theme_font_size_override("font_size", 12)
+		b.add_theme_color_override("font_color", UIKit.TEXT)
+		b.tooltip_text = "点击飞至该站"
+		b.pressed.connect(func():
+			if DB._name_pos.has(sname):
+				checkin_book.visible = false
+				cam_jump_requested.emit(DB._name_pos[sname]))
+		checkin_book_list.add_child(b)
+	if rows.is_empty():
+		checkin_book_list.add_child(UIKit.label(
+				"还没有打卡记录。
+靠近任意车站（3km 内）即可打卡。", 12, UIKit.DIM))
+
+
+func _sync_checkin_pill() -> void:
+	if checkin_target != "" and Meta.checkins.has(checkin_target):
+		checkin_btn.text = "✓ 已打卡"
+		checkin_btn.disabled = true
 
 
 func _build_time_bar() -> void:

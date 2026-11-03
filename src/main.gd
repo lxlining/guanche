@@ -145,6 +145,22 @@ func _shot_tick() -> void:
 			"board":
 				GameTime.jump_to(8, 5)
 				_on_stop_station_click("北京南", "jinghu_hsr", "bjn", 0)
+			"checkin":
+				Meta.checkins = {
+					"南京南": {"t": 25200.0, "n": 1},
+					"上海虹桥": {"t": 28800.0, "n": 2},
+					"沧州西": {"t": 32400.0, "n": 1}
+				}
+				cam.position = DB.line("jinghu_hsr")["stations"]["bjn"]["pos"]
+				cam.zoom = Vector2(0.03, 0.03)
+			"book":
+				Meta.checkins = {
+					"南京南": {"t": 25200.0, "n": 1},
+					"上海虹桥": {"t": 28800.0, "n": 2},
+					"沧州西": {"t": 32400.0, "n": 1},
+					"济南西": {"t": 36000.0, "n": 1}
+				}
+				ui.toggle_checkin_book()
 	if _shot_frame == 30 and _shot_mode == "detail":
 		# 状态已按新时刻重算，再定位与放大
 		_locate("G1")
@@ -171,11 +187,18 @@ func _process(delta: float) -> void:
 	_station_accum += delta
 	if _station_accum > 0.5:
 		_station_accum = 0.0
+		var checkin_target := ""
+		var checkin_best := 3000.0
 		for line_id in DB.line_order:
 			var line: Dictionary = DB.lines[line_id]
 			for sid in line["order"]:
-				if cam.position.distance_to(line["stations"][sid]["pos"]) < 7000.0:
+				var d: float = cam.position.distance_to(line["stations"][sid]["pos"])
+				if d < 7000.0:
 					Meta.visit_station(sid)
+				if d < checkin_best:
+					checkin_best = d
+					checkin_target = DB.station_name(line_id, sid)
+		ui.set_checkin_target(checkin_target, Meta.checkins.has(checkin_target))
 
 	if follow_code != "":
 		_follow_tick()
@@ -217,6 +240,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				Meta.toggle_spot_mode()
 			KEY_D:
 				ui.toggle_dex()
+			KEY_J:
+				ui.toggle_checkin_book()
 			KEY_A:
 				ui.toggle_ach()
 

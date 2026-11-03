@@ -138,7 +138,7 @@ func _refresh() -> void:
 	var trains := _line_trains()
 	var info := [
 		["起讫", "%s — %s" % [line["from"], line["to"]]],
-		["营业里程", "%.0f km" % (line["total_len_m"] / 1000.0)],
+		["营业里程（OSM 实测）", "%.0f km" % (line["total_len_m"] / 1000.0)],
 		["车站数", "%d 座" % line["order"].size()],
 		["日均车次", "%d 趟" % trains.size()],
 	]

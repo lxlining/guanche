@@ -7,6 +7,8 @@ signal spots_changed
 signal spot_mode_changed(enabled: bool)
 signal class_visibility_changed
 signal focus_line_changed
+signal checkin_made(sname: String, total: int)
+signal search_history_changed
 
 const GeoScript := preload("res://src/core/geo.gd")
 const SAVE_PATH := "user://savegame.json"
@@ -18,6 +20,8 @@ var spot_mode: bool = false
 var spots: Array = []             # {id, name, lon, lat, world, r_m}
 var _spot_seq := 0
 
+var checkins: Dictionary = {}     # 站名 -> {t: 首次打卡游戏时刻, n: 打卡次数}
+var search_history: Array = []    # 最近搜索词（新在前，去重，≤8）
 var discovered: Dictionary = {}   # type_id -> {t, code, station}
 var spotted: Dictionary = {}      # code -> {count, first_t, last_t}
 var unlocked: Array = []          # 成就 id
@@ -93,6 +97,34 @@ func visit_station(sid: String) -> void:
 	visited[sid] = true
 	check_achievements()
 
+# ---------- 打卡 ----------
+
+# 在车站打卡：首次记录时刻，重复打卡累加次数。返回是否为首次。
+func checkin(sname: String) -> bool:
+	if checkins.has(sname):
+		checkins[sname]["n"] = int(checkins[sname].get("n", 1)) + 1
+		return false
+	checkins[sname] = {"t": GameTime.t, "n": 1}
+	check_achievements()
+	checkin_made.emit(sname, checkins.size())
+	return true
+
+
+func checkin_total() -> int:
+	return checkins.size()
+
+
+func push_search(q: String) -> void:
+	q = q.strip_edges()
+	if q == "":
+		return
+	search_history.erase(q)
+	search_history.insert(0, q)
+	if search_history.size() > 8:
+		search_history.resize(8)
+	search_history_changed.emit()
+	save()
+
 
 func report_screen_trains(n: int) -> void:
 	if n >= 10 and not screen_done:
@@ -166,6 +198,8 @@ func _eval(def: Dictionary) -> bool:
 			return visited.size() >= DB.total_station_count()
 		"screen_trains":
 			return screen_done
+		"checkins_min":
+			return checkins.size() >= int(def.get("n", 1))
 	return false
 
 
@@ -211,6 +245,8 @@ func progress_text(def: Dictionary) -> String:
 			return "%d/%d" % [followed_codes.size(), int(def.get("n", 1))]
 		"stations_all":
 			return "%d/%d" % [visited.size(), DB.total_station_count()]
+		"checkins_min":
+			return "%d/%d" % [checkins.size(), int(def.get("n", 1))]
 	return ""
 
 
@@ -285,7 +321,8 @@ func save() -> void:
 		"max_follow_km": max_follow_km, "full": full_journey_done,
 		"cross": cross_meet_done, "screen": screen_done,
 		"visited": visited.keys(), "spots": spots_data,
-		"class_visible": class_visible
+		"class_visible": class_visible, "checkins": checkins,
+		"search_history": search_history
 	}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f != null:
@@ -304,6 +341,8 @@ func _load_save() -> void:
 		return
 	is_fresh = false
 	GameTime.t = float(parsed.get("game_t", GameTime.t))
+	checkins = parsed.get("checkins", {})
+	search_history = parsed.get("search_history", [])
 	GameTime.speed = float(parsed.get("speed", GameTime.speed))
 	GameTime.paused = bool(parsed.get("paused", false))
 	discovered = parsed.get("discovered", {})
