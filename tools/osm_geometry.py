@@ -5,24 +5,24 @@
 结果只写 stdout，文件持久化全部由 bash 重定向完成。
 
 子命令：
-  fetch <line_id>   stdin= 线路 JSON；向 Overpass 抓该线包围盒内
-                    railway=rail way，JSON 打到 stdout
-  build <line_id>   stdin= 线路 JSON 与 OSM 缓存 JSON 顺序拼接
-                    （依次 raw_decode 两份文档）；输出整份线路 JSON
+  fetch <line_id> [pair]  stdin= 线路 JSON；向 Overpass 抓该线包围盒
+                          （或第 pair 个站对的包围盒）内 railway=rail way
+  build <line_id>         stdin= 线路 JSON 与 OSM 缓存 JSON 顺序拼接；
+                          输出整份线路 JSON
 
-流程（build）：
-  1. OSM way 按共享节点做并查集 -> 连通分量（不同铁路基本不共节点，
-     天然防止把走线拼到平行线上）；
-  2. 每座车站吸附到分量内最近节点（空间网格加速）；
-  3. 相邻站对：在共同分量上跑 A*（大圆距离启发式）得到真实走线；
-  4. 绕路比 > MAX_DETOUR 的站对回退为旧线形对应区段（找不到则直线）；
-  5. 区段独立 Douglas-Peucker 简化（保住车站标记点），整线长度比校验，
-     回退站对比例过高则整线放弃（原样输出旧文档），保留旧线形。
+build 流程（走廊排序链式拼接，天然免疫 OSM 碎片化与平行线干扰）：
+  1. 按线路等级过滤 way 子图（高铁/城际保留高等级与匿名 way，普速反之）；
+  2. 以旧线形为走廊参考，仅保留中点距走廊 ≤12km 的碎片，按首节点去重；
+  3. 碎片按走廊投影排序，贪心链接：窗口内优先同名/匿名碎片、
+     取端点最近者并按需翻转方向，窗口外直连跳过缺口；
+  4. 站序单调向前吸附到链上最近顶点；站坐标偏差 >2km 时
+     以 OSM 位置修正站坐标（km 不变）；
+  5. 区段独立 Douglas-Peucker 简化（保住车站标记点），
+     整线长度比校验，越界则原样输出旧文档。
 
 安全约定：Overpass 仅允许白名单域名的 https 端点，请求前解析 DNS
 并阻断私网/环回/链路本地地址；line_id 仅用于日志（仍做格式校验）。
 """
-import heapq
 import json
 import math
 import re
@@ -34,12 +34,14 @@ import urllib.request
 
 import timetable_lib as lib
 
-BBOX_PAD = 0.22          # 线路包围格外扩（度）
-SNAP_MAX_M = 5000.0      # 车站吸附分量最近节点的最大距离
-MAX_DETOUR = 2.6         # 站对走线长 / 大圆距离 的上限
+BBOX_PAD = 0.22          # 线路/站对包围格外扩（度）
 SIMPLIFY_TOL_M = 120.0   # DP 简化容差
 LEN_RATIO_MIN, LEN_RATIO_MAX = 0.55, 1.9   # 新旧整线长度比的安全区间
-MAX_FALLBACK_FRAC = 0.45  # 回退站对比例上限（超过则整线放弃）
+
+CORRIDOR_MAX_M = 12000.0   # 碎片中点距走廊的最大距离
+CHAIN_GAP_M = 30000.0      # 链接相邻碎片的最大端点跳距
+NAME_WINDOW_T = 0.08       # 同名优先的投影窗口宽度
+COORD_FIX_M = 2000.0       # 站坐标修正阈值
 
 OVERPASS_ENDPOINTS = [
     "https://overpass-api.de/api/interpreter",
@@ -78,15 +80,19 @@ def check_url(url):
     return url
 
 
-def read_stdin_docs(n=2):
-    """从 stdin 顺序 raw_decode n 份 JSON 文档。"""
+def read_stdin_docs(n=None):
+    """从 stdin 顺序 raw_decode JSON 文档；n=None 时读到流结束。"""
     text = sys.stdin.read()
     dec = json.JSONDecoder()
     pos = 0
     docs = []
-    for _ in range(n):
+    while True:
         while pos < len(text) and text[pos] in " \t\r\n":
             pos += 1
+        if pos >= len(text):
+            break
+        if n is not None and len(docs) >= n:
+            break
         doc, pos = dec.raw_decode(text, pos)
         docs.append(doc)
     return docs
@@ -104,7 +110,6 @@ def gc_m(a, b):
 
 
 # ---------- fetch ----------
-
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
     """禁止重定向：端点固定，重定向一律视为失败。"""
@@ -168,7 +173,7 @@ def cmd_fetch(line_id, pair_idx=None):
     for rnd in range(2):  # 快速失败：整体重跑兜底，不在单任务里久耗
         try:
             doc, n_way, nbytes, url = overpass_post(query)
-            eprint("[fetch] %s[%s]: %d ways, %.1f MB, (%s)"
+            eprint("[fetch] %s[%s]: %d ways, %.1f MB (%s)"
                    % (line_id, "?" if pair_idx is None else pair_idx,
                       n_way, nbytes / 1e6, url))
             json.dump(doc, sys.stdout, ensure_ascii=False)
@@ -179,129 +184,50 @@ def cmd_fetch(line_id, pair_idx=None):
     die("[fetch] %s 全部端点失败: %s" % (line_id, last_err))
 
 
-# ---------- build：图构建与走线 ----------
+# ---------- build：走廊排序链式拼接 ----------
 
 
-class RailGraph:
-    """OSM way 集合 -> 连通分量（并查集）+ 邻接表 + 节点空间网格。"""
-
-    def __init__(self, doc):
-        ways = []
-        for el in doc.get("elements", []):
-            if el.get("type") != "way":
-                continue
-            node_ids = el.get("nodes") or []
-            geom = el.get("geometry") or []
-            if len(node_ids) >= 2 and len(geom) >= 2 and len(node_ids) == len(geom):
-                ways.append((node_ids, [(float(p["lon"]), float(p["lat"]))
-                                        for p in geom]))
-        self.parent = {}
-
-        def find(x):
-            root = x
-            while self.parent[root] != root:
-                root = self.parent[root]
-            while self.parent[x] != root:
-                self.parent[x], x = root, self.parent[x]
-            return root
-        self._find = find
-
-        def union(a, b):
-            for v in (a, b):
-                self.parent.setdefault(v, v)
-            ra, rb = find(a), find(b)
-            if ra != rb:
-                self.parent[ra] = rb
-
-        self.nodes = {}
-        for nids, coords in ways:
-            for nid, c in zip(nids, coords):
-                self.nodes[nid] = c
-            for a, b in zip(nids, nids[1:]):
-                union(a, b)
-        self.adj = {}
-        for nids, coords in ways:
-            for (a, ca), (b, cb) in zip(zip(nids, coords), zip(nids[1:], coords[1:])):
-                if find(a) != find(b):
-                    continue
-                w = dist_m(ca, cb)
-                if w <= 0:
-                    continue
-                self.adj.setdefault(a, []).append((b, w))
-                self.adj.setdefault(b, []).append((a, w))
-        self.grid = {}
-        cs = 0.01
-        for nid, (lon, lat) in self.nodes.items():
-            self.grid.setdefault((int(lon / cs), int(lat / cs)), []).append(nid)
-        self._cs = cs
-
-    def comp_of(self, nid):
-        return self._find(nid)
-
-    def nearest_nodes(self, pt, max_m=SNAP_MAX_M):
-        """返回 [(node_id, dist_m)] 按距离升序（网格扩散查找）。"""
-        cs = self._cs
-        bx, by = int(pt[0] / cs), int(pt[1] / cs)
-        out = []
-        radius = 2
-        while radius <= 40:
-            for gx in range(bx - radius, bx + radius + 1):
-                for gy in range(by - radius, by + radius + 1):
-                    for nid in self.grid.get((gx, gy), ()):
-                        d = dist_m(pt, self.nodes[nid])
-                        if d <= max_m:
-                            out.append((nid, d))
-            if out:
-                break
-            radius = radius * 2
-        out.sort(key=lambda t: t[1])
-        return out[:12]
+def _point_seg_dist(p, a, b):
+    """点到线段距离与段内参数。"""
+    ax, ay = a
+    bx, by = b
+    px, py = p
+    dx, dy = bx - ax, by - ay
+    l2 = dx * dx + dy * dy
+    if l2 <= 0:
+        return math.hypot(px - ax, py - ay), 0.0
+    t = max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / l2))
+    cx, cy = ax + t * dx, ay + t * dy
+    return math.hypot(px - cx, py - cy), t
 
 
-def astar_path(g, src, dst):
-    """分量内 A*（启发式 = 到终点大圆距离；边权 >= 大圆距离，可采纳）。"""
-    if src == dst:
-        return [src]
-    goal_pos = g.nodes[dst]
-    open_h = [(0.0, src)]
-    g_score = {src: 0.0}
-    came = {}
-    closed = set()
-    while open_h:
-        _, cur = heapq.heappop(open_h)
-        if cur == dst:
-            path = [cur]
-            while cur in came:
-                cur = came[cur]
-                path.append(cur)
-            return path[::-1]
-        if cur in closed:
-            continue
-        closed.add(cur)
-        base = g_score[cur]
-        for nbr, w in g.adj.get(cur, ()):
-            ng = base + w
-            if ng < g_score.get(nbr, 1e18):
-                g_score[nbr] = ng
-                came[nbr] = cur
-                heapq.heappush(open_h, (ng + gc_m(g.nodes[nbr], goal_pos), nbr))
-    return None
+class Corridor:
+    """旧线形走廊：投影返回 (距离, 归一化弧长参数 t)。"""
+
+    def __init__(self, pts):
+        self.pts = pts
+        cum = [0.0]
+        for a, b in zip(pts, pts[1:]):
+            cum.append(cum[-1] + dist_m(a, b))
+        self.cum = cum
+        self.total = cum[-1] if cum else 0.0
+
+    def project(self, p):
+        best_d, best_t = 1e18, 0.0
+        for i in range(len(self.pts) - 1):
+            d, t = _point_seg_dist(p, self.pts[i], self.pts[i + 1])
+            if d < best_d:
+                seg_len = self.cum[i + 1] - self.cum[i]
+                best_d = d
+                best_t = (self.cum[i] + seg_len * t) / max(self.total, 1.0)
+        return best_d, best_t
 
 
-def old_segment(line, sid_a, sid_b):
-    """从旧线形中提取 sid_a..sid_b 的区段（含端点）。"""
-    geo = line.get("geometry", [])
-    ia = ib = -1
-    for i, p in enumerate(geo):
-        if len(p) > 2 and p[2]:
-            if p[2] == sid_a and ia < 0:
-                ia = i
-            elif p[2] == sid_b and ia >= 0:
-                ib = i
-                break
-    if ia >= 0 and ib > ia:
-        return [[p[0], p[1]] for p in geo[ia:ib + 1]]
-    return None
+def _is_hs_way(tags):
+    n = str(tags.get("name", "") or "")
+    return (tags.get("highspeed") == "yes"
+            or "高铁" in n or "高速铁路" in n or "高速线" in n
+            or "客运专线" in n)
 
 
 def dp_simplify(pts, tol):
@@ -350,61 +276,206 @@ def cmd_build(line_id):
     for d in docs[1:]:
         osm["elements"].extend(d.get("elements", []))
     stations = line["stations"]
-    n_pairs = len(stations) - 1
-    if n_pairs < 1:
-        die("[build] %s 车站不足" % line_id)
+    if len(stations) < 2 or len(line.get("geometry", [])) < 2:
+        die("[build] %s 线路数据不足" % line_id)
 
-    g = RailGraph(osm)
-    if not g.nodes:
-        die("[build] %s OSM 数据为空" % line_id)
+    # 按线路等级过滤 way 子图（匿名 way 保留——部分区段高铁未命名）
+    _cls = str(line.get("line_class", ""))
+    if _cls in ("hsr350", "hsr250", "intercity"):
+        osm["elements"] = [e for e in osm["elements"]
+                           if e.get("type") != "way"
+                           or not str((e.get("tags") or {}).get("name", "") or "")
+                           or _is_hs_way(e.get("tags") or {})]
+    elif _cls in ("conventional", "freight"):
+        osm["elements"] = [e for e in osm["elements"]
+                           if e.get("type") != "way"
+                           or not str((e.get("tags") or {}).get("name", "") or "")
+                           or not _is_hs_way(e.get("tags") or {})]
 
-    # 每站最近节点候选（跨分量）
-    snap = {}
-    for s in stations:
-        pt = (float(s["lon"]), float(s["lat"]))
-        snap[s["id"]] = g.nearest_nodes(pt)
+    # 碎片收集：中点距走廊 ≤12km，按首节点去重（重叠缓存重复抓取同一 way）
+    corridor = Corridor([(float(p[0]), float(p[1])) for p in line["geometry"]])
+    frags = {}
+    for el in osm.get("elements", []):
+        if el.get("type") != "way":
+            continue
+        geom = el.get("geometry") or []
+        if len(geom) < 2:
+            continue
+        coords = [(float(p["lon"]), float(p["lat"])) for p in geom]
+        mid = coords[len(coords) // 2]
+        d, t = corridor.project(mid)
+        if d > CORRIDOR_MAX_M:
+            continue
+        frags.setdefault(el["nodes"][0],
+                         {"name": str((el.get("tags") or {}).get("name", "") or ""),
+                          "pts": coords, "t": t})
+    if not frags:
+        die("[build] %s 走廊内无 OSM 碎片" % line_id)
+    frs = sorted(frags.values(), key=lambda f: f["t"])
 
-    geometry = []
-    n_ok = n_fb = 0
-    for k in range(n_pairs):
-        sa, sb = stations[k], stations[k + 1]
-        pa = (float(sa["lon"]), float(sa["lat"]))
-        pb = (float(sb["lon"]), float(sb["lat"]))
-        base_len = max(gc_m(pa, pb), 500.0)
-        # 共同分量中选 dA+dB 最小的节点对
+    # 碎片链接：优先「主导名」碎片族（同名 way 属同一物理铁路，
+    # 独立描段后沿走廊排序即可无缝成链）；校验失败再试次选名称
+    import collections
+    name_counts = collections.Counter(f["name"] for f in frs if f["name"])
+    candidates = [n for n, _ in name_counts.most_common(3)]
+
+    def chain_family(name):
+        fam = [f for f in frs if f["name"] == name]
+        if len(fam) < 2:
+            return None
+        s0 = (float(stations[0]["lon"]), float(stations[0]["lat"]))
+        # 预计算每碎片两端点的走廊投影（前进门控用）
+        for f in fam:
+            f["p0"] = corridor.project(f["pts"][0])[1]
+            f["p1"] = corridor.project(f["pts"][-1])[1]
+        used = set()
         best = None
-        for na, da in snap[sa["id"]]:
-            ca = g.comp_of(na)
-            for nb, db in snap[sb["id"]]:
-                if ca == g.comp_of(nb) and (best is None or da + db < best[0]):
-                    best = (da + db, na, nb)
-        seg = None
-        if best is not None:
-            _, na, nb = best
-            node_path = astar_path(g, na, nb)
-            if node_path:
-                if gc_m(pa, pb) < 1.0:
-                    seg = [g.nodes[na], g.nodes[nb]]
-                else:
-                    seg = [pa] + [g.nodes[n] for n in node_path] + [pb]
-                    if poly_len(seg) / base_len > MAX_DETOUR:
-                        seg = None
-        if seg is None:
-            n_fb += 1
-            old = old_segment(line, sa["id"], sb["id"])
-            seg = old if old else [[pa[0], pa[1]], [pb[0], pb[1]]]
-            if not old:
-                eprint("[build] %s: %s-%s 无旧线形，用直线" % (line_id, sa["id"], sb["id"]))
-        else:
-            n_ok += 1
-        # 拼接（去掉与上一段重复的连接点）
-        if geometry and dist_m(tuple(geometry[-1][:2]), tuple(seg[0])) < 1.0:
-            seg = seg[1:]
-        seg = [[p[0], p[1], None] for p in seg]
-        if not geometry:
-            seg[0][2] = sa["id"]
-        seg[-1][2] = sb["id"]
-        geometry.extend(seg)
+        for i, f in enumerate(fam):
+            for endi, p in ((0, f["pts"][0]), (1, f["pts"][-1])):
+                d = dist_m(s0, p)
+                if best is None or d < best[0]:
+                    best = (d, i, endi)
+        _d, i0, endi0 = best
+        start_f = fam[i0]
+        out_f = list(start_f["pts"] if endi0 == 0 else start_f["pts"][::-1])
+        used.add(i0)
+        cur_proj = start_f["p1"] if endi0 == 0 else start_f["p0"]
+        n_gap = 0
+        while True:
+            cur_end = out_f[-1]
+            # 1) 同点延续（≤50m）且方向向前：取投影最远的一条穿过站场
+            cont = None
+            for i, f in enumerate(fam):
+                if i in used:
+                    continue
+                d0 = dist_m(cur_end, f["pts"][0])
+                d1 = dist_m(cur_end, f["pts"][-1])
+                if min(d0, d1) < 50.0:
+                    far = f["p1"] if d0 <= d1 else f["p0"]
+                    if far < cur_proj - 0.005:
+                        continue  # 折返碎片跳过
+                    if cont is None or far > cont[3]:
+                        cont = (i, d0, d1, far)
+            if cont is not None:
+                i, d0, d1, far = cont
+                seg = fam[i]["pts"][::-1] if d1 < d0 else fam[i]["pts"]
+                used.add(i)
+                if dist_m(out_f[-1], seg[0]) < 1.0:
+                    seg = seg[1:]
+                out_f.extend(seg)
+                cur_proj = far
+                continue
+            # 2) 最近端点（≤CHAIN_GAP）且向前
+            best = None
+            for i, f in enumerate(fam):
+                if i in used:
+                    continue
+                d0 = dist_m(cur_end, f["pts"][0])
+                d1 = dist_m(cur_end, f["pts"][-1])
+                d = min(d0, d1)
+                far = f["p1"] if d0 <= d1 else f["p0"]
+                if far < cur_proj - 0.005:
+                    continue
+                if best is None or d < best[0]:
+                    best = (d, i, d0, d1, far)
+            if best is None or best[0] > CHAIN_GAP_M:
+                # 断口跳接：跳到投影最靠前的未用碎片（OSM 数据缺口直连）
+                jump = None
+                for i, f in enumerate(fam):
+                    if i in used:
+                        continue
+                    mn = min(f["p0"], f["p1"])
+                    if mn < cur_proj - 0.005:
+                        continue
+                    if jump is None or mn < jump[0]:
+                        jump = (mn, i)
+                if jump is None:
+                    break
+                _mn, i = jump
+                f = fam[i]
+                d0 = dist_m(cur_end, f["pts"][0])
+                d1 = dist_m(cur_end, f["pts"][-1])
+                seg = f["pts"][::-1] if d1 < d0 else f["pts"]
+                used.add(i)
+                n_gap += 1
+                out_f.extend(seg)
+                cur_proj = max(cur_proj, max(f["p0"], f["p1"]))
+                continue
+            _d, i, d0, d1, far = best
+            seg = fam[i]["pts"][::-1] if d1 < d0 else fam[i]["pts"]
+            used.add(i)
+            if best[0] > 1.0:
+                n_gap += 1
+            if dist_m(out_f[-1], seg[0]) < 1.0:
+                seg = seg[1:]
+            out_f.extend(seg)
+            cur_proj = far
+        return out_f, n_gap, 1.0
+
+    chosen = None
+    for name in candidates:
+        r = chain_family(name)
+        if not r:
+            continue
+        pts_f, n_gap_f, span_f = r
+        if len(pts_f) < 2 or span_f < 0.80:
+            continue
+        len_f = poly_len(pts_f)
+        old_len = poly_len([(p[0], p[1]) for p in line.get("geometry", [])])
+        if not (LEN_RATIO_MIN <= len_f / max(old_len, 1.0) <= LEN_RATIO_MAX):
+            continue
+        chosen = (pts_f, n_gap_f, name)
+        break
+    if chosen is None:
+        eprint("[build] %s: 无可用同名碎片族 => KEEP-OLD" % line_id)
+        json.dump(line, sys.stdout, ensure_ascii=False, indent=2)
+        return
+    out, n_gap, fam_name = chosen
+    eprint("[build] %s: 主名碎片族「%s」" % (line_id, fam_name))
+    if len(out) < 2:
+        die("[build] %s 链接结果过短" % line_id)
+
+    # 站序单调向前吸附到链上最近顶点；偏差 >2km 修正站坐标。
+    # tagged 集合保证每站独占一个顶点——两站同顶点会覆盖标记，
+    # 导致 geometry 丢站标签、运行时 station_arc 缺失
+    geometry = [[p[0], p[1], None] for p in out]
+    coord_fixed = 0
+    tagged = set()
+    prev_idx = 0
+    for s in stations:
+        pos = (float(s["lon"]), float(s["lat"]))
+        if prev_idx >= len(out) - 1:
+            # 链已耗尽：把剩余站点追加为线的延伸顶点（标记不丢失）
+            out.append(pos)
+            geometry.append([pos[0], pos[1], s["id"]])
+            tagged.add(len(geometry) - 1)
+            prev_idx = len(out) - 1
+            continue
+        best_i, best_d = prev_idx, 1e18
+        for i in range(prev_idx, len(out)):
+            d = dist_m(pos, out[i])
+            if d < best_d:
+                best_d, best_i = d, i
+        if best_i <= prev_idx:
+            best_i = min(prev_idx + 1, len(out) - 1)
+        while best_i in tagged and best_i < len(out) - 1:
+            best_i += 1
+        if best_i in tagged:
+            # 顶点被占且无法前进：追加新顶点
+            out.append(pos)
+            geometry.append([pos[0], pos[1], s["id"]])
+            tagged.add(len(geometry) - 1)
+            prev_idx = len(out) - 1
+            continue
+        tagged.add(best_i)
+        if best_d > COORD_FIX_M:
+            s["lon"], s["lat"] = out[best_i]
+            coord_fixed += 1
+        geometry[best_i] = [s["lon"], s["lat"], s["id"]]
+        prev_idx = best_i
+    if coord_fixed:
+        eprint("[build] %s: 修正 %d 站坐标（吸附至 OSM 真实位置）"
+               % (line_id, coord_fixed))
 
     # 区段独立简化（保住车站标记）
     simplified = []
@@ -421,22 +492,22 @@ def cmd_build(line_id):
     new_len = poly_len([(p[0], p[1]) for p in simplified])
     old_len = poly_len([(p[0], p[1]) for p in line.get("geometry", [])])
     ratio = new_len / max(old_len, 1.0)
-    fb_frac = n_fb / max(n_pairs, 1)
-    ok = (LEN_RATIO_MIN <= ratio <= LEN_RATIO_MAX) and fb_frac <= MAX_FALLBACK_FRAC
-    eprint("[build] %s: 站对 %d（OSM %d / 回退 %d）旧长 %.0f km 新长 %.0f km "
+    fam_name = locals().get("fam_name", "?")
+    ok = LEN_RATIO_MIN <= ratio <= LEN_RATIO_MAX
+    eprint("[build] %s: 碎片族「%s」（缺口直连 %d）旧长 %.0f km 新长 %.0f km "
            "(x%.2f) 顶点 %d -> %d => %s"
-           % (line_id, n_pairs, n_ok, n_fb, old_len / 1000, new_len / 1000,
-              ratio, len(geometry), len(simplified), "OK" if ok else "KEEP-OLD"))
+           % (line_id, fam_name, n_gap, old_len / 1000, new_len / 1000,
+              ratio, len(out), len(simplified), "OK" if ok else "KEEP-OLD"))
     if not ok:
         json.dump(line, sys.stdout, ensure_ascii=False, indent=2)
         return
 
-    out = dict(line)
-    out["geometry"] = simplified
+    out_doc = dict(line)
+    out_doc["geometry"] = simplified
     note = str(line.get("note", ""))
     if "OSM 真实线形" not in note:
-        out["note"] = (note + " | 线形为 OSM 真实铁路走向（Overpass）。").strip(" |")
-    json.dump(out, sys.stdout, ensure_ascii=False, indent=2)
+        out_doc["note"] = (note + " | 线形为 OSM 真实铁路走向（Overpass）。").strip(" |")
+    json.dump(out_doc, sys.stdout, ensure_ascii=False, indent=2)
 
 
 def main():

@@ -73,8 +73,6 @@ func _load_lines() -> void:
 		fname = dir.get_next()
 	dir.list_dir_end()
 	print("DB: 已加载 %d 条线路" % line_order.size())
-
-
 func _build_line(doc: Dictionary) -> Dictionary:
 	var line := {
 		"id": doc["id"], "name": doc.get("name", doc["id"]),
@@ -175,6 +173,18 @@ func _load_trains() -> void:
 
 	trains.sort_custom(func(a, b): return a["start_s"] < b["start_s"])
 	print("DB: 已加载 %d 条线路、%d 趟列车（含货运示意）" % [line_order.size(), trains.size()])
+	if not data_warnings.is_empty():
+		var uniq := {}
+		for w in data_warnings:
+			var key: String = String(w).substr(0, 24)
+			uniq[key] = uniq.get(key, 0) + 1
+		print("DB: 数据警告 %d 条（按前缀聚合 top20）：" % data_warnings.size())
+		var pairs := []
+		for k in uniq:
+			pairs.append([uniq[k], k])
+		pairs.sort_custom(func(a, b): return a[0] > b[0])
+		for pr in pairs.slice(0, 20):
+			print("   x%d  %s" % [pr[0], pr[1]])
 
 
 func _parse_train(tr: Dictionary, line_id: String) -> Dictionary:
@@ -197,7 +207,7 @@ func _parse_train(tr: Dictionary, line_id: String) -> Dictionary:
 		var sl = sr.get("line")
 		var lid: String = str(sl) if sl != null and str(sl) != "" else ""
 		var arc := -1.0
-		if lid != "" and lines.has(lid) and lines[lid]["stations"].has(sid):
+		if lid != "" and lines.has(lid) and lines[lid].has("stations") 				and lines[lid]["stations"].has(sid):
 			arc = float(lines[lid]["station_arc"][sid])
 		var arr_s := -1.0
 		var dep_s := -1.0

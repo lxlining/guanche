@@ -24,7 +24,7 @@ for f in data/lines/*.json; do
       ok=$((ok+1))
     fi
   else
-    fail=$((fail+1)); echo "[build-fail] $id" >> "$LOG"
+    fail=$((fail+1)); rm -f "$f.new"; echo "[build-fail] $id" >> "$LOG"
   fi
 done
 echo "[$(date +%T)] build done: replaced=$ok keep-old=$keep fail=$fail (backup: $BAK)" >> "$LOG"
