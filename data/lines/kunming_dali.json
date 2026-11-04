@@ -12,32 +12,32 @@
     {
       "id": "kdl_km",
       "name": "昆明",
-      "lon": 102.42,
-      "lat": 25.04,
+      "lon": 102.7203,
+      "lat": 25.0187,
       "km": 0,
       "major": true
     },
     {
       "id": "kdl_lfn",
       "name": "禄丰南",
-      "lon": 102.2,
-      "lat": 25.15,
+      "lon": 102.8584407,
+      "lat": 24.9218896,
       "km": 45,
       "major": false
     },
     {
       "id": "kdl_cx",
       "name": "楚雄",
-      "lon": 101.55,
-      "lat": 25.04,
+      "lon": 101.5427,
+      "lat": 25.0853,
       "km": 110,
       "major": false
     },
     {
       "id": "kdl_dl",
       "name": "大理",
-      "lon": 100.27,
-      "lat": 25.61,
+      "lon": 100.2485,
+      "lat": 25.5919,
       "km": 330,
       "major": true
     },

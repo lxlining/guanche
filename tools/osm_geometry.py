@@ -302,13 +302,17 @@ def cmd_build(line_id):
         if len(geom) < 2:
             continue
         coords = [(float(p["lon"]), float(p["lat"])) for p in geom]
+        name = str((el.get("tags") or {}).get("name", "") or "")
+        # 站场净化：匿名短碎片（<1.5km 的站场/渡线轨道）不入链，
+        # 避免大站周围的面条环线；匿名长正线（如辽宁段高铁）保留
+        if name == "" and poly_len(coords) < 1500.0:
+            continue
         mid = coords[len(coords) // 2]
         d, t = corridor.project(mid)
         if d > CORRIDOR_MAX_M:
             continue
         frags.setdefault(el["nodes"][0],
-                         {"name": str((el.get("tags") or {}).get("name", "") or ""),
-                          "pts": coords, "t": t})
+                         {"name": name, "pts": coords, "t": t})
     if not frags:
         die("[build] %s 走廊内无 OSM 碎片" % line_id)
     frs = sorted(frags.values(), key=lambda f: f["t"])
