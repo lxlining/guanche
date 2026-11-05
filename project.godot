@@ -19,6 +19,10 @@ GameTime="*res://src/autoload/game_time.gd"
 Simulation="*res://src/autoload/simulation.gd"
 Meta="*res://src/autoload/meta.gd"
 
+[audio]
+
+general/text_to_speech=true
+
 [display]
 
 window/size/viewport_width=1600

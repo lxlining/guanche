@@ -93,7 +93,7 @@ func _ready() -> void:
 	follow_btn.pressed.connect(func(): follow_requested.emit(code))
 	btns.add_child(follow_btn)
 	btns.add_child(UIKit.button("定位", func(): locate_requested.emit(code)))
-	var tts_btn := UIKit.button("🔊 车站播报", func(): _play_arrival())
+	tts_btn = UIKit.button("🔊 车站播报", func(): _play_arrival())
 	tts_btn.toggle_mode = true
 	tts_btn.toggled.connect(func(on: bool):
 		if on:
@@ -132,6 +132,8 @@ func _open_station_info(sname: String, line_id: String, sid: String, km: int) ->
 
 
 var _tts_voice := ""
+var tts_btn: Button
+
 
 func _play_arrival() -> void:
 	if not DB.train_by_code.has(code):
@@ -152,7 +154,9 @@ func _play_arrival() -> void:
 	if voices.is_empty():
 		voices = DisplayServer.tts_get_voices()
 	if voices.is_empty():
+		next_label.text = "（本机无 TTS 语音包，无法播报）"
 		return
+	print("[TTS] voices=%d 选用=%s" % [voices.size(), _tts_voice])
 	if _tts_voice == "":
 		for v in DisplayServer.tts_get_voices():
 			var vn: String = str(v.get("name", ""))
