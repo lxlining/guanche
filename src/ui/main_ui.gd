@@ -57,6 +57,7 @@ func _ready() -> void:
 	_build_legend()
 	_build_top_buttons()
 	_build_checkin_ui()
+	_build_toast()
 	_build_time_bar()
 	_build_pills()
 	_build_toasts()
@@ -240,10 +241,37 @@ func _build_checkin_ui() -> void:
 	checkin_book_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	checkin_book_list.add_theme_constant_override("separation", 2)
 	scroll.add_child(checkin_book_list)
+	Meta.achievement_unlocked.connect(func(ach: Dictionary):
+		if str(ach.get("check", "")) == "checkins_min":
+			show_toast("🏅 成就解锁：%s" % str(ach.get("name", ""))))
 	Meta.checkin_made.connect(func(_sname: String, _total: int):
 		_refresh_checkin_book()
 		_sync_checkin_pill())
 	ui_root.add_child(checkin_book)
+
+
+var toast_label: Label
+var toast_timer := 0.0
+
+
+var toast_panel: PanelContainer
+
+
+func _build_toast() -> void:
+	toast_panel = UIKit.panel_container(UIKit.flat(Color("1a2230ee"), 10, UIKit.ACCENT2, 1, 10))
+	toast_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP,
+			Control.PRESET_MODE_MINSIZE, 76)
+	toast_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	toast_label = UIKit.label("", 14, Color.WHITE)
+	toast_panel.add_child(toast_label)
+	toast_panel.visible = false
+	ui_root.add_child(toast_panel)
+
+
+func show_toast(text: String) -> void:
+	toast_label.text = text
+	toast_panel.visible = true
+	toast_timer = 3.0
 
 
 func _do_checkin() -> void:
@@ -276,13 +304,45 @@ func toggle_checkin_book() -> void:
 		_refresh_checkin_book()
 
 
+func _station_lines(sname: String) -> String:
+	var parts: Array = []
+	for line_id in DB.line_order:
+		var line: Dictionary = DB.lines[line_id]
+		for sid in line["order"]:
+			if line["stations"][sid]["name"] == sname:
+				parts.append(str(line["short"]))
+				break
+	return " / ".join(parts)
+
+
 func _refresh_checkin_book() -> void:
 	checkin_book_progress.text = "已打卡 %d / %d 站 · 足迹 %.1f%%" % [
 		Meta.checkin_total(), DB.total_station_count(),
 		100.0 * Meta.checkin_total() / maxf(DB.total_station_count(), 1)]
 	for c in checkin_book_list.get_children():
 		c.queue_free()
+	# 成就进度
+	for def in DB.achievements:
+		if def.get("check") != "checkins_min":
+			continue
+		var unlocked: bool = def["id"] in Meta.unlocked
+		var prog: String = Meta.progress_text(def)
+		var b := Button.new()
+		b.focus_mode = Control.FOCUS_NONE
+		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		b.text = "%s %s · %s%s" % ["🏅" if unlocked else "🔒", def["name"],
+				prog, "　已达成" if unlocked else ""]
+		b.flat = true
+		b.disabled = true
+		b.add_theme_font_size_override("font_size", 12)
+		b.add_theme_color_override("font_color",
+				UIKit.ACCENT2 if unlocked else UIKit.DIM)
+		checkin_book_list.add_child(b)
+	checkin_book_list.add_child(UIKit.hspace(4))
+	checkin_book_list.add_child(UIKit.label("最近打卡", 11, UIKit.DIM))
+	# 打卡行（线路徽章 + 点击飞站）
 	var rows: Array = []
+	var line_count := {}
 	for sname in Meta.checkins:
 		var rec: Dictionary = Meta.checkins[sname]
 		rows.append([float(rec.get("t", 0.0)), sname, int(rec.get("n", 1))])
@@ -290,13 +350,17 @@ func _refresh_checkin_book() -> void:
 	for r in rows:
 		var t: float = r[0]
 		var sname: String = r[1]
+		var lines_txt := _station_lines(sname)
+		for ln in lines_txt.split(" / "):
+			line_count[ln] = true
 		var hh := int(fmod(t / 3600.0, 24.0))
 		var mm := int(fmod(t / 60.0, 60.0))
 		var b := Button.new()
 		b.focus_mode = Control.FOCUS_NONE
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		b.text = "📍 %s    %02d:%02d 打卡%s" % [sname, hh, mm,
-				"（%d 次）" % r[2] if r[2] > 1 else ""]
+		b.text = "📍 %s    %02d:%02d%s%s" % [sname, hh, mm,
+				"（%d 次）" % r[2] if r[2] > 1 else "",
+				"  ·  %s" % lines_txt if lines_txt != "" else ""]
 		b.flat = true
 		b.add_theme_font_size_override("font_size", 12)
 		b.add_theme_color_override("font_color", UIKit.TEXT)
@@ -310,6 +374,13 @@ func _refresh_checkin_book() -> void:
 		checkin_book_list.add_child(UIKit.label(
 				"还没有打卡记录。
 靠近任意车站（3km 内）即可打卡。", 12, UIKit.DIM))
+	else:
+		var sp := Control.new()
+		sp.custom_minimum_size = Vector2(0, 8)
+		checkin_book_list.add_child(sp)
+		checkin_book_list.add_child(UIKit.label(
+				"共 %d 站 · 覆盖 %d 条线路" % [rows.size(), line_count.size()],
+				11, UIKit.DIM))
 
 
 func _sync_checkin_pill() -> void:
@@ -451,7 +522,11 @@ func _build_help() -> void:
 
 # ---------- 行为 ----------
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	if toast_timer > 0.0:
+		toast_timer -= delta
+		if toast_timer <= 0.0:
+			toast_panel.visible = false
 	if clock_label != null:
 		clock_label.text = ("Ⅱ " if GameTime.paused else "") + GameTime.time_string_full()
 		clock_sub.text = "%s× · %d 条线路 · %d 站 · 在图 %d 趟" % [
@@ -578,7 +653,7 @@ func set_follow_pill(text: String) -> void:
 
 
 func any_overlay_open() -> bool:
-	return dex.visible or ach_screen.visible or help_panel.visible 			or diagram.visible or line_screen.visible
+	return dex.visible or ach_screen.visible or help_panel.visible 			or diagram.visible or line_screen.visible 			or checkin_book.visible
 
 
 func close_overlays() -> void:
@@ -587,6 +662,7 @@ func close_overlays() -> void:
 	help_panel.visible = false
 	diagram.visible = false
 	line_screen.visible = false
+	checkin_book.visible = false
 
 
 func toggle_list() -> void:
