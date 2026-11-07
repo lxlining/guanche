@@ -7,7 +7,7 @@
   "length_km": 59,
   "color": "#64748b",
   "line_class": "hsr250",
-  "note": "由 12306 车次停站站对证据 + OSM 车站坐标自动发现生成（第二轮）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
+  "note": "由 12306 车次停站站对证据 + OSM 车站坐标自动发现生成（第二轮）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
   "stations": [
     {
       "id": "auto2_01_s00",
@@ -124,11 +124,6 @@
       113.6825517,
       22.865073,
       "auto2_01_s00"
-    ],
-    [
-      113.678546,
-      22.8645848,
-      null
     ],
     [
       113.6732656,

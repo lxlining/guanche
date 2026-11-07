@@ -44,9 +44,9 @@ func _ready() -> void:
 			continue
 		for sid in line["order"]:
 			var st: Dictionary = line["stations"][sid]
-			var key := "%s|%.0f|%.0f" % [st["name"], st["pos"].x, st["pos"].y]
+			var key := str(st["name"])
 			if seen_stations.has(key):
-				continue  # 多线共站（如北京南）只标注一次
+				continue  # 多线共站按站名去重（同名站坐标可能有米级差异）
 			seen_stations[key] = true
 			var sl := _mk(15.0 if st["major"] else 11.5,
 					Color("dbe2ee") if st["major"] else Color(0.72, 0.77, 0.86, 0.85),

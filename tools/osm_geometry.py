@@ -742,7 +742,9 @@ def cmd_build(line_id):
             if cands:
                 nid, d = cands[0]
                 snap[s["id"]] = nid
-                if d > COORD_FIX_M:
+                # 修正距离上限 25km：更远的偏移说明链走错（或原始坐标
+                # 本就正确而链偏了），保留原坐标，避免灾难性拖站
+                if COORD_FIX_M < d <= 25000.0:
                     s["lon"], s["lat"] = g.nodes[nid]
                     coord_fixed += 1
             else:
@@ -858,7 +860,7 @@ def cmd_build(line_id):
             prev_idx = len(out) - 1
             continue
         tagged.add(best_i)
-        if best_d > COORD_FIX_M:
+        if COORD_FIX_M < best_d <= 25000.0:
             s["lon"], s["lat"] = out[best_i]
             coord_fixed += 1
         geometry[best_i] = [s["lon"], s["lat"], s["id"]]

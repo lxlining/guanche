@@ -7,7 +7,7 @@
   "length_km": 252,
   "color": "#64748b",
   "line_class": "hsr250",
-  "note": "由 12306 车次停站站对证据 + OSM 车站坐标自动发现生成。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
+  "note": "由 12306 车次停站站对证据 + OSM 车站坐标自动发现生成。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
   "stations": [
     {
       "id": "auto_51_s00",
@@ -44,8 +44,8 @@
     {
       "id": "auto_51_s04",
       "name": "宁德",
-      "lon": 119.3008992,
-      "lat": 26.1235696,
+      "lon": 119.5794,
+      "lat": 26.6729,
       "km": 252,
       "major": true
     }
@@ -2902,8 +2902,8 @@
       null
     ],
     [
-      119.3008992,
-      26.1235696,
+      119.5794,
+      26.6729,
       "auto_51_s04"
     ]
   ]

@@ -7,7 +7,7 @@
   "length_km": 560,
   "color": "#64748b",
   "line_class": "hsr250",
-  "note": "由 12306 车次停站站对证据 + OSM 车站坐标自动发现生成。 | 线形为 OSM 真实铁路走向（Overpass）。",
+  "note": "由 12306 车次停站站对证据 + OSM 车站坐标自动发现生成。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
   "stations": [
     {
       "id": "auto_49_s00",

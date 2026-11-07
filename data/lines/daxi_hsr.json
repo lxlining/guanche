@@ -6,7 +6,7 @@
   "to": "西安北",
   "length_km": 859,
   "color": "#fca5a5",
-  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
   "stations": [
     {
       "id": "dx_tyn",
@@ -131,8 +131,8 @@
     {
       "id": "dx_hsb",
       "name": "华山北",
-      "lon": 109.8503006,
-      "lat": 34.7883607,
+      "lon": 110.08,
+      "lat": 34.58,
       "km": 461,
       "major": false
     },
@@ -5375,8 +5375,8 @@
       null
     ],
     [
-      109.8503006,
-      34.7883607,
+      110.08,
+      34.58,
       "dx_hsb"
     ],
     [

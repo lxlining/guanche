@@ -6,7 +6,7 @@
   "to": "南京",
   "length_km": 301,
   "color": "#34d399",
-  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
   "stations": [
     {
       "id": "hn_sh",
@@ -187,11 +187,6 @@
       121.4512,
       31.2516,
       "hn_sh"
-    ],
-    [
-      121.4470661,
-      31.2535952,
-      null
     ],
     [
       121.4466291,

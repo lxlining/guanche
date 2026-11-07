@@ -6,7 +6,7 @@
   "to": "衡阳东",
   "length_km": 318,
   "color": "#fda4af",
-  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
   "stations": [
     {
       "id": "hs_hhn",
@@ -67,11 +67,6 @@
       109.9888,
       27.5155,
       "hs_hhn"
-    ],
-    [
-      109.9958396,
-      27.5160559,
-      null
     ],
     [
       109.9961418,
