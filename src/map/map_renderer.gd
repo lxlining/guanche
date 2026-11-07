@@ -174,6 +174,13 @@ func _draw_line(px: float, wf: float, df: float, zoom: float, view: Rect2) -> vo
 		var line_c := _dim_color(line["color"], 0.4 + 0.6 * df)
 		draw_polyline(pts, base_c, (core + 5.0) * wf * px, aa)
 		draw_polyline(pts, line_c, core * wf * px, aa)
+		# OSM 数据缺口段：虚线明示「该段为直连近似，非真实走向」
+		for gr in line.get("gap_ranges", []):
+			var ga: Vector2 = line["wpts"][gr[0]]
+			var gb: Vector2 = line["wpts"][gr[1]]
+			if ga.distance_to(gb) * zoom < 6.0:
+				continue  # 屏幕上不足 6px 的缺口不值得虚线
+			draw_dashed_line(ga, gb, line_c.lightened(0.35), core * wf * px, 10.0 * px)
 
 
 func _draw_stations(px: float, df: float, view: Rect2) -> void:

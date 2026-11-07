@@ -375,12 +375,41 @@ func _refresh_checkin_book() -> void:
 				"还没有打卡记录。
 靠近任意车站（3km 内）即可打卡。", 12, UIKit.DIM))
 	else:
+		# 线路打卡热力：按该线已打卡比例排序
+		var heat: Array = []
+		for line_id in DB.line_order:
+			var line: Dictionary = DB.lines[line_id]
+			var total: int = line["order"].size()
+			var got: int = 0
+			for sid in line["order"]:
+				if Meta.checkins.has(str(line["stations"][sid]["name"])):
+					got += 1
+			if got > 0:
+				heat.append([got / float(total), str(line["short"]), got, total])
+		heat.sort_custom(func(a, b): return a[0] > b[0])
 		var sp := Control.new()
 		sp.custom_minimum_size = Vector2(0, 8)
 		checkin_book_list.add_child(sp)
 		checkin_book_list.add_child(UIKit.label(
-				"共 %d 站 · 覆盖 %d 条线路" % [rows.size(), line_count.size()],
+				"共 %d 站 · 覆盖 %d 条线路 · 线路打卡热力" % [rows.size(), heat.size()],
 				11, UIKit.DIM))
+		for h in heat.slice(0, 12):
+			var bar := ProgressBar.new()
+			bar.min_value = 0.0
+			bar.max_value = 1.0
+			bar.value = h[0]
+			bar.show_percentage = false
+			bar.custom_minimum_size = Vector2(64, 10)
+			var hb2 := HBoxContainer.new()
+			hb2.add_theme_constant_override("separation", 8)
+			var lbl := UIKit.label("🛤 %s  %d/%d" % [h[1], h[2], h[3]], 12, UIKit.TEXT)
+			lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			hb2.add_child(lbl)
+			hb2.add_child(bar)
+			checkin_book_list.add_child(hb2)
+		if heat.size() > 12:
+			checkin_book_list.add_child(UIKit.label(
+					"…另有 %d 条线路已涉及" % (heat.size() - 12), 11, UIKit.DIM))
 
 
 func _sync_checkin_pill() -> void:
