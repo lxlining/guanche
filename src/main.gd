@@ -130,6 +130,13 @@ func _shot_tick() -> void:
 		cam.follow_code = ""
 		cam.position = line["center"]
 		cam.zoom = Vector2(line["fit_zoom"], line["fit_zoom"])
+	if _shot_frame == 8 and _shot_mode == "at":
+		# 通用定位截图：SHOT_LON/SHOT_LAT/SHOT_Z
+		var lon := float(OS.get_environment("SHOT_LON"))
+		var lat := float(OS.get_environment("SHOT_LAT"))
+		var z := float(OS.get_environment("SHOT_Z"))
+		cam.position = Vector2((lon - 118.85) * 90627.0, -(lat - 35.5) * 110574.0)
+		cam.zoom = Vector2(z, z)
 	if _shot_frame == 8 and _shot_mode == "zoom2":
 		# 闽赣浙交界（用户圈注区域）
 		cam.position = Vector2((117.9 - 118.85) * 90627.0, -(27.9 - 35.5) * 110574.0)

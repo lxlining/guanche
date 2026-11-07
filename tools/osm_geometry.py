@@ -23,6 +23,7 @@ build 流程（走廊排序链式拼接，天然免疫 OSM 碎片化与平行线
 安全约定：Overpass 仅允许白名单域名的 https 端点，请求前解析 DNS
 并阻断私网/环回/链路本地地址；line_id 仅用于日志（仍做格式校验）。
 """
+import heapq
 import json
 import math
 import re
@@ -184,6 +185,215 @@ def cmd_fetch(line_id, pair_idx=None):
     die("[fetch] %s 全部端点失败: %s" % (line_id, last_err))
 
 
+# ---------- 轨道图（缝合 + A*） ----------
+
+
+class RailGraph:
+    """OSM way 集合 -> 缝合后的轨道图（并查集 + 邻接表 + 网格吸附）。"""
+
+    def __init__(self, doc):
+        ways = []
+        for el in doc.get("elements", []):
+            if el.get("type") != "way":
+                continue
+            node_ids = el.get("nodes") or []
+            geom = el.get("geometry") or []
+            if len(node_ids) >= 2 and len(geom) >= 2 and len(node_ids) == len(geom):
+                wname = str((el.get("tags") or {}).get("name", "") or "")
+                ways.append((wname, node_ids,
+                             [(float(p["lon"]), float(p["lat"])) for p in geom]))
+        self.parent = {}
+
+        def find(x):
+            root = x
+            while self.parent[root] != root:
+                root = self.parent[root]
+            while self.parent[x] != root:
+                self.parent[x], x = root, self.parent[x]
+            return root
+        self._find = find
+
+        def union(a, b=None):
+            for v in ((a,) if b is None else (a, b)):
+                self.parent.setdefault(v, v)
+            if b is None:
+                return
+            ra, rb = find(a), find(b)
+            if ra != rb:
+                self.parent[ra] = rb
+
+        self.nodes = {}
+        stitch_edges = []
+        name_ends = {}
+        for wname, nids, coords in ways:
+            for nid, c in zip(nids, coords):
+                self.nodes[nid] = c
+                union(nid)
+            for a, b in zip(nids, nids[1:]):
+                union(a, b)
+            if wname and len(nids) >= 2:
+                name_ends.setdefault(wname, []).append((nids[0], nids[-1]))
+        for wname, ends in name_ends.items():
+            pts = []
+            for wid, (a, b) in enumerate(ends):
+                pts.append((a, wid))
+                pts.append((b, wid))
+            cell = 0.05
+            buckets = {}
+            for i, (nid, wid) in enumerate(pts):
+                lon, lat = self.nodes[nid]
+                buckets.setdefault((int(lon / cell), int(lat / cell)), []).append(i)
+            nearest = [None] * len(pts)
+            for i, (nid, wid) in enumerate(pts):
+                lon, lat = self.nodes[nid]
+                bx, by = int(lon / cell), int(lat / cell)
+                bd, bj = 5000.0, -1
+                for gx in (bx - 1, bx, bx + 1):
+                    for gy in (by - 1, by, by + 1):
+                        for j in buckets.get((gx, gy), ()):
+                            if j == i:
+                                continue
+                            nid2, wj = pts[j]
+                            if wj == wid:
+                                continue
+                            d = dist_m(self.nodes[nid], self.nodes[nid2])
+                            if d < bd:
+                                bd, bj = d, j
+                nearest[i] = (bj, bd)
+            for i in range(len(pts)):
+                j, di = nearest[i]
+                if j < 0:
+                    continue
+                bj, _dj = nearest[j]
+                if bj == i:
+                    a, wi = pts[i]
+                    b, wj = pts[j]
+                    if a != b and wi != wj:
+                        union(a, b)
+                        stitch_edges.append((a, b, di))
+        all_ends = []
+        for wname, end_pairs in name_ends.items():
+            for a, b in end_pairs:
+                all_ends.append((a, wname))
+                all_ends.append((b, wname))
+        cell2 = 0.01
+        buckets2 = {}
+        for i, (nid, wname) in enumerate(all_ends):
+            lon, lat = self.nodes[nid]
+            buckets2.setdefault((int(lon / cell2), int(lat / cell2)), []).append(i)
+        near2 = [None] * len(all_ends)
+        for i, (nid, wname) in enumerate(all_ends):
+            lon, lat = self.nodes[nid]
+            bx, by = int(lon / cell2), int(lat / cell2)
+            bd, bj = 800.0, -1
+            for gx in (bx - 1, bx, bx + 1):
+                for gy in (by - 1, by, by + 1):
+                    for j in buckets2.get((gx, gy), ()):
+                        if j == i:
+                            continue
+                        nid2, _w2 = all_ends[j]
+                        d = dist_m(self.nodes[nid], self.nodes[nid2])
+                        if d < bd:
+                            bd, bj = d, j
+            near2[i] = (bj, bd)
+        for i in range(len(all_ends)):
+            j, di = near2[i]
+            if j < 0:
+                continue
+            bj, _dj = near2[j]
+            if bj == i:
+                a, _w1 = all_ends[i]
+                b, _w2 = all_ends[j]
+                if a != b:
+                    union(a, b)
+                    stitch_edges.append((a, b, di))
+        self.adj = {}
+        for wname, nids, coords in ways:
+            for (a, ca), (b, cb) in zip(zip(nids, coords), zip(nids[1:], coords[1:])):
+                if find(a) != find(b):
+                    continue
+                w = dist_m(ca, cb)
+                if w <= 0:
+                    continue
+                self.adj.setdefault(a, []).append((b, w))
+                self.adj.setdefault(b, []).append((a, w))
+        for a, b, d in stitch_edges:
+            self.adj.setdefault(a, []).append((b, d))
+            self.adj.setdefault(b, []).append((a, d))
+        self.grid = {}
+        cs = 0.01
+        for nid, (lon, lat) in self.nodes.items():
+            self.grid.setdefault((int(lon / cs), int(lat / cs)), []).append(nid)
+        self._cs = cs
+
+    def comp_of(self, nid):
+        return self._find(nid)
+
+    def nearest_nodes(self, pt, max_m=18000.0):
+        cs = self._cs
+        bx, by = int(pt[0] / cs), int(pt[1] / cs)
+        out = []
+        radius = 2
+        while radius <= 40:
+            for gx in range(bx - radius, bx + radius + 1):
+                for gy in range(by - radius, by + radius + 1):
+                    for nid in self.grid.get((gx, gy), ()):
+                        d = dist_m(pt, self.nodes[nid])
+                        if d <= max_m:
+                            out.append((nid, d))
+            if out:
+                break
+            radius = radius * 2
+        out.sort(key=lambda t: t[1])
+        return out[:12]
+
+
+def astar_path(g, src, dst):
+    """缝合图内 A*（启发式 = 大圆距离，可采纳）。"""
+    if src == dst:
+        return [src]
+    goal_pos = g.nodes[dst]
+    open_h = [(0.0, src)]
+    g_score = {src: 0.0}
+    came = {}
+    closed = set()
+    while open_h:
+        _, cur = heapq.heappop(open_h)
+        if cur == dst:
+            path = [cur]
+            while cur in came:
+                cur = came[cur]
+                path.append(cur)
+            return path[::-1]
+        if cur in closed:
+            continue
+        closed.add(cur)
+        base = g_score[cur]
+        for nbr, w in g.adj.get(cur, ()):
+            ng = base + w
+            if ng < g_score.get(nbr, 1e18):
+                g_score[nbr] = ng
+                came[nbr] = cur
+                heapq.heappush(open_h, (ng + gc_m(g.nodes[nbr], goal_pos), nbr))
+    return None
+
+
+def old_segment(line, sid_a, sid_b):
+    """从旧线形中提取 sid_a..sid_b 的区段（含端点）。"""
+    geo = line.get("geometry", [])
+    ia = ib = -1
+    for i, p in enumerate(geo):
+        if len(p) > 2 and p[2]:
+            if p[2] == sid_a and ia < 0:
+                ia = i
+            elif p[2] == sid_b and ia >= 0:
+                ib = i
+                break
+    if ia >= 0 and ib > ia:
+        return [[p[0], p[1]] for p in geo[ia:ib + 1]]
+    return None
+
+
 # ---------- build：走廊排序链式拼接 ----------
 
 
@@ -276,6 +486,7 @@ def cmd_build(line_id):
     for d in docs[1:]:
         osm["elements"].extend(d.get("elements", []))
     stations = line["stations"]
+    n_pairs = len(stations) - 1
     if len(stations) < 2 or len(line.get("geometry", [])) < 2:
         die("[build] %s 线路数据不足" % line_id)
 
@@ -317,11 +528,112 @@ def cmd_build(line_id):
         die("[build] %s 走廊内无 OSM 碎片" % line_id)
     frs = sorted(frags.values(), key=lambda f: f["t"])
 
+    # 全量碎片（不过走廊）：同名家族即线路身份，山区旧走廊偏差大时
+    # 走廊过滤会错杀真实走向——主名族链配合站点覆盖校验兜底
+    frags_all = {}
+    for el in osm.get("elements", []):
+        if el.get("type") != "way":
+            continue
+        geom = el.get("geometry") or []
+        if len(geom) < 2:
+            continue
+        coords = [(float(p["lon"]), float(p["lat"])) for p in geom]
+        name = str((el.get("tags") or {}).get("name", "") or "")
+        if name == "" and poly_len(coords) < 1500.0:
+            continue
+        frags_all.setdefault(el["nodes"][0],
+                             {"name": name, "pts": coords, "t": 0.0})
+
     # 碎片链接：优先「主导名」碎片族（同名 way 属同一物理铁路，
     # 独立描段后沿走廊排序即可无缝成链）；校验失败再试次选名称
     import collections
     name_counts = collections.Counter(f["name"] for f in frs if f["name"])
     candidates = [n for n, _ in name_counts.most_common(3)]
+
+    def chain_family_free(name):
+        """同名碎片全量族：走廊投影作前进门控（碎片可偏离走廊，
+        沿走廊方向的投影仍单调——双线/折返被门控挡住）。"""
+        fam = [f for f in frags_all.values() if f["name"] == name]
+        if len(fam) < 2:
+            return None
+        for f in fam:
+            f["ta"] = corridor.project(f["pts"][0])[1]
+            f["tb"] = corridor.project(f["pts"][-1])[1]
+        fam.sort(key=lambda f: min(f["ta"], f["tb"]))
+        used = set()
+        out_f = []
+        last_t = -1.0
+        n_gap = 0
+        progress = True
+        while progress:
+            progress = False
+            cand = None
+            for i, f in enumerate(fam):
+                if i in used:
+                    continue
+                lo, hi = min(f["ta"], f["tb"]), max(f["ta"], f["tb"])
+                if hi < last_t - 0.01 or lo > last_t + 0.05:
+                    continue
+                if f["ta"] <= f["tb"]:
+                    entry, far = f["pts"][0], f["pts"][-1]
+                    t_far = f["tb"]
+                else:
+                    entry, far = f["pts"][-1], f["pts"][0]
+                    t_far = f["ta"]
+                if t_far < last_t - 0.01:
+                    continue
+                dcur = dist_m(out_f[-1], entry) if out_f else 0.0
+                if cand is None or dcur < cand[0]:
+                    cand = (dcur, i, entry, far, t_far)
+            if cand is not None:
+                _d, i, entry, far, t_far = cand
+                f = fam[i]
+                seg = f["pts"] if f["pts"][0] == entry else f["pts"][::-1]
+                if out_f and dist_m(out_f[-1], seg[0]) < 50.0:
+                    seg = seg[1:]
+                elif out_f:
+                    n_gap += 1
+                out_f.extend(seg)
+                last_t = max(last_t, t_far)
+                used.add(i)
+                progress = True
+                continue
+            jump = None
+            for i, f in enumerate(fam):
+                if i in used:
+                    continue
+                lo = min(f["ta"], f["tb"])
+                if lo <= last_t - 0.01:
+                    continue
+                if jump is None or lo < jump[0]:
+                    jump = (lo, i)
+            if jump is not None:
+                i = jump[1]
+                f = fam[i]
+                seg = f["pts"] if f["ta"] <= f["tb"] else f["pts"][::-1]
+                if out_f and dist_m(out_f[-1], seg[0]) < 50.0:
+                    seg = seg[1:]
+                elif out_f:
+                    n_gap += 1
+                out_f.extend(seg)
+                last_t = max(last_t, max(f["ta"], f["tb"]))
+                used.add(i)
+                progress = True
+        span = max(max(f["ta"], f["tb"]) for f in fam) - \
+            min(min(f["ta"], f["tb"]) for f in fam)
+        return out_f, n_gap, span
+
+    def station_coverage_ok(pts_f, max_m=20000.0):
+        for s in stations:
+            pos = (float(s["lon"]), float(s["lat"]))
+            dmin = 1e18
+            for p in pts_f:
+                d = dist_m(pos, p)
+                if d < dmin:
+                    dmin = d
+            if dmin > max_m:
+                return False
+        return True
 
     def chain_family(name):
         fam = [f for f in frs if f["name"] == name]
@@ -416,20 +728,94 @@ def cmd_build(line_id):
             cur_proj = far
         return out_f, n_gap, 1.0
 
+    old_len = poly_len([(p[0], p[1]) for p in line.get("geometry", [])])
     chosen = None
-    for name in candidates:
-        r = chain_family(name)
-        if not r:
-            continue
-        pts_f, n_gap_f, span_f = r
-        if len(pts_f) < 2 or span_f < 0.80:
-            continue
-        len_f = poly_len(pts_f)
-        old_len = poly_len([(p[0], p[1]) for p in line.get("geometry", [])])
-        if not (LEN_RATIO_MIN <= len_f / max(old_len, 1.0) <= LEN_RATIO_MAX):
-            continue
-        chosen = (pts_f, n_gap_f, name)
-        break
+
+    # 第一级：逐对 A*（缝合图最短路只走一条轨，天然无双线加倍）
+    g = RailGraph(osm) if osm.get("elements") else None
+    if g is not None and g.nodes:
+        snap = {}
+        coord_fixed = 0
+        for s in stations:
+            pt = (float(s["lon"]), float(s["lat"]))
+            cands = g.nearest_nodes(pt)
+            if cands:
+                nid, d = cands[0]
+                snap[s["id"]] = nid
+                if d > COORD_FIX_M:
+                    s["lon"], s["lat"] = g.nodes[nid]
+                    coord_fixed += 1
+            else:
+                snap[s["id"]] = None
+        if coord_fixed:
+            eprint("[build] %s: 修正 %d 站坐标（吸附至 OSM 真实位置）"
+                   % (line_id, coord_fixed))
+        geometry_pair = []
+        ok_pairs = fb_pairs = 0
+        for k in range(n_pairs):
+            sa, sb = stations[k], stations[k + 1]
+            pa = (float(sa["lon"]), float(sa["lat"]))
+            pb = (float(sb["lon"]), float(sb["lat"]))
+            base = max(gc_m(pa, pb), 500.0)
+            seg = None
+            na, nb = snap.get(sa["id"]), snap.get(sb["id"])
+            if na is not None and nb is not None and g.comp_of(na) == g.comp_of(nb):
+                node_path = astar_path(g, na, nb)
+                if node_path:
+                    seg = [pa] + [g.nodes[n] for n in node_path] + [pb]
+                    if gc_m(pa, pb) > 1.0 and poly_len(seg) / base > 2.6:
+                        seg = None
+            if seg is None:
+                fb_pairs += 1
+                old = old_segment(line, sa["id"], sb["id"])
+                seg = old if old else [[pa[0], pa[1]], [pb[0], pb[1]]]
+            else:
+                ok_pairs += 1
+            if geometry_pair and dist_m(geometry_pair[-1], seg[0]) < 1.0:
+                seg = seg[1:]
+            geometry_pair.extend(seg)
+        pair_len = poly_len(geometry_pair)
+        pair_ratio = pair_len / max(old_len, 1.0)
+        fb_frac = fb_pairs / max(n_pairs, 1)
+        if LEN_RATIO_MIN <= pair_ratio <= LEN_RATIO_MAX and fb_frac <= 0.45:
+            eprint("[build] %s: 逐对 A*（OK %d / 回退 %d）x%.2f => 采纳"
+                   % (line_id, ok_pairs, fb_pairs, pair_ratio))
+            chosen = (geometry_pair, fb_pairs, "逐对A*")
+
+    # 第二级：全量主名族（无走廊限制，山区友好）
+    if chosen is None:
+        import collections as _collections
+        all_counts = _collections.Counter(
+            f["name"] for f in frags_all.values() if f["name"])
+        for name, _cnt in all_counts.most_common(4):
+            r = chain_family_free(name)
+            if not r:
+                continue
+            pts_f, n_gap_f, span_f = r
+            if len(pts_f) < 2 or span_f < 0.80:
+                continue
+            len_f = poly_len(pts_f)
+            if not (0.65 <= len_f / max(old_len, 1.0) <= 1.9):
+                continue
+            if not station_coverage_ok(pts_f):
+                continue
+            chosen = (pts_f, n_gap_f, name)
+            break
+
+    # 第三级：走廊族（原有路径）
+    if chosen is None:
+        for name in candidates:
+            r = chain_family(name)
+            if not r:
+                continue
+            pts_f, n_gap_f, span_f = r
+            if len(pts_f) < 2 or span_f < 0.80:
+                continue
+            len_f = poly_len(pts_f)
+            if not (LEN_RATIO_MIN <= len_f / max(old_len, 1.0) <= LEN_RATIO_MAX):
+                continue
+            chosen = (pts_f, n_gap_f, name)
+            break
     if chosen is None:
         eprint("[build] %s: 无可用同名碎片族 => KEEP-OLD" % line_id)
         json.dump(line, sys.stdout, ensure_ascii=False, indent=2)

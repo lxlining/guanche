@@ -127,7 +127,7 @@ func _build_line(doc: Dictionary) -> Dictionary:
 
 	# OSM 真实线形中的数据缺口段（相邻顶点间距 >2.5km，构建时直连）
 	# 记录顶点下标区间，渲染层以虚线呈现，明示「该段非真实走向」
-	if "OSM 真实线形" in str(doc.get("note", "")):
+	if "OSM 真实" in str(doc.get("note", "")):
 		var gap_ranges: Array = []
 		for gi in range(1, pts.size()):
 			if pts[gi - 1]["pos"].distance_to(pts[gi]["pos"]) > 2500.0:
