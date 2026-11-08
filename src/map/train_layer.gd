@@ -91,6 +91,13 @@ func _run_observation(zoom: float) -> void:
 		Meta.report_screen_trains(n)
 
 
+func _train_on_line(train: Dictionary, line_id: String) -> bool:
+	for leg in train.get("legs", []):
+		if str(leg["line"]) == line_id:
+			return true
+	return false
+
+
 func _is_active(st: Dictionary) -> bool:
 	var s: String = st.get("status", "off")
 	return s == "run" or s == "stop" or s == "wait"
@@ -131,9 +138,15 @@ func _draw() -> void:
 		var st: Dictionary = Simulation.states[code]
 		if not _is_active(st):
 			continue
-		if Meta.is_focus_line(str(st.get("line", ""))):
+		var tr_line: String = str(st.get("line", ""))
+		# 专注过滤：车次专注只显示该车；线路专注只显示本线车次
+		if Meta.focus_train != "" and code != Meta.focus_train:
 			continue
-		if not Meta.is_class_visible(DB.line_class(str(st.get("line", "")))):
+		if Meta.focus_train == "" and Meta.focus_line != "" 				and not _train_on_line(DB.train_by_code.get(code, {}), Meta.focus_line):
+			continue
+		if Meta.is_focus_line(tr_line):
+			continue
+		if not Meta.is_class_visible(DB.line_class(tr_line)):
 			continue
 		var tt: Dictionary = DB.train_types.get(st["type"], {})
 		var col: Color = Color(tt.get("color", "#e5484d"))

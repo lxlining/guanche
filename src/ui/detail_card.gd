@@ -5,6 +5,7 @@ signal follow_requested(code: String)
 signal station_info_requested(sname: String, line_id: String, sid: String, km: int)
 signal locate_requested(code: String)
 signal closed
+signal focus_requested(code: String)
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
 const EmuIllu := preload("res://src/ui/emu_illustration.gd")
@@ -93,6 +94,7 @@ func _ready() -> void:
 	follow_btn.pressed.connect(func(): follow_requested.emit(code))
 	btns.add_child(follow_btn)
 	btns.add_child(UIKit.button("定位", func(): locate_requested.emit(code)))
+	btns.add_child(UIKit.button("🎯 只看此车", func(): focus_requested.emit(code)))
 	tts_btn = UIKit.button("🔊 车站播报", func(): _play_arrival())
 	tts_btn.toggle_mode = true
 	tts_btn.toggled.connect(func(on: bool):

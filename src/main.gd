@@ -55,11 +55,13 @@ func _ready() -> void:
 	ui.detail.connect("follow_requested", _toggle_follow)
 	ui.detail.connect("station_info_requested", _on_stop_station_click)
 	ui.detail.connect("locate_requested", _locate)
+	ui.detail.connect("focus_requested", _enter_train_focus)
 	ui.detail.connect("closed", func(): _select(""))
 	cam.connect("map_clicked", _on_map_click)
 	cam.connect("map_right_clicked", _on_map_right_click)
 	ui.diagram.connect("train_picked", _on_diagram_pick)
 	ui.line_screen.connect("code_picked", _on_line_screen_pick)
+	Meta.focus_line_changed.connect(_on_line_focus_camera)
 	ui.train_search_picked.connect(_on_train_search_pick)
 	ui.cam_jump_requested.connect(func(wpos: Vector2):
 		cam.follow_code = ""
@@ -160,6 +162,12 @@ func _shot_tick() -> void:
 				}
 				cam.position = DB.line("jinghu_hsr")["stations"]["bjn"]["pos"]
 				cam.zoom = Vector2(0.03, 0.03)
+			"trainfocus":
+				GameTime.jump_to(10, 0)
+				Meta.set_focus_train("G1")
+				_fit_train_route("G1")
+			"linefocus":
+				Meta.set_focus_line("hukun_hsr")
 			"book":
 				Meta.checkins = {
 					"南京南": {"t": 25200.0, "n": 1},
@@ -227,8 +235,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				if selected != "":
 					_toggle_follow(selected)
 			KEY_ESCAPE:
-				if Meta.focus_line != "":
-					Meta.set_focus_line("")
+				if Meta.focus_active():
+					Meta.clear_focus()
 				elif ui.any_overlay_open():
 					ui.close_overlays()
 				elif follow_code != "":
@@ -378,6 +386,10 @@ func _on_list_select(code: String) -> void:
 func _select(code: String) -> void:
 	selected = code
 	trains_layer.selected = code
+	if Meta.focus_train != "" and code != "" and code != Meta.focus_train:
+		Meta.set_focus_train(code)
+		_fit_train_route(code)
+		ui.sync_focus_pill()
 	ui.detail.set_train(code)
 	ui.diagram.set_selected(code)
 	if code == "":
@@ -388,6 +400,48 @@ func _select(code: String) -> void:
 		var line_id: String = str(st.get("line", DB.line_order[0]))
 		var sid: String = DB.nearest_station(line_id, st.get("pos", DB.map_center))
 		Meta.observe(code, str(st.get("type", "")), GameTime.t, DB.station_name(line_id, sid))
+
+
+func _enter_train_focus(code: String) -> void:
+	Meta.set_focus_train(code)
+	_fit_train_route(code)
+	ui.sync_focus_pill()
+
+
+func _fit_train_route(code: String) -> void:
+	if not DB.train_by_code.has(code):
+		return
+	var mn := Vector2.INF
+	var mx := -Vector2.INF
+	for stop in DB.train_by_code[code]["stops"]:
+		var lid: String = str(stop.get("line", ""))
+		var sid: String = str(stop.get("sid", ""))
+		if lid == "" or not DB.lines.has(lid):
+			continue
+		var line: Dictionary = DB.lines[lid]
+		if not line["stations"].has(sid):
+			continue
+		var pos: Vector2 = line["stations"][sid]["pos"]
+		mn = mn.min(pos)
+		mx = mx.max(pos)
+	if mn == Vector2.INF:
+		return
+	cam.follow_code = ""
+	cam.position = (mn + mx) * 0.5
+	var size: Vector2 = mx - mn
+	var z: float = minf(1500.0 / maxf(size.x, 800.0), 830.0 / maxf(size.y, 600.0))
+	z = clampf(z, 0.0008, 0.08)
+	cam.zoom = Vector2(z, z)
+
+
+func _on_line_focus_camera() -> void:
+	# 线路专注变更时统一飞至该线中心（搜索/点击/切换入口都走这里）
+	if Meta.focus_line == "" or Meta.focus_train != "":
+		return
+	var line: Dictionary = DB.line(Meta.focus_line)
+	cam.follow_code = ""
+	cam.position = line["center"]
+	cam.zoom = Vector2(line["fit_zoom"], line["fit_zoom"])
 
 
 func _locate(code: String) -> void:

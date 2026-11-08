@@ -7,6 +7,7 @@ signal spots_changed
 signal spot_mode_changed(enabled: bool)
 signal class_visibility_changed
 signal focus_line_changed
+signal focus_mode_changed
 signal checkin_made(sname: String, total: int)
 signal search_history_changed
 
@@ -37,14 +38,47 @@ var _last_observe: Dictionary = {}  # code -> 上次观测的游戏时刻
 var is_fresh: bool = true           # 从未存过档（用于首次引导）
 var class_visible: Dictionary = {"hsr350": true, "hsr250": true, "intercity": true, "conventional": true, "freight": true}
 var focus_line: String = ""
+var focus_train: String = ""          # 车次专注：仅显示该车与其走线
+var focus_train_lines: Dictionary = {}  # line_id -> true（该车全部走线）
 
 
 func set_focus_line(line_id: String) -> void:
 	focus_line = line_id
+	focus_train = ""
+	focus_train_lines = {}
 	focus_line_changed.emit()
+	focus_mode_changed.emit()
 
 
+func set_focus_train(code: String) -> void:
+	focus_train = code
+	focus_train_lines = {}
+	focus_line = ""
+	if code != "" and DB.train_by_code.has(code):
+		for leg in DB.train_by_code[code]["legs"]:
+			focus_train_lines[str(leg["line"])] = true
+	focus_line_changed.emit()
+	focus_mode_changed.emit()
+
+
+func clear_focus() -> void:
+	var had := focus_line != "" or focus_train != ""
+	focus_line = ""
+	focus_train = ""
+	focus_train_lines = {}
+	if had:
+		focus_line_changed.emit()
+		focus_mode_changed.emit()
+
+
+func focus_active() -> bool:
+	return focus_line != "" or focus_train != ""
+
+
+# line_id 是否应被隐藏（专注模式下属走线集合的线路不隐藏）
 func is_focus_line(line_id: String) -> bool:
+	if focus_train != "":
+		return not focus_train_lines.has(line_id)
 	return focus_line != "" and focus_line != line_id
 
 

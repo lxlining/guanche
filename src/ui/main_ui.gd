@@ -598,12 +598,20 @@ func _on_type_discovered(type_id: String) -> void:
 	toast("图鉴更新", "首次发现 %s（%s）" % [tt.get("name", type_id), tt.get("family", "")], UIKit.GOOD)
 
 
+func sync_focus_pill() -> void:
+	_on_focus_changed()
+
+
 func _on_focus_changed() -> void:
-	if Meta.focus_line == "":
-		focus_pill.visible = false
-	else:
+	if Meta.focus_train != "":
+		focus_pill.visible = true
+		var tr: Dictionary = DB.train_by_code.get(Meta.focus_train, {})
+		focus_label.text = "车次专注：仅显示 %s 及其走线 · [Esc] 退出" % tr.get("code", "")
+	elif Meta.focus_line != "":
 		focus_pill.visible = true
 		focus_label.text = "线路专注：%s · 点击其他线路切换 · [Esc] 退出" % DB.line(Meta.focus_line)["short"]
+	else:
+		focus_pill.visible = false
 
 
 func open_station_by_name(sname: String) -> void:
