@@ -12,6 +12,7 @@ const DexScreen := preload("res://src/ui/dex_screen.gd")
 const AchievementsScreen := preload("res://src/ui/achievements_screen.gd")
 const DiagramView := preload("res://src/ui/diagram_view.gd")
 const StationCard := preload("res://src/ui/station_card.gd")
+const YardView := preload("res://src/ui/yard_view.gd")
 const LineScreen := preload("res://src/ui/line_screen.gd")
 const GlobalSearch := preload("res://src/ui/global_search.gd")
 const MiniMap := preload("res://src/ui/mini_map.gd")
@@ -27,6 +28,7 @@ var checkin_book: PanelContainer
 var checkin_book_list: VBoxContainer
 var checkin_book_progress: Label
 var checkin_target := ""   # 当前可打卡站名（空 = 不可打卡）
+var yard_view: Control
 var follow_label: Label
 var spot_pill: PanelContainer
 var toast_box: VBoxContainer
@@ -57,6 +59,7 @@ func _ready() -> void:
 	_build_legend()
 	_build_top_buttons()
 	_build_checkin_ui()
+	_build_yard_view()
 	_build_toast()
 	_build_time_bar()
 	_build_pills()
@@ -255,6 +258,16 @@ var toast_timer := 0.0
 
 
 var toast_panel: PanelContainer
+
+
+func _build_yard_view() -> void:
+	yard_view = YardView.new()
+	yard_view.name = "YardView"
+	ui_root.add_child(yard_view)
+
+
+func open_yard_view(sname: String, pos: Vector2) -> void:
+	yard_view.open(sname, pos)
 
 
 func _build_toast() -> void:
@@ -690,7 +703,7 @@ func set_follow_pill(text: String) -> void:
 
 
 func any_overlay_open() -> bool:
-	return dex.visible or ach_screen.visible or help_panel.visible 			or diagram.visible or line_screen.visible 			or checkin_book.visible
+	return dex.visible or ach_screen.visible or help_panel.visible 			or diagram.visible or line_screen.visible 			or checkin_book.visible 			or yard_view.visible
 
 
 func close_overlays() -> void:
@@ -700,6 +713,7 @@ func close_overlays() -> void:
 	diagram.visible = false
 	line_screen.visible = false
 	checkin_book.visible = false
+	yard_view.visible = false
 
 
 func toggle_list() -> void:

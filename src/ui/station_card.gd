@@ -6,6 +6,7 @@ extends PanelContainer
 const UIKit := preload("res://src/ui/ui_kit.gd")
 
 signal train_picked(code: String)
+signal yard_requested(sname: String)
 
 const CONTENT_DIR := "user://station_content"
 const IMG_DIR := "user://station_images"
@@ -96,6 +97,9 @@ func _ready() -> void:
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(sp)
+	var yard_btn := UIKit.button("🏢 站场", func(): yard_requested.emit(cur_name))
+	yard_btn.custom_minimum_size = Vector2(72, 26)
+	head.add_child(yard_btn)
 	var edit_btn := UIKit.button("✏ 编辑", func(): _toggle_edit())
 	edit_btn.custom_minimum_size = Vector2(64, 26)
 	head.add_child(edit_btn)

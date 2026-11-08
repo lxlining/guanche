@@ -56,6 +56,9 @@ func _ready() -> void:
 	ui.detail.connect("station_info_requested", _on_stop_station_click)
 	ui.detail.connect("locate_requested", _locate)
 	ui.detail.connect("focus_requested", _enter_train_focus)
+	ui.station_card.connect("yard_requested", func(sname: String):
+		if DB._name_pos.has(sname):
+			ui.open_yard_view(sname, DB._name_pos[sname]))
 	ui.detail.connect("closed", func(): _select(""))
 	cam.connect("map_clicked", _on_map_click)
 	cam.connect("map_right_clicked", _on_map_right_click)
@@ -168,6 +171,9 @@ func _shot_tick() -> void:
 				_fit_train_route("G1")
 			"linefocus":
 				Meta.set_focus_line("hukun_hsr")
+			"yard":
+				if DB._name_pos.has("成都南"):
+					ui.open_yard_view("成都南", DB._name_pos["成都南"])
 			"book":
 				Meta.checkins = {
 					"南京南": {"t": 25200.0, "n": 1},
