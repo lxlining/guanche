@@ -65,10 +65,32 @@ func _draw() -> void:
 	_draw_stars(px, df)
 	_draw_graticule(px)
 	_draw_geography(px, df)
+	_draw_geo_terrain(px, df)
+	_draw_geo_terrain(px, df)
 	var view := Rect2(cam.get_screen_center_position() - Vector2(1.5e6, 1.5e6) / zoom,
 			Vector2(3e6, 3e6) / zoom)
 	_draw_line(px, wf, df, zoom, view)
 	_draw_stations(px, df, view)
+
+
+func _ready() -> void:
+	# 沙漠点纹预计算（固定种子，世界坐标）
+	for d in DB.geo_rich.get("deserts", []):
+		if not d.has("wpos"):
+			continue
+		var rng := RandomNumberGenerator.new()
+		rng.seed = hash(str(d.get("name", "")))
+		var dots := []
+		for i in range(110):
+			var ang := rng.randf_range(0.0, TAU)
+			var rr := sqrt(rng.randf_range(0.05, 0.95))
+			var off := Vector2(cos(ang) * rr * float(d.get("wrx", 1.0)),
+					sin(ang) * rr * float(d.get("wry", 1.0)))
+			dots.append(d["wpos"] + off)
+		d["dots"] = dots
+
+
+
 
 
 func _draw_graticule(px: float) -> void:
@@ -141,6 +163,66 @@ func _draw_geography(px: float, df: float) -> void:
 
 
 const CLASS_WIDTH := {"hsr350": 5.5, "hsr250": 4.5, "intercity": 4.0, "conventional": 2.6, "freight": 3.2}
+
+func _draw_geo_terrain(px: float, df: float) -> void:
+	# 地貌区淡色块（高原/盆地/平原）
+	var region_tint := Color(0.55, 0.5, 0.38, 0.05 + 0.04 * (1.0 - df))
+	for g in DB.geo_rich.get("regions", []):
+		if not g.has("wpos"):
+			continue
+		draw_set_transform(g["wpos"], 0.0, Vector2(g["wrx"], g["wry"]))
+		draw_circle(Vector2.ZERO, 1.0, region_tint)
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	# 沙漠点纹
+	var desert_col := _dim_color(Color(0.72, 0.62, 0.38, 0.3), df)
+	for d in DB.geo_rich.get("deserts", []):
+		if not d.has("wpos"):
+			continue
+		for dot in d.get("dots", []):
+			draw_circle(dot, 3.0 * px, desert_col)
+	# 山脉 ∧ 符号
+	var mtn_col := _dim_color(Color(0.6, 0.52, 0.42, 0.55), df)
+	var spacing := 34.0 * px
+	for r in DB.geo_rich.get("mountain_ranges", []):
+		var wpts: Array = r.get("wpts", [])
+		if wpts.size() < 2:
+			continue
+		var carry := 0.0
+		for i in range(1, wpts.size()):
+			var a: Vector2 = wpts[i - 1]
+			var b: Vector2 = wpts[i]
+			var seg_len := a.distance_to(b)
+			var ang := (b - a).angle()
+			var t := carry
+			while t <= seg_len:
+				var p := a.lerp(b, t / maxf(seg_len, 0.001))
+				var up := Vector2(-sin(ang), -cos(ang)) * 7.0 * px
+				draw_line(p - up * 0.9 + Vector2(sin(ang), -cos(ang)).orthogonal() * 5.0 * px,
+						p + up, mtn_col, 1.6 * px, true)
+				draw_line(p + up,
+						p - up * 0.9 - Vector2(sin(ang), -cos(ang)).orthogonal() * 5.0 * px,
+						mtn_col, 1.6 * px, true)
+				t += spacing
+			carry = t - seg_len
+	# 京杭大运河（虚线）
+	var canal: Dictionary = DB.geo_rich.get("canal", {})
+	var cw: Array = canal.get("wpts", [])
+	for i in range(1, cw.size()):
+		draw_dashed_line(cw[i - 1], cw[i], _dim_color(Color(0.4, 0.68, 0.82, 0.45), df),
+				1.6 * px, 9.0 * px)
+	# 补充河流
+	for rv in DB.geo_rich.get("rivers", []):
+		var rw: Array = rv.get("wpts", [])
+		if rw.size() >= 2:
+			draw_polyline(rw, COL_WATER, float(rv.get("w", 2.0)) * px * 0.55, true)
+	# 补充湖泊
+	for g in DB.geo_rich.get("lakes", []):
+		if not g.has("wpos"):
+			continue
+		draw_set_transform(g["wpos"], 0.0, Vector2(g["wrx"], g["wry"]))
+		draw_circle(Vector2.ZERO, 1.0, COL_WATER * Color(1, 1, 1, 0.75))
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
 
 func _draw_line(px: float, wf: float, df: float, zoom: float, view: Rect2) -> void:
 	for line_id in DB.line_order:

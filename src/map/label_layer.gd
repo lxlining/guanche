@@ -15,6 +15,8 @@ var _cities: Array = []
 var _stations: Array = []
 var _trains: Array = []
 var _spots: Array = []
+var _geo: Array = []
+var _linenames: Array = []
 
 
 func _ready() -> void:
@@ -58,6 +60,49 @@ func _ready() -> void:
 				"label": sl, "km": kl,
 				"wpos": st["pos"], "major": bool(st["major"])
 			})
+	# 地理标注：山脉（沿线旋转）/ 地貌区 / 沙漠 / 海域 / 湖泊
+	for r in DB.geo_rich.get("mountain_ranges", []):
+		if not r.has("wlabel") or r.get("wpts", []).size() < 2:
+			continue
+		var ml := _mk(13.0, Color(0.74, 0.65, 0.52, 0.6))
+		ml.text = r["name"]
+		var dir: Vector2 = r["wpts"][1] - r["wpts"][0]
+		ml.rotation = dir.angle()
+		_geo.append({"label": ml, "wpos": r["wlabel"]})
+	for g in DB.geo_rich.get("regions", []):
+		var rl := _mk(16.0, Color(0.78, 0.75, 0.66, 0.5))
+		rl.text = g["name"]
+		_geo.append({"label": rl, "wpos": g["wpos"]})
+	for g in DB.geo_rich.get("deserts", []):
+		var dl := _mk(12.0, Color(0.8, 0.7, 0.45, 0.62))
+		dl.text = g["name"]
+		_geo.append({"label": dl, "wpos": g["wpos"]})
+	for s in DB.geo_rich.get("seas", []):
+		var sl := _mk(18.0, Color(0.55, 0.72, 0.9, 0.5))
+		sl.text = s["name"]
+		_geo.append({"label": sl, "wpos": s["wpos"]})
+	var canal: Dictionary = DB.geo_rich.get("canal", {})
+	if canal.has("wpts") and canal["wpts"].size() > 4:
+		var cl := _mk(11.0, Color(0.45, 0.72, 0.85, 0.6))
+		cl.text = str(canal.get("name", "京杭大运河"))
+		_geo.append({"label": cl, "wpos": canal["wpts"][3]})
+	for g in DB.geo_rich.get("lakes", []):
+		var ll := _mk(10.0, Color(0.6, 0.75, 0.9, 0.55))
+		ll.text = g["name"]
+		_geo.append({"label": ll, "wpos": g["wpos"]})
+	# 干线名沿线标注（长度 >400km 的线路，走线 30%/62% 处）
+	for line_id in DB.line_order:
+		var line: Dictionary = DB.lines[line_id]
+		if float(line.get("total_len_m", 0.0)) < 400000.0:
+			continue
+		var col: Color = Color(line["color"]).lightened(0.4)
+		for tt in [0.3, 0.62]:
+			var arc: float = float(line.get("total_len_m", 0.0)) * tt
+			var ap: Dictionary = DB.arc_point(line_id, arc)
+			var nl := _mk(10.0, Color(col.r, col.g, col.b, 0.6))
+			nl.text = str(line["short"])
+			nl.rotation = ap["dir"].angle()
+			_linenames.append({"label": nl, "wpos": ap["pos"]})
 	for i in range(160):
 		_trains.append(_mk(11.0, Color(0.95, 0.97, 1.0, 0.92)))
 	for i in range(6):
@@ -98,6 +143,11 @@ func _process(_delta: float) -> void:
 		var vis: bool = e["major"] or show_station
 		_place(e["label"], e["wpos"], center, half, zoom, rect, Vector2(9, -21), vis)
 		_place(e["km"], e["wpos"], center, half, zoom, rect, Vector2(9, 4), vis and show_km)
+	for e in _geo:
+		_place(e["label"], e["wpos"], center, half, zoom, rect, Vector2.ZERO, true)
+	var show_lines := zoom > 0.008
+	for e in _linenames:
+		_place(e["label"], e["wpos"], center, half, zoom, rect, Vector2(0, -14), show_lines)
 	_sync_trains(center, half, zoom, rect)
 	_sync_spots(center, half, zoom, rect)
 

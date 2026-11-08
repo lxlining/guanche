@@ -12,6 +12,7 @@ var train_by_code: Dictionary = {}
 var express_codes: Array = []     # 大站车（成就用）
 
 var background: Dictionary = {}
+var geo_rich: Dictionary = {}
 var train_types: Dictionary = {}
 var type_list: Array = []
 var achievements: Array = []
@@ -25,6 +26,7 @@ var fit_zoom: float = 0.001
 
 func _ready() -> void:
 	background = _load_json("res://data/map/background.json")
+	geo_rich = _load_json("res://data/map/geo_rich.json")
 	var types_doc := _load_json("res://data/trains/train_types.json")
 	var ach_doc := _load_json("res://data/achievements.json")
 	for t in types_doc.get("types", []):
@@ -35,6 +37,7 @@ func _ready() -> void:
 	_load_lines()
 	_build_name_pos()
 	_build_background()
+	_build_geo_rich()
 	_load_trains()
 	_union_bounds()
 
@@ -366,6 +369,44 @@ func _union_bounds() -> void:
 	map_size = max_p - min_p
 	fit_zoom = minf(1500.0 / maxf(map_size.x, 1.0), 830.0 / maxf(map_size.y, 1.0))
 
+
+func _build_geo_rich() -> void:
+	for r in geo_rich.get("mountain_ranges", []):
+		var wpts := []
+		for pt in r.get("pts", []):
+			wpts.append(GeoScript.lonlat_to_world(float(pt[0]), float(pt[1])))
+		r["wpts"] = wpts
+		var lb: Array = r.get("label", [])
+		if lb.size() >= 2:
+			r["wlabel"] = GeoScript.lonlat_to_world(float(lb[0]), float(lb[1]))
+	for g in geo_rich.get("regions", []):
+		var c: Array = g.get("center", [0, 0])
+		g["wpos"] = GeoScript.lonlat_to_world(float(c[0]), float(c[1]))
+		g["wrx"] = float(g.get("rx", 1.0)) * GeoScript.M_PER_DEG_LON
+		g["wry"] = float(g.get("ry", 1.0)) * GeoScript.M_PER_DEG_LAT
+	for g in geo_rich.get("deserts", []):
+		var c2: Array = g.get("center", [0, 0])
+		g["wpos"] = GeoScript.lonlat_to_world(float(c2[0]), float(c2[1]))
+		g["wrx"] = float(g.get("rx", 1.0)) * GeoScript.M_PER_DEG_LON
+		g["wry"] = float(g.get("ry", 1.0)) * GeoScript.M_PER_DEG_LAT
+	for g in geo_rich.get("lakes", []):
+		var c3: Array = g.get("center", [0, 0])
+		g["wpos"] = GeoScript.lonlat_to_world(float(c3[0]), float(c3[1]))
+		g["wrx"] = float(g.get("rx", 1.0)) * GeoScript.M_PER_DEG_LON
+		g["wry"] = float(g.get("ry", 1.0)) * GeoScript.M_PER_DEG_LAT
+	for g in geo_rich.get("seas", []):
+		var p3: Array = g.get("pos", [0, 0])
+		g["wpos"] = GeoScript.lonlat_to_world(float(p3[0]), float(p3[1]))
+	var canal: Dictionary = geo_rich.get("canal", {})
+	var cw := []
+	for p4 in canal.get("pts", []):
+		cw.append(GeoScript.lonlat_to_world(float(p4[0]), float(p4[1])))
+	canal["wpts"] = cw
+	for rv in geo_rich.get("rivers", []):
+		var rw := []
+		for p5 in rv.get("pts", []):
+			rw.append(GeoScript.lonlat_to_world(float(p5[0]), float(p5[1])))
+		rv["wpts"] = rw
 
 func _build_background() -> void:
 	var wcoast: Array = []
