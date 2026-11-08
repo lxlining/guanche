@@ -18,6 +18,8 @@ DB="*res://src/autoload/db.gd"
 GameTime="*res://src/autoload/game_time.gd"
 Simulation="*res://src/autoload/simulation.gd"
 Meta="*res://src/autoload/meta.gd"
+FlightSim="*res://src/autoload/flight_sim.gd"
+PerfProbe="*res://src/autoload/perf_probe.gd"
 
 [audio]
 

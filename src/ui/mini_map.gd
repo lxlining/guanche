@@ -10,6 +10,9 @@ const COL_VIEWPORT := Color(1, 1, 1, 0.35)
 
 var _geo_cache: Array = []  # [{line_color, points: PackedVector2Array}]（归一化 0-1）
 var _bounds := Rect2()
+var _pixel_cache: Array = []          # 已变换到当前 size 的折线（size 变化才重建）
+var _pixel_cache_size := Vector2.ZERO
+var _mm_accum := 0.0
 
 
 func _ready() -> void:
@@ -49,8 +52,36 @@ func _build_cache() -> void:
 		_geo_cache.append({"color": entry["color"], "pts": norm})
 
 
-func _process(_delta: float) -> void:
-	queue_redraw()
+func _process(delta: float) -> void:
+	# 小地图重绘 2Hz 节流：视野框与列车点无需逐帧刷新
+	_mm_accum += delta
+	if _mm_accum >= 0.5:
+		_mm_accum = 0.0
+		queue_redraw()
+
+
+func _pixel_lines() -> Array:
+	if _pixel_cache_size != size:
+		# 全部线路抽稀为线段对 → 单次 draw_multiline。180px 面板 6k 段足够，
+		# 全分辨率 20 万段 + AA 会拖垮 GL 每帧画布重放。
+		var segs := PackedVector2Array()
+		for entry in _geo_cache:
+			var pts: PackedVector2Array = entry["pts"]
+			var n := pts.size()
+			var step := 1
+			while n / step > 24:
+				step += 1
+			var prev := Vector2.ZERO
+			for j in range(0, n, step):
+				var p: Vector2 = pts[j]
+				var cur := Vector2(8 + p.x * (size.x - 16), 8 + p.y * (size.y - 16))
+				if j > 0:
+					segs.push_back(prev)
+					segs.push_back(cur)
+				prev = cur
+		_pixel_cache = [segs]
+		_pixel_cache_size = size
+	return _pixel_cache
 
 
 func _world_to_mini(world_pos: Vector2) -> Vector2:
@@ -82,12 +113,9 @@ func _draw() -> void:
 	var cam_center: Vector2 = cam.get_screen_center_position()
 	var vp_size: Vector2 = get_viewport_rect().size / zoom
 
-	# 线路缩略
-	for entry in _geo_cache:
-		var pts := PackedVector2Array()
-		for p in entry["pts"]:
-			pts.append(Vector2(8 + p.x * (size.x - 16), 8 + p.y * (size.y - 16)))
-		draw_polyline(pts, COL_LINE, 1.0, true)
+	# 线路缩略（线段批缓存，size 变化才重建；单次 draw_multiline，无 AA）
+	for segs in _pixel_lines():
+		draw_multiline(segs, COL_LINE, 1.0, false)
 
 	# 视野框
 	var half := vp_size * 0.5 / zoom
@@ -96,13 +124,14 @@ func _draw() -> void:
 	var vr := Rect2(tl, br - tl)
 	draw_rect(vr, COL_VIEWPORT, false, 1.2)
 
-	# 在途列车点
+	# 在途列车点（索引遍历）
 	var active := 0
-	for code in Simulation.states:
-		var st: Dictionary = Simulation.states[code]
-		if str(st.get("status", "")) not in ["run", "stop"]:
+	var nt := Simulation.count()
+	for ti in range(nt):
+		var status_i: int = Simulation.status_at(ti)
+		if status_i == 0 or status_i == 3:
 			continue
-		var mp := _world_to_mini(st["pos"])
+		var mp := _world_to_mini(Simulation.pos_at(ti))
 		if Rect2(Vector2.ZERO, size).has_point(mp):
 			draw_circle(mp, 1.2, Color(1, 1, 1, 0.5))
 			active += 1

@@ -3,6 +3,7 @@ extends CanvasLayer
 
 signal train_search_picked(code: String)
 signal cam_jump_requested(world_pos: Vector2)
+signal flight_picked(idx: int)
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
 const FontLib := preload("res://src/ui/font_lib.gd")
@@ -16,6 +17,8 @@ const YardView := preload("res://src/ui/yard_view.gd")
 const LineScreen := preload("res://src/ui/line_screen.gd")
 const GlobalSearch := preload("res://src/ui/global_search.gd")
 const MiniMap := preload("res://src/ui/mini_map.gd")
+const FlightCard := preload("res://src/ui/flight_card.gd")
+const AirportCard := preload("res://src/ui/airport_card.gd")
 
 var ui_root: Control
 var clock_label: Label
@@ -46,6 +49,8 @@ var station_card: Control
 var mini_map: Control
 var line_screen: Control
 var global_search: Control
+var flight_card: Control
+var airport_card: Control
 var focus_pill: PanelContainer
 var focus_label: Label
 var help_panel: Control
@@ -89,6 +94,13 @@ func _ready() -> void:
 	ui_root.add_child(mini_map)
 	line_screen = LineScreen.new()
 	ui_root.add_child(line_screen)
+	flight_card = FlightCard.new()
+	ui_root.add_child(flight_card)
+	airport_card = AirportCard.new()
+	airport_card.flight_picked.connect(func(idx: int):
+		airport_card.hide()
+		flight_picked.emit(idx))
+	ui_root.add_child(airport_card)
 	_build_help()
 
 	focus_pill = UIKit.panel_container(UIKit.flat(Color("1a2230e6"), 10, UIKit.WARN, 1, 10))
@@ -102,6 +114,9 @@ func _ready() -> void:
 	Meta.achievement_unlocked.connect(_on_achievement)
 	Meta.type_discovered.connect(_on_type_discovered)
 	Meta.spot_mode_changed.connect(_on_spot_mode)
+	Meta.aviation_changed.connect(_on_aviation_changed)
+	if Meta.aviation_on:
+		_on_aviation_changed()
 	GameTime.speed_changed.connect(_sync_time_controls)
 	GameTime.jumped.connect(_sync_time_controls)
 	_sync_time_controls()
@@ -190,6 +205,9 @@ func _build_top_buttons() -> void:
 	hb.add_child(UIKit.button("打卡簿 [J]", func(): toggle_checkin_book()))
 	hb.add_child(UIKit.button("车型图鉴 [D]", func(): toggle_dex()))
 	hb.add_child(UIKit.button("成就 [A]", func(): toggle_ach()))
+	var air_btn := UIKit.button("✈ 航空 [F8]", func(): Meta.set_aviation(not Meta.aviation_on))
+	air_btn.name = "AirButton"
+	hb.add_child(air_btn)
 	var spot_btn := UIKit.button("机位模式 [P]", func(): Meta.toggle_spot_mode())
 	spot_btn.name = "SpotButton"
 	hb.add_child(spot_btn)
@@ -542,6 +560,10 @@ func _build_help() -> void:
 · [F] 跟随选中列车　· [Esc] 关闭窗口 / 退出跟随　· [Space] 暂停
 · [Tab] 列车列表　· [G] 运行图（时刻-距离图）　· [P] 机位模式　· [D] 图鉴　· [A] 成就
 
+[b]航空模式 [F8][/b]
+· 全国 100 座机场、3911 条航线、每日 7800+ 班航班同时运行（OpenFlights 开放数据）。
+· 点击飞机查看航班详情（航司/高度/速度/进度），点「跟随」伴飞全程；点击机场看出发大屏。
+
 [b]运行图[/b]
 · 所有列车按「到发时刻 × 里程」画成经典斜线：右上行的下行车、左上行的上行车。
 · 红色竖线是当前时刻，左右拖动即可平移时间；每个彩点是一趟在线列车的实时位置。
@@ -670,6 +692,22 @@ func _on_spot_mode(on: bool) -> void:
 	var sb := ui_root.find_child("SpotButton", true, false)
 	if sb != null:
 		sb.set_pressed_no_signal(on)
+
+
+func _on_aviation_changed() -> void:
+	if Meta.aviation_on and FlightSim.ready_ok:
+		show_toast("✈ 航空模式：%d 机场 · %d 航线 · 日航班 %d 班，点击飞机查看详情" % [
+			FlightSim.airport_list.size(), FlightSim.routes.size(), FlightSim.flights.size()])
+	elif not FlightSim.ready_ok:
+		show_toast("航空数据未就绪（data/air/aviation.json 缺失）")
+	var ab := ui_root.find_child("AirButton", true, false)
+	if ab != null:
+		ab.set_pressed_no_signal(Meta.aviation_on)
+
+
+func close_flight_cards() -> void:
+	flight_card.visible = false
+	airport_card.visible = false
 
 
 func toast(title: String, body: String, accent: Color = UIKit.ACCENT2) -> void:

@@ -19,3 +19,6 @@ stellar-moments/
 tools/shots/
 tools/pubkey.txt
 tools/pubkey.txt
+
+# 航空数据抓取缓存（同 cache12306，可随时重抓）
+tools/cacheair/

@@ -10,6 +10,7 @@ signal focus_line_changed
 signal focus_mode_changed
 signal checkin_made(sname: String, total: int)
 signal search_history_changed
+signal aviation_changed
 
 const GeoScript := preload("res://src/core/geo.gd")
 const SAVE_PATH := "user://savegame.json"
@@ -40,6 +41,20 @@ var class_visible: Dictionary = {"hsr350": true, "hsr250": true, "intercity": tr
 var focus_line: String = ""
 var focus_train: String = ""          # 车次专注：仅显示该车与其走线
 var focus_train_lines: Dictionary = {}  # line_id -> true（该车全部走线）
+var aviation_on: bool = false         # 航空模式（航线弧/机场/航班）
+var flights_seen: Dictionary = {}     # 航班号 -> 观测次数
+
+
+func set_aviation(on: bool) -> void:
+	if aviation_on == on:
+		return
+	aviation_on = on
+	aviation_changed.emit()
+	save()
+
+
+func observe_flight(fid: String) -> void:
+	flights_seen[fid] = int(flights_seen.get(fid, 0)) + 1
 
 
 func set_focus_line(line_id: String) -> void:
@@ -356,7 +371,8 @@ func save() -> void:
 		"cross": cross_meet_done, "screen": screen_done,
 		"visited": visited.keys(), "spots": spots_data,
 		"class_visible": class_visible, "checkins": checkins,
-		"search_history": search_history
+		"search_history": search_history,
+		"aviation_on": aviation_on, "flights_seen": flights_seen
 	}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f != null:
@@ -377,6 +393,8 @@ func _load_save() -> void:
 	GameTime.t = float(parsed.get("game_t", GameTime.t))
 	checkins = parsed.get("checkins", {})
 	search_history = parsed.get("search_history", [])
+	aviation_on = bool(parsed.get("aviation_on", false))
+	flights_seen = parsed.get("flights_seen", {})
 	GameTime.speed = float(parsed.get("speed", GameTime.speed))
 	GameTime.paused = bool(parsed.get("paused", false))
 	discovered = parsed.get("discovered", {})

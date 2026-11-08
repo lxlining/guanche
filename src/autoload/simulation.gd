@@ -7,11 +7,62 @@ const WAIT_WINDOW := 1800.0  # 网内始发列车发车前 30 分钟显示「待
 
 var states: Dictionary = {}  # code -> 状态字典（当前时刻）
 
+var _last_t := -1.0
+var _rr := 0                 # 轮转游标：预算制逐帧刷新全量列车
+const OFFVIEW_BUDGET := 400  # 每帧为视口外列车解算的最大数量
+var _codes := PackedStringArray()   # 平行数组：免每帧 9686 次字典字符串哈希
+var _pos_arr := PackedVector2Array()
+var _dir_arr := PackedVector2Array()
+var _cur_line := PackedStringArray()
+var _type_arr := PackedStringArray()
+var _freight_arr := PackedByteArray()
+var _status_arr := PackedByteArray()   # 0=off 1=run 2=stop 3=wait
+var _arrays_ready := false
+
 
 func _process(_delta: float) -> void:
+	var t0 := Time.get_ticks_usec()
 	var t := GameTime.t
-	for train in DB.trains:
-		states[train["code"]] = state_for(train, t)
+	if t == _last_t:
+		return  # 暂停/时刻未变：状态冻结，跳过全量解算
+	_last_t = t
+	# 性能：视口内列车每帧解算（近景平滑）；其余列车轮转预算更新，
+	# 全量 9686 车在 ~0.25s 内轮完，位置滞后对远景/统计不可感。
+	var vp_rect := _view_rect()
+	var n := DB.trains.size()
+	if n == 0:
+		return
+	_ensure_arrays(n)
+	var budget := OFFVIEW_BUDGET
+	var processed := 0
+	var i := _rr
+	while processed < n:
+		var in_view := vp_rect.size.x > 0.0 and vp_rect.has_point(_pos_arr[i])
+		if in_view or budget > 0:
+			var st: Dictionary = state_for(DB.trains[i], t)
+			var code_i := _codes[i]
+			states[code_i] = st
+			var status := str(st.get("status", "off"))
+			_status_arr[i] = 1 if status == "run" else (2 if status == "stop" else (3 if status == "wait" else 0))
+			if st.has("pos"):
+				_pos_arr[i] = st["pos"]
+				_dir_arr[i] = st["dirv"]
+				_cur_line[i] = str(st.get("line", ""))
+			if not in_view:
+				budget -= 1
+		i = (i + 1) % n
+		processed += 1
+	_rr = i
+	PerfProbe.lap("sim", Time.get_ticks_usec() - t0)
+
+
+func _view_rect() -> Rect2:
+	var cam := get_viewport().get_camera_2d()
+	if cam == null:
+		return Rect2()
+	var vp := get_viewport().get_visible_rect().size
+	return Rect2(cam.get_screen_center_position() - vp * 0.5 / cam.zoom.x,
+			vp / cam.zoom.x).grow(50000.0)
 
 
 # 纯解算：给定列车与时刻，返回状态。
@@ -60,9 +111,9 @@ func _state_in_leg(train: Dictionary, leg: Dictionary, rel: float) -> Dictionary
 			var arc: float = lerpf(seg["arc0"], seg["arc1"], p)
 			var slope: float = _trapezoid_slope(tau, seg["accel"])
 			var v_kmh: float = seg["len_m"] / maxf(seg["dur_s"], 1.0) * slope * 3.6
-			var pt := DB.arc_point(line_id, arc)
+			var rpt := DB.arc_pos(line_id, arc)
 			var dirv: Vector2 = _probe_dir(line_id, arc, leg)
-			return _mk_state(train, line_id, "run", pt["pos"], dirv,
+			return _mk_state(train, line_id, "run", rpt, dirv,
 					DB.km_at_arc(line_id, arc), rel, leg["i0"] + i, leg["i0"] + i + 1,
 					minf(v_kmh, 350.0))
 	# 已驶离本腿末端（时间缝隙由 transfer 分支处理，此处兜底收车）
@@ -99,9 +150,9 @@ func _transfer_state(train: Dictionary, tr: Dictionary, rel: float,
 
 func _state_at_stop(train: Dictionary, line_id: String, stop: Dictionary,
 		rel: float, stop_idx: int, next_idx: int) -> Dictionary:
-	var pt := DB.arc_point(line_id, stop["arc"])
+	var spt := DB.arc_pos(line_id, stop["arc"])
 	var dirv: Vector2 = _probe_dir(line_id, stop["arc"], null)
-	return _mk_state(train, line_id, "stop", pt["pos"], dirv,
+	return _mk_state(train, line_id, "stop", spt, dirv,
 			DB.km_at_arc(line_id, stop["arc"]), rel, stop_idx, next_idx, 0.0)
 
 
@@ -110,12 +161,12 @@ func _probe_dir(line_id: String, arc: float, leg) -> Vector2:
 	var sign := 1.0
 	if leg != null:
 		sign = 1.0 if leg["arc1"] > leg["arc0"] else -1.0
-	var pt := DB.arc_point(line_id, arc)
-	var pt2 := DB.arc_point(line_id, arc + 80.0 * sign)
-	var dv: Vector2 = pt2["pos"] - pt["pos"]
+	var p0 := DB.arc_pos(line_id, arc)
+	var p1 := DB.arc_pos(line_id, arc + 80.0 * sign)
+	var dv := p1 - p0
 	if dv.length_squared() > 1.0:
 		return dv.normalized()
-	return pt["dir"]
+	return dv
 
 
 func _mk_state(train: Dictionary, line_id: String, status: String, pos: Vector2,
@@ -159,3 +210,75 @@ func _trapezoid_slope(tau: float, a: float) -> float:
 	if tau <= 1.0 - a:
 		return v
 	return v * (1.0 - tau) / a
+
+# ---------- 渲染层热路径：平行数组索引访问（免字典哈希） ----------
+
+func count() -> int:
+	_ensure_arrays(DB.trains.size())
+	return DB.trains.size()
+
+# 平行数组懒初始化（渲染层可能在 Simulation 首帧前访问）
+func _ensure_arrays(n: int) -> void:
+	if _arrays_ready and _codes.size() == n:
+		return
+	_codes = PackedStringArray()
+	_pos_arr = PackedVector2Array()
+	_dir_arr = PackedVector2Array()
+	_cur_line = PackedStringArray()
+	_type_arr = PackedStringArray()
+	_freight_arr = PackedByteArray()
+	_status_arr = PackedByteArray()
+	_codes.resize(n)
+	_pos_arr.resize(n)
+	_dir_arr.resize(n)
+	_cur_line.resize(n)
+	_type_arr.resize(n)
+	_freight_arr.resize(n)
+	_status_arr.resize(n)
+	for k in range(n):
+		var tr0: Dictionary = DB.trains[k]
+		_codes[k] = str(tr0["code"])
+		_pos_arr[k] = Vector2.INF
+		_type_arr[k] = str(tr0.get("type", ""))
+		_freight_arr[k] = 1 if bool(tr0.get("freight", false)) else 0
+	_arrays_ready = true
+
+
+
+
+func code_at(i: int) -> String:
+	_ensure_arrays(DB.trains.size())
+	return _codes[i]
+
+
+func pos_at(i: int) -> Vector2:
+	_ensure_arrays(DB.trains.size())
+	return _pos_arr[i]
+
+
+func dir_at(i: int) -> Vector2:
+	return _dir_arr[i]
+
+
+func status_at(i: int) -> int:
+	_ensure_arrays(DB.trains.size())
+	return _status_arr[i]
+
+
+func type_at(i: int) -> String:
+	return _type_arr[i]
+
+
+func freight_at(i: int) -> bool:
+	return _freight_arr[i] == 1
+
+
+func cur_line_at(i: int) -> String:
+	return _cur_line[i]
+
+
+func train_on_line_at(i: int, line_id: String) -> bool:
+	for leg in DB.trains[i]["legs"]:
+		if str(leg["line"]) == line_id:
+			return true
+	return false

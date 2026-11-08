@@ -6,16 +6,20 @@ const CameraController := preload("res://src/map/camera_controller.gd")
 const TrainLayer := preload("res://src/map/train_layer.gd")
 const SpotLayer := preload("res://src/map/spot_layer.gd")
 const LabelLayer := preload("res://src/map/label_layer.gd")
+const FlightArcLayer := preload("res://src/map/flight_arc_layer.gd")
+const FlightLayer := preload("res://src/map/flight_layer.gd")
 const MainUI := preload("res://src/ui/main_ui.gd")
 
 var cam: Camera2D
 var trains_layer: Node2D
+var flights_layer: Node2D
 var label_layer: CanvasLayer
 var ui: CanvasLayer
 
 var selected := ""
 
 var follow_code := ""
+var follow_flight := -1     # 跟随航班 idx（-1 = 不跟随）
 var _f_last_pos := Vector2(NAN, NAN)
 var _f_dist := 0.0
 var _f_started_at_departure := false
@@ -34,12 +38,18 @@ func _ready() -> void:
 	var map := MapRenderer.new()
 	map.name = "MapRenderer"
 	add_child(map)
+	var arcs := FlightArcLayer.new()
+	arcs.name = "FlightArcLayer"
+	add_child(arcs)
 	var spots := SpotLayer.new()
 	spots.name = "SpotLayer"
 	add_child(spots)
 	trains_layer = TrainLayer.new()
 	trains_layer.name = "TrainLayer"
 	add_child(trains_layer)
+	flights_layer = FlightLayer.new()
+	flights_layer.name = "FlightLayer"
+	add_child(flights_layer)
 	label_layer = LabelLayer.new()
 	label_layer.name = "LabelLayer"
 	add_child(label_layer)
@@ -51,6 +61,8 @@ func _ready() -> void:
 	add_child(ui)
 
 	trains_layer.connect("train_clicked", _on_train_clicked)
+	ui.flight_card.connect("follow_requested", _toggle_flight_follow)
+	ui.flight_picked.connect(_on_flight_pick)
 	ui.train_list.connect("train_selected", _on_list_select)
 	ui.detail.connect("follow_requested", _toggle_follow)
 	ui.detail.connect("station_info_requested", _on_stop_station_click)
@@ -72,6 +84,22 @@ func _ready() -> void:
 
 	if Meta.is_fresh:
 		ui.help_panel.visible = true
+
+	# 临时性能排查开关：PERF_SKIP=map,trains,flights,labels,minimap 逐层排除
+	var skip := OS.get_environment("PERF_SKIP").split(",")
+	for s in skip:
+		match s:
+			"map":
+				get_node("MapRenderer").visible = false
+			"trains":
+				trains_layer.visible = false
+			"flights":
+				flights_layer.visible = false
+				get_node("FlightArcLayer").visible = false
+			"labels":
+				label_layer.visible = false
+			"minimap":
+				ui.mini_map.visible = false
 
 	_shot_mode = OS.get_environment("SHOT_MODE")
 	if _shot_mode != "" and OS.get_environment("SHOT_PATH") != "":
@@ -123,11 +151,28 @@ func _shot_tick() -> void:
 				GameTime.jump_to(23, 0)
 			"detail":
 				GameTime.jump_to(10, 0)
+			"air":
+				Meta.set_aviation(true)
+				GameTime.jump_to(10, 0)
+			"airfl":
+				Meta.set_aviation(true)
+				GameTime.jump_to(10, 0)
 			_:
 				ui.close_overlays()
 	if _shot_frame == 8 and _shot_mode == "zoom":
 		cam.position = DB.line("jinghu_hsr")["stations"]["jnx"]["pos"]
 		cam.zoom = Vector2(0.03, 0.03)
+	if _shot_frame == 8 and _shot_mode == "air":
+		# 全国视野看航线网络（可 SHOT_LON/SHOT_LAT/SHOT_Z 定位）
+		cam.follow_code = ""
+		if OS.get_environment("SHOT_LON") != "":
+			cam.position = Vector2((float(OS.get_environment("SHOT_LON")) - 118.85) * 90627.0,
+					-(float(OS.get_environment("SHOT_LAT")) - 35.5) * 110574.0)
+			var z := float(OS.get_environment("SHOT_Z"))
+			cam.zoom = Vector2(z, z)
+		else:
+			cam.position = DB.map_center
+			cam.zoom = Vector2(DB.fit_zoom * 1.02, DB.fit_zoom * 1.02)
 	if _shot_frame == 8 and _shot_mode == "focus":
 		# 模拟点击沪昆高铁线体：专注模式
 		Meta.set_focus_line("hukun_hsr")
@@ -171,6 +216,16 @@ func _shot_tick() -> void:
 				_fit_train_route("G1")
 			"linefocus":
 				Meta.set_focus_line("hukun_hsr")
+			"airap":
+				Meta.set_aviation(true)
+				ui.airport_card.show_airport("CTU")
+			"airfl":
+				var act: Array = FlightSim.active_flights(GameTime.t)
+				if not act.is_empty():
+					var fidx: int = act[act.size() / 2]
+					_on_flight_click(fidx)
+					_locate_flight(fidx)
+					cam.zoom = Vector2(0.006, 0.006)
 			"yard":
 				if DB._name_pos.has("成都南"):
 					ui.open_yard_view("成都南", DB._name_pos["成都南"])
@@ -204,10 +259,20 @@ func _process(delta: float) -> void:
 
 	label_layer.selected = selected
 	label_layer.hover = trains_layer.hover
+	label_layer.aviation_on = Meta.aviation_on and FlightSim.ready_ok and not Meta.focus_active()
+	label_layer.flight_selected = flights_layer.selected
+	label_layer.flight_hover = flights_layer.hover
+	label_layer.flight_states = flights_layer._states      # 引用共享，避免重复解算
+	label_layer.flight_airborne = flights_layer._airborne
+
+	if follow_flight >= 0:
+		_flight_follow_tick()
 
 	_station_accum += delta
 	if _station_accum > 0.5:
 		_station_accum = 0.0
+		var ck0 := Time.get_ticks_usec()
+		PerfProbe.lap("checkin", 0)
 		var checkin_target := ""
 		var checkin_best := 3000.0
 		for line_id in DB.line_order:
@@ -238,13 +303,21 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_TAB:
 				ui.toggle_list()
 			KEY_F:
-				if selected != "":
+				if follow_flight >= 0:
+					_toggle_flight_follow(follow_flight)
+				elif selected != "":
 					_toggle_follow(selected)
+			KEY_F8:
+				Meta.set_aviation(not Meta.aviation_on)
 			KEY_ESCAPE:
 				if Meta.focus_active():
 					Meta.clear_focus()
 				elif ui.any_overlay_open():
 					ui.close_overlays()
+				elif ui.flight_card.visible or ui.airport_card.visible:
+					ui.close_flight_cards()
+				elif follow_flight >= 0:
+					_end_flight_follow()
 				elif follow_code != "":
 					_end_follow(false)
 				elif selected != "":
@@ -273,11 +346,101 @@ func _on_map_click(world_pos: Vector2) -> void:
 	if Meta.spot_mode:
 		Meta.place_spot(world_pos)
 		return
+	# 航空优先：飞机 > 机场 > 铁路
+	if Meta.aviation_on and FlightSim.ready_ok and not Meta.focus_active():
+		var fidx: int = flights_layer.pick(world_pos, cam.zoom.x)
+		if fidx >= 0:
+			_on_flight_click(fidx)
+			return
+		var ap: String = flights_layer.pick_airport(world_pos, cam.zoom.x)
+		if ap != "":
+			_on_airport_click(ap)
+			return
 	var code: String = trains_layer.pick(world_pos, cam.zoom.x)
 	if code != "":
 		_select(code)
 	else:
 		_pick_station(world_pos)
+
+
+# ---------- 航空 ----------
+
+func _on_flight_click(idx: int) -> void:
+	flights_layer.selected = idx
+	ui.airport_card.hide()
+	ui.detail.hide()
+	ui.flight_card.show_flight(idx)
+	Meta.observe_flight(str(FlightSim.flights[idx]["id"]))
+
+
+func _on_airport_click(iata: String) -> void:
+	flights_layer.selected = -1
+	ui.flight_card.hide()
+	ui.detail.hide()
+	ui.airport_card.show_airport(iata)
+
+
+func _on_flight_pick(idx: int) -> void:
+	_on_flight_click(idx)
+	_locate_flight(idx)
+
+
+func _toggle_flight_follow(idx: int) -> void:
+	if idx < 0 or idx >= FlightSim.flights.size():
+		return
+	if follow_flight == idx:
+		_end_flight_follow()
+		return
+	_end_flight_follow()
+	follow_flight = idx
+	cam.follow_code = ""
+	ui.flight_card.set_following(true)
+
+
+func _end_flight_follow() -> void:
+	if follow_flight < 0:
+		return
+	follow_flight = -1
+	ui.flight_card.set_following(false)
+	ui.set_follow_pill("")
+
+
+func _locate_flight(idx: int) -> void:
+	var st: Dictionary = FlightSim.state_for(idx, GameTime.t)
+	cam.follow_code = ""
+	cam.position = st["pos"]
+
+
+func _flight_follow_tick() -> void:
+	var idx := follow_flight
+	if idx >= FlightSim.flights.size():
+		_end_flight_follow()
+		return
+	var fl: Dictionary = FlightSim.flights[idx]
+	var st: Dictionary = FlightSim.state_for(idx, GameTime.t)
+	var ph: String = str(st["phase"])
+	if ph == "done":
+		ui.show_toast("🛬 %s 已到达 %s" % [str(fl["id"]), FlightSim.airports[fl["to"]]["name"]])
+		_end_flight_follow()
+		return
+	if ph == "climb" or ph == "cruise" or ph == "descend":
+		cam.position = st["pos"]
+		ui.set_follow_pill("正在跟随 %s · %s · 高度 %d km · [Esc] 退出" % [
+			str(fl["id"]), _phase_cn(ph), int(float(st["alt"]) / 1000.0)])
+	else:
+		ui.set_follow_pill("跟随 %s · 地面滑行/等待" % str(fl["id"]))
+
+
+func _phase_cn(ph: String) -> String:
+	match ph:
+		"climb":
+			return "爬升"
+		"cruise":
+			return "巡航"
+		"descend":
+			return "下降"
+		_:
+			return "地面"
 
 
 # 详情卡停站名点击 -> 站点信息卡
@@ -392,6 +555,8 @@ func _on_list_select(code: String) -> void:
 func _select(code: String) -> void:
 	selected = code
 	trains_layer.selected = code
+	if code != "":
+		ui.close_flight_cards()
 	if Meta.focus_train != "" and code != "" and code != Meta.focus_train:
 		Meta.set_focus_train(code)
 		_fit_train_route(code)

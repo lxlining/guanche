@@ -14,16 +14,27 @@ var _route_legs: Array = []
 var _route_stops := PackedVector2Array()
 
 var _mouse_world := Vector2.ZERO
+var _obs_accum := 0.0
+var _last_mouse := Vector2(-1e9, -1e9)
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	_mouse_world = get_global_mouse_position()
 	var cam := get_viewport().get_camera_2d()
 	var zoom := cam.zoom.x if cam != null else DB.fit_zoom
 	if selected != _route_for:
 		_rebuild_route(selected)
-	_update_hover(zoom)
-	_run_observation(zoom)
+	# 悬停拾取：仅鼠标移动时重算（万级遍历）
+	if not _mouse_world.is_equal_approx(_last_mouse):
+		_last_mouse = _mouse_world
+		_update_hover(zoom)
+	# 观测判定：4Hz 节流
+	_obs_accum += delta
+	if _obs_accum >= 0.5:
+		_obs_accum = 0.0
+		var ob0 := Time.get_ticks_usec()
+		_run_observation(zoom)
+		PerfProbe.lap("obs", Time.get_ticks_usec() - ob0)
 	queue_redraw()
 
 
@@ -69,26 +80,29 @@ func _run_observation(zoom: float) -> void:
 	if GameTime.paused:
 		return
 	var t := GameTime.t
-	for code in Simulation.states:
-		var st: Dictionary = Simulation.states[code]
-		if not _is_active(st):
+	var n := Simulation.count()
+	for ti in range(n):
+		var status_i: int = Simulation.status_at(ti)
+		if status_i == 0:
 			continue
+		var pos := Simulation.pos_at(ti)
 		for s in Meta.spots:
-			if st["pos"].distance_to(s["world"]) <= s["r_m"]:
-				var sid: String = DB.nearest_station(st["line"], st["pos"])
-				Meta.observe(code, st["type"], t, DB.station_name(st["line"], sid))
+			if pos.distance_to(s["world"]) <= s["r_m"]:
+				var line_id := Simulation.cur_line_at(ti)
+				var sid: String = DB.nearest_station(line_id, pos)
+				Meta.observe(Simulation.code_at(ti), Simulation.type_at(ti), t,
+						DB.station_name(line_id, sid))
 	# 同屏列车数统计（成就用）
 	var vp := get_viewport_rect().size
 	var cam := get_viewport().get_camera_2d()
 	if cam != null:
 		var half := vp * 0.5
 		var rect := Rect2(cam.get_screen_center_position() - half / zoom, vp / zoom)
-		var n := 0
-		for code in Simulation.states:
-			var st: Dictionary = Simulation.states[code]
-			if _is_active(st) and rect.has_point(st["pos"]):
-				n += 1
-		Meta.report_screen_trains(n)
+		var in_screen := 0
+		for ti2 in range(n):
+			if Simulation.status_at(ti2) != 0 and rect.has_point(Simulation.pos_at(ti2)):
+				in_screen += 1
+		Meta.report_screen_trains(in_screen)
 
 
 func _train_on_line(train: Dictionary, line_id: String) -> bool:
@@ -133,40 +147,82 @@ func _draw() -> void:
 	# LOD：全国视野用小圆点，中景小箭头，近景完整箭头
 	var dot_mode := zoom < 0.006
 	var small := zoom < 0.015
+	# 形状/颜色外提：避免每车每帧重建 PackedVector2Array 与 Color(str)
+	var shape_long := PackedVector2Array([
+		Vector2(14, 0), Vector2(-9, 5.5), Vector2(-5, 0), Vector2(-9, -5.5)])
+	var shape_std := PackedVector2Array([
+		Vector2(10, 0), Vector2(-6, 6), Vector2(-3, 0), Vector2(-6, -6)])
+	var type_colors := {}
+	for tid in DB.train_types:
+		type_colors[tid] = Color(str(DB.train_types[tid].get("color", "#e5484d")))
+	# 视口裁剪（视野外列车跳过绘制）
+	var cam2 := get_viewport().get_camera_2d()
+	var view := Rect2()
+	if cam2 != null:
+		var vp := get_viewport().get_visible_rect().size
+		view = Rect2(cam2.get_screen_center_position() - vp * 0.5 / zoom,
+				vp / zoom).grow(40000.0)
+	# 全国视野三角批渲染缓冲（单次 add_triangle_array，替代数千 draw_circle）
+	var tri_idx := PackedInt32Array()
+	var tri_pts := PackedVector2Array()
+	var tri_cols := PackedColorArray()
+	var tri_base := 0
+	var sel_pos := Vector2.INF
+	var hov_pos := Vector2.INF
 
-	for code in Simulation.states:
-		var st: Dictionary = Simulation.states[code]
-		if not _is_active(st):
+	# 主循环走 Simulation 平行数组（免 9686 次/帧的字典哈希）
+	var n_trains := Simulation.count()
+	for ti in range(n_trains):
+		var status_i: int = Simulation.status_at(ti)
+		if status_i == 0:
 			continue
-		var tr_line: String = str(st.get("line", ""))
+		var code: String = Simulation.code_at(ti)
+		var tr_line: String = Simulation.cur_line_at(ti)
 		# 专注过滤：车次专注只显示该车；线路专注只显示本线车次
 		if Meta.focus_train != "" and code != Meta.focus_train:
 			continue
-		if Meta.focus_train == "" and Meta.focus_line != "" 				and not _train_on_line(DB.train_by_code.get(code, {}), Meta.focus_line):
+		if Meta.focus_train == "" and Meta.focus_line != "" \
+				and not Simulation.train_on_line_at(ti, Meta.focus_line):
 			continue
 		if Meta.is_focus_line(tr_line):
 			continue
 		if not Meta.is_class_visible(DB.line_class(tr_line)):
 			continue
-		var tt: Dictionary = DB.train_types.get(st["type"], {})
-		var col: Color = Color(tt.get("color", "#e5484d"))
-		var pos: Vector2 = st["pos"]
+		var tr_type := Simulation.type_at(ti)
+		var col: Color = type_colors.get(tr_type, Color("#e5484d"))
+		var pos: Vector2 = Simulation.pos_at(ti)
+		if not view.has_point(pos):
+			continue
 
-		var is_freight: bool = bool(DB.train_by_code.get(code, {}).get("freight", false))
+		var is_freight: bool = Simulation.freight_at(ti)
 		if is_freight:
 			col = Color("#c2833c")
 
 		if dot_mode:
-			var c := col.lightened(0.15) if code == hover else col
-			draw_circle(pos, (4.5 if code == selected else 3.0) * px, c)
+			# 方向菱形并入批缓冲；选中/悬停的车补画光环
+			var d := Simulation.dir_at(ti).normalized()
+			var nv := Vector2(-d.y, d.x)
+			tri_pts.push_back(pos + d * 4.6 * px)
+			tri_pts.push_back(pos + nv * 2.9 * px)
+			tri_pts.push_back(pos - d * 4.6 * px)
+			tri_pts.push_back(pos - nv * 2.9 * px)
+			tri_idx.append_array(PackedInt32Array([tri_base, tri_base + 1, tri_base + 2,
+					tri_base, tri_base + 2, tri_base + 3]))
+			var cc := col.lightened(0.15) if code == hover else col
+			for _k in range(4):
+				tri_cols.push_back(cc)
+			tri_base += 4
 			if code == selected:
-				draw_arc(pos, 7.0 * px, 0.0, TAU, 20, Color.WHITE, 1.6 * px, true)
+				sel_pos = pos
+			elif code == hover:
+				hov_pos = pos
 			continue
 
+		var dirv := Simulation.dir_at(ti)
 		if is_freight:
 			# 货车：方块标记（区别于客车箭头）
 			var sz := 9.0 * px * (0.7 if small else 1.0)
-			var ang_f: float = (st["dirv"] as Vector2).angle()
+			var ang_f: float = dirv.angle()
 			draw_set_transform(pos, ang_f, Vector2.ONE * px * (0.7 if small else 1.0))
 			var rect := Rect2(Vector2(-5, -4), Vector2(13, 8))
 			draw_rect(rect, col)
@@ -176,16 +232,11 @@ func _draw() -> void:
 				draw_arc(pos, 13.0 * px, 0.0, TAU, 28, Color.WHITE, 2.0 * px, true)
 			continue
 
-		var ang: float = (st["dirv"] as Vector2).angle()
+		var ang: float = dirv.angle()
 		var sc: float = px * (0.7 if small else 1.0)
 		draw_set_transform(pos, ang, Vector2.ONE * sc)
-		var shape := PackedVector2Array([
-			Vector2(14, 0), Vector2(-9, 5.5), Vector2(-5, 0), Vector2(-9, -5.5)
-		]) if long_train(tt) else PackedVector2Array([
-			Vector2(10, 0), Vector2(-6, 6), Vector2(-3, 0), Vector2(-6, -6)
-		])
 		var c2 := col.lightened(0.25) if code == hover and code != selected else col
-		draw_colored_polygon(shape, c2)
+		draw_colored_polygon(shape_long if long_train(DB.train_types.get(tr_type, {})) else shape_std, c2)
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 		# 跟随列车尾迹
@@ -198,6 +249,15 @@ func _draw() -> void:
 			draw_arc(pos, 13.0 * px, 0.0, TAU, 28, Color.WHITE, 2.0 * px, true)
 		elif code == hover:
 			draw_arc(pos, 13.0 * px, 0.0, TAU, 28, Color(1, 1, 1, 0.45), 1.5 * px, true)
+
+	# 全国视野：一次调用提交全部列车菱形 + 选中/悬停光环
+	if dot_mode and tri_base > 0:
+		RenderingServer.canvas_item_add_triangle_array(get_canvas_item(),
+				tri_idx, tri_pts, tri_cols)
+		if sel_pos != Vector2.INF:
+			draw_arc(sel_pos, 7.5 * px, 0.0, TAU, 20, Color.WHITE, 1.6 * px, true)
+		if hov_pos != Vector2.INF:
+			draw_arc(hov_pos, 7.5 * px, 0.0, TAU, 20, Color(1, 1, 1, 0.5), 1.4 * px, true)
 
 
 func long_train(tt: Dictionary) -> bool:
