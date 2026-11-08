@@ -17,6 +17,7 @@
 import csv
 import io
 import json
+import os
 import sys
 import time
 import urllib.parse
@@ -216,6 +217,19 @@ def build(json_in, al_in, rt_in):
           file=sys.stderr)
 
 
+def _safe_cache_path(p):
+    """构建输入路径校验：必须位于 tools/cacheair/ 下、以 .cache 结尾、
+    不含 .. 穿越（防 argv 任意文件读取）。返回规范化绝对路径。"""
+    norm = os.path.normpath(os.path.abspath(p))
+    allowed_dir = os.path.normpath(os.path.abspath("tools/cacheair"))
+    parts = p.replace("\\", "/").split("/")
+    if (not norm.startswith(allowed_dir + os.sep)
+            or not norm.endswith(".cache")
+            or ".." in parts):
+        sys.exit("[build] 拒绝缓存路径（须为 tools/cacheair/*.cache）: %s" % p)
+    return norm
+
+
 def main():
     args = sys.argv[1:]
     if len(args) >= 2 and args[0] == "--fetch":
@@ -223,15 +237,16 @@ def main():
         if key not in URLS:
             sys.exit("[fetch] 未知数据源: %s" % key)
         sys.exit(fetch_to_stdout(key))
-    if len(args) >= 3 and args[0] == "--build":
-        with open(args[1], "rb") as f:
+    if len(args) >= 4 and args[0] == "--build":
+        ap_path = _safe_cache_path(args[1])
+        with open(ap_path, "rb") as f:
             ap = f.read()
         al = rt = None
         if args[2] != "-":
-            with open(args[2], "rb") as f:
+            with open(_safe_cache_path(args[2]), "rb") as f:
                 al = f.read()
         if args[3] != "-":
-            with open(args[3], "rb") as f:
+            with open(_safe_cache_path(args[3]), "rb") as f:
                 rt = f.read()
         build(ap, al, rt)
         return
