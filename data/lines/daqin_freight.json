@@ -7,7 +7,7 @@
   "length_km": 653,
   "color": "#b45309",
   "line_class": "freight",
-  "note": "货运专线（运煤第一通道，年运量超 4 亿吨）；货车车次为程序生成的示意车流。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
+  "note": "货运专线（运煤第一通道，年运量超 4 亿吨）；货车车次为程序生成的示意车流。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
   "stations": [
     {
       "id": "dq_dt",

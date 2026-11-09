@@ -7,7 +7,7 @@
   "length_km": 990,
   "color": "#a8a29e",
   "line_class": "conventional",
-  "note": "站点坐标与里程为公开资料整理的近似值；塔里木盆地北缘干线。 焉耆、和硕站位于吐库段（库尔勒—吐鲁番方向），暂未收录。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
+  "note": "站点坐标与里程为公开资料整理的近似值；塔里木盆地北缘干线。 焉耆、和硕站位于吐库段（库尔勒—吐鲁番方向），暂未收录。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
   "stations": [
     {
       "id": "nj_kel",
@@ -84,11 +84,6 @@
       86.1891765,
       41.7494984,
       "nj_kel"
-    ],
-    [
-      86.1861667,
-      41.752005,
-      null
     ],
     [
       86.1825112,

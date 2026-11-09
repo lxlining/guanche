@@ -491,8 +491,14 @@ def cmd_build(line_id):
         die("[build] %s 线路数据不足" % line_id)
 
     # 按线路等级过滤 way 子图（匿名 way 保留——部分区段高铁未命名）
+    # 例外：自动发现的列车走线（自动线 B*）物理上跨普速/高速干线运行
+    # （如 杨陵南—武功 经 陇海线 进西安站），等级名过滤会砍掉必经轨道，
+    # 导致 A* 拼接与族链双双失败——此类线路用全量轨道图。
+    _auto_route = str(line.get("name", "")).startswith("自动线")
     _cls = str(line.get("line_class", ""))
-    if _cls in ("hsr350", "hsr250", "intercity"):
+    if _auto_route:
+        pass
+    elif _cls in ("hsr350", "hsr250", "intercity"):
         osm["elements"] = [e for e in osm["elements"]
                            if e.get("type") != "way"
                            or not str((e.get("tags") or {}).get("name", "") or "")

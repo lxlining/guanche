@@ -7,7 +7,7 @@
   "length_km": 298,
   "color": "#bef264",
   "line_class": "hsr250",
-  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
+  "note": "站点坐标与里程为公开资料整理的近似值；geometry 为近似真实走向的折线。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。 | 线形为 OSM 真实铁路走向（Overpass）。",
   "stations": [
     {
       "id": "sj_sjz",
@@ -68,11 +68,6 @@
       114.5206997,
       38.059225,
       "sj_sjz"
-    ],
-    [
-      114.524475,
-      38.0663468,
-      null
     ],
     [
       114.5261595,
