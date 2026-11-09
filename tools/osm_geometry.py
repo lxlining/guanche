@@ -47,9 +47,13 @@ COORD_FIX_M = 2000.0       # 站坐标修正阈值
 
 OVERPASS_ENDPOINTS = [
     "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.osm.jp/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
     "https://overpass.osm.ch/api/interpreter",
 ]
-ALLOWED_HOSTS = {"overpass-api.de", "overpass.osm.ch"}
+ALLOWED_HOSTS = {"overpass-api.de", "overpass.kumi.systems", "overpass.osm.jp",
+                 "overpass.private.coffee", "overpass.osm.ch"}
 LINE_ID_RE = re.compile(r"^[a-z0-9_]{1,64}$")
 PRIVATE_PREFIXES = ("10.", "192.168.", "169.254.", "127.", "0.",
                     "fc", "fd", "fe80", "::1")
@@ -134,6 +138,9 @@ def overpass_post(query, timeout=150):
     last_err = None
     # 字面量端点（与 OVERPASS_ENDPOINTS 一致，供静态审查）
     for url in ("https://overpass-api.de/api/interpreter",
+                "https://overpass.kumi.systems/api/interpreter",
+                "https://overpass.osm.jp/api/interpreter",
+                "https://overpass.private.coffee/api/interpreter",
                 "https://overpass.osm.ch/api/interpreter"):
         try:
             check_url(url)
@@ -155,10 +162,15 @@ def overpass_post(query, timeout=150):
     raise RuntimeError("全部端点失败: %s" % last_err)
 
 
-def cmd_fetch(line_id, pair_idx=None):
+def cmd_fetch(line_id, pair_idx=None, station_idx=None):
     (line,) = read_stdin_docs(1)
     sts = line["stations"]
-    if pair_idx is None:
+    if station_idx is not None:
+        # 站级补抓：单站包围盒（keep-old 线走廊缺口修复用）
+        if not (0 <= station_idx < len(sts)):
+            die("station 越界: %s s=%d" % (line_id, station_idx))
+        sel = [sts[station_idx]]
+    elif pair_idx is None:
         sel = sts
     else:
         if not (0 <= pair_idx < len(sts) - 1):
@@ -950,13 +962,15 @@ def cmd_build(line_id):
 
 def main():
     if len(sys.argv) < 3:
-        die("用法: osm_geometry.py fetch <line_id> [pair] < line.json\n"
+        die("用法: osm_geometry.py fetch <line_id> [pair|s<站序>] < line.json\n"
             "      osm_geometry.py build <line_id> < (line.json + osm*.json)")
     cmd = sys.argv[1]
     line_id = check_line_id(sys.argv[2])
     pair = int(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[3].isdigit() else None
+    st_idx = int(sys.argv[3][1:]) if len(sys.argv) > 3 and sys.argv[3].startswith("s") \
+        and sys.argv[3][1:].isdigit() else None
     if cmd == "fetch":
-        cmd_fetch(line_id, pair)
+        cmd_fetch(line_id, pair, st_idx)
     elif cmd == "build":
         cmd_build(line_id)
     else:
