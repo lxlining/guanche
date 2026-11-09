@@ -532,14 +532,22 @@ func km_at_arc(line_id: String, arc: float) -> int:
 		return 0
 	if arc <= marks[0]["arc"]:
 		return int(marks[0]["km"])
-	for i in range(1, marks.size()):
-		if arc <= marks[i]["arc"]:
-			var m0: Dictionary = marks[i - 1]
-			var m1: Dictionary = marks[i]
-			var span: float = m1["arc"] - m0["arc"]
-			var f: float = 0.0 if span <= 0.0 else (arc - m0["arc"]) / span
-			return int(round(lerpf(m0["km"], m1["km"], f)))
-	return int(marks[marks.size() - 1]["km"])
+	if arc >= marks[marks.size() - 1]["arc"]:
+		return int(marks[marks.size() - 1]["km"])
+	# 二分：marks 按弧长升序（热路径，每帧数百次解算）
+	var lo := 0
+	var hi := marks.size() - 1
+	while lo < hi - 1:
+		var mid := (lo + hi) >> 1
+		if float(marks[mid]["arc"]) <= arc:
+			lo = mid
+		else:
+			hi = mid
+	var m0: Dictionary = marks[lo]
+	var m1: Dictionary = marks[hi]
+	var span: float = float(m1["arc"]) - float(m0["arc"])
+	var f: float = 0.0 if span <= 0.0 else (arc - float(m0["arc"])) / span
+	return int(round(lerpf(float(m0["km"]), float(m1["km"]), f)))
 
 
 func nearest_station(line_id: String, pos: Vector2, max_dist_m: float = 1.0e9) -> String:

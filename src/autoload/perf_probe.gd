@@ -20,6 +20,18 @@ func lap(key: String, us: int) -> void:
 
 func _process(_delta: float) -> void:
 	_frames += 1
+	if _frames == 200:
+		var act := 0
+		var miss := 0
+		for train in DB.trains:
+			var st: Dictionary = Simulation.states.get(str(train["code"]), {})
+			if st.is_empty():
+				miss += 1
+				continue
+			var s := str(st.get("status", "off"))
+			if s == "run" or s == "stop" or s == "wait":
+				act += 1
+		print("[STATS] active=", act, " missing=", miss, " / ", DB.trains.size())
 	if _frames % 40 != 0:
 		return
 	var parts := []

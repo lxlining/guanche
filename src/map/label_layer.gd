@@ -246,16 +246,20 @@ func _active(st: Dictionary) -> bool:
 func _sync_trains(center: Vector2, half: Vector2, zoom: float, rect: Rect2) -> void:
 	var show_all := zoom > 0.012
 	var used := 0
-	var n := Simulation.count()
+	# 直读平行数组（每帧 9686 次，免函数调用开销）
+	var st_arr: PackedByteArray = Simulation._status_arr
+	var ps_arr: PackedVector2Array = Simulation._pos_arr
+	var cd_arr: PackedStringArray = Simulation._codes
+	var tp_arr: PackedStringArray = Simulation._type_arr
+	var n := cd_arr.size()
 	for ti in range(n):
-		var status_i: int = Simulation.status_at(ti)
-		if status_i == 0:
+		if st_arr[ti] == 0:
 			continue
-		var code := Simulation.code_at(ti)
+		var code := cd_arr[ti]
 		var force: bool = code == selected or code == hover
 		if not show_all and not force:
 			continue
-		var sp: Vector2 = (Simulation.pos_at(ti) - center) * zoom + half
+		var sp: Vector2 = (ps_arr[ti] - center) * zoom + half
 		if not rect.has_point(sp):
 			continue
 		if used >= _trains.size():
@@ -266,7 +270,7 @@ func _sync_trains(center: Vector2, half: Vector2, zoom: float, rect: Rect2) -> v
 		used += 1
 		l.visible = true
 		l.text = code
-		var tt: Dictionary = DB.train_types.get(Simulation.type_at(ti), {})
+		var tt: Dictionary = DB.train_types.get(tp_arr[ti], {})
 		var col: Color = Color(tt.get("color", "#ffffff"))
 		l.label_settings.font_color = Color.WHITE if force else col.lightened(0.45)
 		l.position = sp + Vector2(0, -19)

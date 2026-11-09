@@ -264,6 +264,7 @@ func _process(delta: float) -> void:
 	label_layer.flight_hover = flights_layer.hover
 	label_layer.flight_states = flights_layer._states      # 引用共享，避免重复解算
 	label_layer.flight_airborne = flights_layer._airborne
+	flights_layer.force_idx = follow_flight if follow_flight >= 0 else flights_layer.selected
 
 	if follow_flight >= 0:
 		_flight_follow_tick()
@@ -285,6 +286,12 @@ func _process(delta: float) -> void:
 					checkin_best = d
 					checkin_target = DB.station_name(line_id, sid)
 		ui.set_checkin_target(checkin_target, Meta.checkins.has(checkin_target))
+		# 机场到访：航空模式且非专注时，镜头 15km 内的机场记一次到访（成就）
+		if Meta.aviation_on and FlightSim.ready_ok and not Meta.focus_active():
+			for iata in FlightSim.airports:
+				var ap: Dictionary = FlightSim.airports[iata]
+				if (ap["pos"] as Vector2).distance_to(cam.position) < 15000.0:
+					Meta.visit_airport(str(iata))
 
 	if follow_code != "":
 		_follow_tick()
@@ -421,6 +428,7 @@ func _flight_follow_tick() -> void:
 	var ph: String = str(st["phase"])
 	if ph == "done":
 		ui.show_toast("🛬 %s 已到达 %s" % [str(fl["id"]), FlightSim.airports[fl["to"]]["name"]])
+		Meta.report_follow_flight_done()
 		_end_flight_follow()
 		return
 	if ph == "climb" or ph == "cruise" or ph == "descend":

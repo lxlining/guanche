@@ -130,6 +130,47 @@
       "desc": "打卡 200 座车站。",
       "check": "checkins_min",
       "n": 200
+    },
+    {
+      "id": "first_flight",
+      "name": "初见航班",
+      "desc": "第一次点击观测到航班。",
+      "check": "flights_min",
+      "n": 1
+    },
+    {
+      "id": "flights_20",
+      "name": "航空观察员",
+      "desc": "观测 20 个不同航班。",
+      "check": "flights_min",
+      "n": 20
+    },
+    {
+      "id": "flights_60",
+      "name": "空管视线",
+      "desc": "观测 60 个不同航班。",
+      "check": "flights_min",
+      "n": 60
+    },
+    {
+      "id": "airlines_8",
+      "name": "全航司收藏家",
+      "desc": "观测过 8 家不同航空公司的航班。",
+      "check": "airlines_min",
+      "n": 8
+    },
+    {
+      "id": "follow_flight",
+      "name": "云端伴飞",
+      "desc": "完整跟随一航班从起飞到降落。",
+      "check": "follow_flight"
+    },
+    {
+      "id": "airports_15",
+      "name": "机场巡视员",
+      "desc": "移动镜头到访 15 座机场上空。",
+      "check": "airports_min",
+      "n": 15
     }
   ]
 }

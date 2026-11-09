@@ -9,7 +9,8 @@ var states: Dictionary = {}  # code -> 状态字典（当前时刻）
 
 var _last_t := -1.0
 var _rr := 0                 # 轮转游标：预算制逐帧刷新全量列车
-const OFFVIEW_BUDGET := 400  # 每帧为视口外列车解算的最大数量
+const OFFVIEW_BUDGET := 400  # 每帧为轮转列车解算的最大数量
+const VIEW_CAP := 500        # 每帧视口内逐帧解算的上限（超出并入轮转）
 var _codes := PackedStringArray()   # 平行数组：免每帧 9686 次字典字符串哈希
 var _pos_arr := PackedVector2Array()
 var _dir_arr := PackedVector2Array()
@@ -33,11 +34,22 @@ func _process(_delta: float) -> void:
 	if n == 0:
 		return
 	_ensure_arrays(n)
-	var budget := OFFVIEW_BUDGET
+	# 自适应预算：近景（视口内列车已逐帧解算）压低离屏刷新至 1/3，
+	# 全国视野保持全量轮转节奏
+	var cam0 := get_viewport().get_camera_2d()
+	var z0 := cam0.zoom.x if cam0 != null else 0.0
+	var budget := OFFVIEW_BUDGET if z0 < 0.006 else OFFVIEW_BUDGET / 3
+	# 视口内解算上限：全国视野下视口=全网（9686 辆全部逐帧解算是原 1fps 根因），
+	# 超出上限的视口列车并入轮转预算（全国视野 ~1.2s 轮完一遍）
+	var view_upd := 0
 	var processed := 0
 	var i := _rr
+	var last_budget := -1
 	while processed < n:
-		var in_view := vp_rect.size.x > 0.0 and vp_rect.has_point(_pos_arr[i])
+		var in_view := vp_rect.size.x > 0.0 and vp_rect.has_point(_pos_arr[i]) \
+				and view_upd < VIEW_CAP
+		if in_view:
+			view_upd += 1
 		if in_view or budget > 0:
 			var st: Dictionary = state_for(DB.trains[i], t)
 			var code_i := _codes[i]
@@ -48,11 +60,19 @@ func _process(_delta: float) -> void:
 				_pos_arr[i] = st["pos"]
 				_dir_arr[i] = st["dirv"]
 				_cur_line[i] = str(st.get("line", ""))
-			if not in_view:
+			# 游标只由「预算更新」推进——in_view 更新是位置驱动的每帧重复，
+			# 若让其回卷游标会造成原地打转、其余列车永远轮不到
+			if in_view:
+				pass
+			else:
 				budget -= 1
+				last_budget = i
 		i = (i + 1) % n
 		processed += 1
-	_rr = i
+	if last_budget >= 0:
+		_rr = (last_budget + 1) % n
+	if OS.get_environment("SIM_DEBUG") != "":
+		print("[sim] t=%.2f rr=%d states=%d" % [t, _rr, states.size()])
 	PerfProbe.lap("sim", Time.get_ticks_usec() - t0)
 
 
@@ -122,25 +142,36 @@ func _state_in_leg(train: Dictionary, leg: Dictionary, rel: float) -> Dictionary
 
 func _transfer_state(train: Dictionary, tr: Dictionary, rel: float,
 		next_leg: Dictionary) -> Dictionary:
-	# 沿铁路网真实路径（途经站折线）按弧长均匀插值
+	# 沿铁路网真实路径（途经站折线）按弧长均匀插值。
+	# 性能：联络线折线可达数千点，逐次线性扫是近景帧率杀手——
+	# 累积弧长懒构建 + 二分查找定位。
 	var span: float = maxf(tr["t1_rel"] - tr["t0_rel"], 1.0)
 	var f := clampf((rel - tr["t0_rel"]) / span, 0.0, 1.0)
 	var pts: PackedVector2Array = tr["pts"]
 	var total: float = maxf(tr["total_m"], 1.0)
 	var target: float = f * total
-	var acc := 0.0
-	var pos: Vector2 = pts[0]
-	var dirv := Vector2.RIGHT
-	for i in range(pts.size() - 1):
-		var seg := pts[i].distance_to(pts[i + 1])
-		if acc + seg >= target or i == pts.size() - 2:
-			var t := 0.0 if seg <= 0.0 else (target - acc) / seg
-			pos = pts[i].lerp(pts[i + 1], t)
-			dirv = (pts[i + 1] - pts[i]).normalized() if seg > 1.0 else dirv
-			break
-		acc += seg
-	if dirv.length_squared() < 0.5:
-		dirv = Vector2.RIGHT
+	var cum_v: Variant = tr.get("cum")
+	var cum: PackedFloat64Array = cum_v if cum_v is PackedFloat64Array else PackedFloat64Array()
+	if cum.is_empty():
+		var acc0 := 0.0
+		cum.append(0.0)
+		for i in range(pts.size() - 1):
+			acc0 += pts[i].distance_to(pts[i + 1])
+			cum.append(acc0)
+		tr["cum"] = cum
+	# 二分：找 cum[lo] <= target <= cum[hi]
+	var lo := 0
+	var hi := cum.size() - 1
+	while lo < hi - 1:
+		var mid := (lo + hi) >> 1
+		if cum[mid] <= target:
+			lo = mid
+		else:
+			hi = mid
+	var seg := cum[hi] - cum[lo]
+	var t := 0.0 if seg <= 0.0 else (target - cum[lo]) / seg
+	var pos: Vector2 = pts[lo].lerp(pts[hi], t)
+	var dirv := (pts[hi] - pts[lo]).normalized() if (pts[hi] - pts[lo]).length_squared() > 1.0 else Vector2.RIGHT
 	var v_kmh: float = total / 1000.0 / maxf(span / 3600.0, 0.01)
 	var next_stop: Dictionary = train["stops"][next_leg["i0"]]
 	return _mk_state(train, str(next_stop.get("line", "")), "run", pos, dirv,

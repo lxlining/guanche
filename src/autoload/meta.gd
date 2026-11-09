@@ -43,6 +43,8 @@ var focus_train: String = ""          # 车次专注：仅显示该车与其走�
 var focus_train_lines: Dictionary = {}  # line_id -> true（该车全部走线）
 var aviation_on: bool = false         # 航空模式（航线弧/机场/航班）
 var flights_seen: Dictionary = {}     # 航班号 -> 观测次数
+var airport_visits: Dictionary = {}   # 机场 IATA -> true（镜头到访）
+var follow_flight_done: bool = false  # 完整跟随航班（起飞到降落）
 
 
 func set_aviation(on: bool) -> void:
@@ -55,6 +57,31 @@ func set_aviation(on: bool) -> void:
 
 func observe_flight(fid: String) -> void:
 	flights_seen[fid] = int(flights_seen.get(fid, 0)) + 1
+	check_achievements()
+
+
+# 航司两字码（航班号前两位；重号后缀 -N 不影响）
+func airlines_seen_count() -> int:
+	var set := {}
+	for fid in flights_seen:
+		var s := str(fid)
+		if s.length() >= 2:
+			set[s.substr(0, 2)] = true
+	return set.size()
+
+
+func visit_airport(iata: String) -> void:
+	if iata == "" or airport_visits.has(iata):
+		return
+	airport_visits[iata] = true
+	check_achievements()
+
+
+func report_follow_flight_done() -> void:
+	if follow_flight_done:
+		return
+	follow_flight_done = true
+	check_achievements()
 
 
 func set_focus_line(line_id: String) -> void:
@@ -249,6 +276,14 @@ func _eval(def: Dictionary) -> bool:
 			return screen_done
 		"checkins_min":
 			return checkins.size() >= int(def.get("n", 1))
+		"flights_min":
+			return flights_seen.size() >= int(def.get("n", 1))
+		"airlines_min":
+			return airlines_seen_count() >= int(def.get("n", 1))
+		"follow_flight":
+			return follow_flight_done
+		"airports_min":
+			return airport_visits.size() >= int(def.get("n", 1))
 	return false
 
 
@@ -296,6 +331,12 @@ func progress_text(def: Dictionary) -> String:
 			return "%d/%d" % [visited.size(), DB.total_station_count()]
 		"checkins_min":
 			return "%d/%d" % [checkins.size(), int(def.get("n", 1))]
+		"flights_min":
+			return "%d/%d" % [flights_seen.size(), int(def.get("n", 1))]
+		"airlines_min":
+			return "%d/%d" % [airlines_seen_count(), int(def.get("n", 1))]
+		"airports_min":
+			return "%d/%d" % [airport_visits.size(), int(def.get("n", 1))]
 	return ""
 
 
@@ -372,7 +413,8 @@ func save() -> void:
 		"visited": visited.keys(), "spots": spots_data,
 		"class_visible": class_visible, "checkins": checkins,
 		"search_history": search_history,
-		"aviation_on": aviation_on, "flights_seen": flights_seen
+		"aviation_on": aviation_on, "flights_seen": flights_seen,
+		"airport_visits": airport_visits, "follow_flight_done": follow_flight_done
 	}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f != null:
@@ -395,6 +437,8 @@ func _load_save() -> void:
 	search_history = parsed.get("search_history", [])
 	aviation_on = bool(parsed.get("aviation_on", false))
 	flights_seen = parsed.get("flights_seen", {})
+	airport_visits = parsed.get("airport_visits", {})
+	follow_flight_done = bool(parsed.get("follow_flight_done", false))
 	GameTime.speed = float(parsed.get("speed", GameTime.speed))
 	GameTime.paused = bool(parsed.get("paused", false))
 	discovered = parsed.get("discovered", {})

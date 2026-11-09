@@ -80,17 +80,21 @@ func _run_observation(zoom: float) -> void:
 	if GameTime.paused:
 		return
 	var t := GameTime.t
-	var n := Simulation.count()
+	var st_arr: PackedByteArray = Simulation._status_arr
+	var ps_arr: PackedVector2Array = Simulation._pos_arr
+	var cd_arr: PackedStringArray = Simulation._codes
+	var tp_arr: PackedStringArray = Simulation._type_arr
+	var cl_arr: PackedStringArray = Simulation._cur_line
+	var n: int = cd_arr.size()
 	for ti in range(n):
-		var status_i: int = Simulation.status_at(ti)
-		if status_i == 0:
+		if st_arr[ti] == 0:
 			continue
-		var pos := Simulation.pos_at(ti)
+		var pos := ps_arr[ti]
 		for s in Meta.spots:
 			if pos.distance_to(s["world"]) <= s["r_m"]:
-				var line_id := Simulation.cur_line_at(ti)
+				var line_id: String = cl_arr[ti]
 				var sid: String = DB.nearest_station(line_id, pos)
-				Meta.observe(Simulation.code_at(ti), Simulation.type_at(ti), t,
+				Meta.observe(cd_arr[ti], tp_arr[ti], t,
 						DB.station_name(line_id, sid))
 	# 同屏列车数统计（成就用）
 	var vp := get_viewport_rect().size
@@ -100,7 +104,7 @@ func _run_observation(zoom: float) -> void:
 		var rect := Rect2(cam.get_screen_center_position() - half / zoom, vp / zoom)
 		var in_screen := 0
 		for ti2 in range(n):
-			if Simulation.status_at(ti2) != 0 and rect.has_point(Simulation.pos_at(ti2)):
+			if st_arr[ti2] != 0 and rect.has_point(ps_arr[ti2]):
 				in_screen += 1
 		Meta.report_screen_trains(in_screen)
 
@@ -170,14 +174,20 @@ func _draw() -> void:
 	var sel_pos := Vector2.INF
 	var hov_pos := Vector2.INF
 
-	# 主循环走 Simulation 平行数组（免 9686 次/帧的字典哈希）
-	var n_trains := Simulation.count()
+	# 主循环走 Simulation 平行数组（直读，免函数调用开销）
+	var st_arr: PackedByteArray = Simulation._status_arr
+	var ps_arr: PackedVector2Array = Simulation._pos_arr
+	var cd_arr: PackedStringArray = Simulation._codes
+	var tp_arr: PackedStringArray = Simulation._type_arr
+	var fr_arr: PackedByteArray = Simulation._freight_arr
+	var dv_arr: PackedVector2Array = Simulation._dir_arr
+	var cl_arr: PackedStringArray = Simulation._cur_line
+	var n_trains: int = cd_arr.size()
 	for ti in range(n_trains):
-		var status_i: int = Simulation.status_at(ti)
-		if status_i == 0:
+		if st_arr[ti] == 0:
 			continue
-		var code: String = Simulation.code_at(ti)
-		var tr_line: String = Simulation.cur_line_at(ti)
+		var code: String = cd_arr[ti]
+		var tr_line: String = cl_arr[ti]
 		# 专注过滤：车次专注只显示该车；线路专注只显示本线车次
 		if Meta.focus_train != "" and code != Meta.focus_train:
 			continue
@@ -188,19 +198,19 @@ func _draw() -> void:
 			continue
 		if not Meta.is_class_visible(DB.line_class(tr_line)):
 			continue
-		var tr_type := Simulation.type_at(ti)
+		var tr_type: String = tp_arr[ti]
 		var col: Color = type_colors.get(tr_type, Color("#e5484d"))
-		var pos: Vector2 = Simulation.pos_at(ti)
+		var pos: Vector2 = ps_arr[ti]
 		if not view.has_point(pos):
 			continue
 
-		var is_freight: bool = Simulation.freight_at(ti)
+		var is_freight: bool = fr_arr[ti] == 1
 		if is_freight:
 			col = Color("#c2833c")
 
 		if dot_mode:
 			# 方向菱形并入批缓冲；选中/悬停的车补画光环
-			var d := Simulation.dir_at(ti).normalized()
+			var d := dv_arr[ti].normalized()
 			var nv := Vector2(-d.y, d.x)
 			tri_pts.push_back(pos + d * 4.6 * px)
 			tri_pts.push_back(pos + nv * 2.9 * px)
@@ -218,7 +228,7 @@ func _draw() -> void:
 				hov_pos = pos
 			continue
 
-		var dirv := Simulation.dir_at(ti)
+		var dirv := dv_arr[ti]
 		if is_freight:
 			# 货车：方块标记（区别于客车箭头）
 			var sz := 9.0 * px * (0.7 if small else 1.0)

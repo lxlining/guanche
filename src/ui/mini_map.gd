@@ -124,14 +124,15 @@ func _draw() -> void:
 	var vr := Rect2(tl, br - tl)
 	draw_rect(vr, COL_VIEWPORT, false, 1.2)
 
-	# 在途列车点（索引遍历）
+	# 在途列车点（直读平行数组）
 	var active := 0
-	var nt := Simulation.count()
+	var st_arr: PackedByteArray = Simulation._status_arr
+	var ps_arr: PackedVector2Array = Simulation._pos_arr
+	var nt: int = st_arr.size()
 	for ti in range(nt):
-		var status_i: int = Simulation.status_at(ti)
-		if status_i == 0 or status_i == 3:
+		if st_arr[ti] == 0 or st_arr[ti] == 3:
 			continue
-		var mp := _world_to_mini(Simulation.pos_at(ti))
+		var mp := _world_to_mini(ps_arr[ti])
 		if Rect2(Vector2.ZERO, size).has_point(mp):
 			draw_circle(mp, 1.2, Color(1, 1, 1, 0.5))
 			active += 1

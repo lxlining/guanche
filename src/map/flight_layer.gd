@@ -10,6 +10,7 @@ var _mouse_world := Vector2.ZERO
 var _states := {}      # idx -> state（0.2s 实时量化重建，供拾取与绘制复用）
 var _airborne: Array = []
 var _fl_accum := 0.0
+var force_idx := -1    # 被跟随/选中的航班：每帧单独解算（相机平滑所需）
 
 
 func _process(_delta: float) -> void:
@@ -24,6 +25,16 @@ func _process(_delta: float) -> void:
 	_fl_accum += _delta
 	var t := GameTime.t
 	if _states.size() > 0 and _fl_accum < 0.2:
+		# 被跟随/选中航班保持逐帧平滑
+		if force_idx >= 0 and FlightSim.flights.size() > force_idx:
+			var fst := FlightSim.state_for(force_idx, t)
+			var fph: String = str(fst["phase"])
+			if fph == "pre" or fph == "done":
+				_airborne.erase(force_idx)
+			else:
+				_states[force_idx] = fst
+				if not _airborne.has(force_idx):
+					_airborne.append(force_idx)
 		return
 	_fl_accum = 0.0
 	_states = {}

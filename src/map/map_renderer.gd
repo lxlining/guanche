@@ -26,6 +26,9 @@ var _geo_host: Node2D
 var _geo_items: Array = []     # 省界/海岸/河流保留式 item
 var _geo_bucket := -999999
 var _geo_sig := ""
+var _terrain_host: Node2D
+var _terrain_items: Array = [] # 山脉/沙漠/地貌/城市/湖泊保留式 item
+var _grat_cache: Array = []    # 经纬网两段数组（常量，懒建一次）
 
 
 func _ready() -> void:
@@ -35,6 +38,9 @@ func _ready() -> void:
 	_geo_host = Node2D.new()
 	_geo_host.name = "RSGeoHost"
 	add_child(_geo_host)
+	_terrain_host = Node2D.new()
+	_terrain_host.name = "RSTerrainHost"
+	add_child(_terrain_host)
 	_precalc_deserts()
 
 
@@ -43,8 +49,11 @@ func _exit_tree() -> void:
 		RenderingServer.free_rid(rid)
 	for rid in _geo_items:
 		RenderingServer.free_rid(rid)
+	for rid in _terrain_items:
+		RenderingServer.free_rid(rid)
 	_rs_items = []
 	_geo_items = []
+	_terrain_items = []
 var _last_cam := Vector2(NAN, NAN)
 var _last_zoom := -1.0
 var _idle_accum := 0.0
@@ -81,9 +90,11 @@ func _process(delta: float) -> void:
 		_geo_bucket = bucket
 		_geo_sig = sig
 		_rebuild_rs_geo(cz)
+		_rebuild_rs_terrain(cz)
 	var dfk := 0.55 + 0.45 * daylight_factor(GameTime.t)
 	_line_host.modulate = Color(dfk, dfk, dfk, 1.0)
 	_geo_host.modulate = Color(dfk, dfk, dfk, 1.0)
+	_terrain_host.modulate = Color(dfk, dfk, dfk, 1.0)
 
 
 
@@ -165,17 +176,12 @@ func _draw() -> void:
 	var sky := _sky_color(df)
 	draw_rect(Rect2(Vector2(-2e6, -2e6), Vector2(6e6, 6e6)), sky)
 	_draw_stars(px, df)
+	_draw_city_glow(px, df)
 	var t1 := Time.get_ticks_usec()
 	_draw_graticule(px)
-	var t2 := Time.get_ticks_usec()
-	_draw_geography(px, df)
-	var t3 := Time.get_ticks_usec()
-	_draw_geo_terrain(px, df)
 	var t4 := Time.get_ticks_usec()
 	PerfProbe.lap("m_sky", t1 - dt0)
-	PerfProbe.lap("m_grat", t2 - t1)
-	PerfProbe.lap("m_geo", t3 - t2)
-	PerfProbe.lap("m_terr", t4 - t3)
+	PerfProbe.lap("m_grat", t4 - t1)
 	var view := Rect2(cam.get_screen_center_position() - Vector2(1.5e6, 1.5e6) / zoom,
 			Vector2(3e6, 3e6) / zoom)
 	_draw_stations(px, df, view, zoom)
@@ -202,17 +208,19 @@ func _precalc_deserts() -> void:
 
 
 func _draw_graticule(px: float) -> void:
-	# 经纬网合并为两次 draw_multiline（原 71 次 draw_line）
-	var segs := PackedVector2Array()
-	for lon in range(80, 133):
-		segs.push_back(GeoScript.lonlat_to_world(float(lon), 17.5))
-		segs.push_back(GeoScript.lonlat_to_world(float(lon), 54.0))
-	draw_multiline(segs, COL_GRATICULE, maxf(px, 1.0), false)
-	var segs2 := PackedVector2Array()
-	for lat in range(18, 54):
-		segs2.push_back(GeoScript.lonlat_to_world(79.0, float(lat)))
-		segs2.push_back(GeoScript.lonlat_to_world(133.0, float(lat)))
-	draw_multiline(segs2, COL_GRATICULE, maxf(px, 1.0), false)
+	# 经纬网合并为两次 draw_multiline（常量数组，懒建一次）
+	if _grat_cache.is_empty():
+		var s1 := PackedVector2Array()
+		for lon in range(80, 133):
+			s1.push_back(GeoScript.lonlat_to_world(float(lon), 17.5))
+			s1.push_back(GeoScript.lonlat_to_world(float(lon), 54.0))
+		var s2 := PackedVector2Array()
+		for lat in range(18, 54):
+			s2.push_back(GeoScript.lonlat_to_world(79.0, float(lat)))
+			s2.push_back(GeoScript.lonlat_to_world(133.0, float(lat)))
+		_grat_cache = [s1, s2]
+	draw_multiline(_grat_cache[0], COL_GRATICULE, maxf(px, 1.0), false)
+	draw_multiline(_grat_cache[1], COL_GRATICULE, maxf(px, 1.0), false)
 
 
 # 夜间星空：世界坐标随机星点，亮度随天色渐入、轻微闪烁
@@ -237,67 +245,63 @@ func _draw_stars(px: float, df: float) -> void:
 		draw_circle(s["pos"], s["size"] * px, Color(1, 1, 1, (0.20 + 0.55 * tw) * k))
 
 
-func _draw_geography(px: float, df: float) -> void:
-	var bg := DB.background
-	# 省界/海岸/河流已保留式渲染（RSGeoHost），此处只画湖泊与城市光点
-	for lake in bg.get("lakes", []):
-		draw_set_transform(lake["wpos"], 0.0, Vector2(lake["wrx"] / lake["wry"], 1.0))
-		draw_circle(Vector2.ZERO, lake["wry"], COL_WATER * Color(1, 1, 1, 0.6))
-		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-
-	for pl in bg.get("province_labels", []):
-		pass  # 省份标注由 LabelLayer 绘制
-
-	for c in bg.get("cities", []):
+# 夜间城市灯火：暖色光晕（df 驱动，立即绘制；核心点在 RS 地形项）
+func _draw_city_glow(px: float, df: float) -> void:
+	if df >= 0.45:
+		return
+	var lk: float = (0.45 - df) / 0.45
+	for c in DB.background.get("cities", []):
+		if not c.has("wpos"):
+			continue
 		var pos: Vector2 = c["wpos"]
 		var major: bool = c.get("major", false)
-		# 夜间城市灯火：暖色光晕，白天恢复普通灰白点
-		if df < 0.45:
-			var lk: float = (0.45 - df) / 0.45
-			var glow: float = (7.5 if major else 4.5) * px
-			draw_circle(pos, glow, Color(1.0, 0.80, 0.42, 0.10 * lk))
-			draw_circle(pos, glow * 0.45, Color(1.0, 0.84, 0.5, 0.28 * lk))
-		draw_circle(pos, (3.0 if major else 2.0) * px,
-				_dim_color(Color(0.82, 0.87, 0.95, 0.75), 0.35 + 0.65 * df))
+		var glow: float = (7.5 if major else 4.5) * px
+		draw_circle(pos, glow, Color(1.0, 0.80, 0.42, 0.10 * lk))
+		draw_circle(pos, glow * 0.45, Color(1.0, 0.84, 0.5, 0.28 * lk))
 
 
 const CLASS_WIDTH := {"hsr350": 5.5, "hsr250": 4.5, "intercity": 4.0, "conventional": 2.6, "freight": 3.2}
 
-func _draw_geo_terrain(px: float, df: float) -> void:
-	# 地貌区淡色块（高原/盆地/平原）
-	var region_tint := Color(0.55, 0.5, 0.38, 0.05 + 0.04 * (1.0 - df))
+# 地形/地貌/城市核心点/湖泊：全部并入 RS 保留项（桶变更重录；天色经宿主 modulate）
+func _rebuild_rs_terrain(zoom: float) -> void:
+	for rid in _terrain_items:
+		RenderingServer.free_rid(rid)
+	_terrain_items = []
+	var zb := pow(2.0, float(_geo_bucket))
+	var px0 := 1.0 / maxf(zb, 1.0e-6)
+	var ci := RenderingServer.canvas_item_create()
+	RenderingServer.canvas_item_set_parent(ci, _terrain_host.get_canvas_item())
+	# 地貌区淡色块：椭圆 24 边形近似（免变换命令）
 	for g in DB.geo_rich.get("regions", []):
 		if not g.has("wpos"):
 			continue
-		draw_set_transform(g["wpos"], 0.0, Vector2(g["wrx"], g["wry"]))
-		draw_circle(Vector2.ZERO, 1.0, region_tint)
-		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-	# 沙漠点纹（菱形并入三角批缓冲，单次提交；逐点 draw_circle 数百 call 不可接受）
-	var desert_col := _dim_color(Color(0.72, 0.62, 0.38, 0.3), df)
+		var poly := PackedVector2Array()
+		var wpos: Vector2 = g["wpos"]
+		for k in range(24):
+			var a := TAU * k / 24.0
+			poly.push_back(wpos + Vector2(cos(a) * float(g["wrx"]), sin(a) * float(g["wry"])))
+		RenderingServer.canvas_item_add_polygon(ci, poly,
+				PackedColorArray([Color(0.55, 0.5, 0.38, 0.05)]))
+	# 沙漠点纹（菱形三角批，单色）
 	var d_idx := PackedInt32Array()
 	var d_pts := PackedVector2Array()
-	var d_cols := PackedColorArray()
 	var d_base := 0
 	for d in DB.geo_rich.get("deserts", []):
-		if not d.has("wpos"):
-			continue
 		for dot in d.get("dots", []):
 			var dp: Vector2 = dot
-			var r2 := 3.0 * px
+			var r2 := 3.0 * px0
 			d_pts.push_back(dp + Vector2(0, -r2))
 			d_pts.push_back(dp + Vector2(r2, 0))
 			d_pts.push_back(dp + Vector2(0, r2))
 			d_pts.push_back(dp + Vector2(-r2, 0))
 			d_idx.append_array(PackedInt32Array([d_base, d_base + 1, d_base + 2,
 					d_base, d_base + 2, d_base + 3]))
-			for _k in range(4):
-				d_cols.push_back(desert_col)
 			d_base += 4
 	if d_base > 0:
-		RenderingServer.canvas_item_add_triangle_array(get_canvas_item(), d_idx, d_pts, d_cols)
-	# 山脉 ∧ 符号：每 ∧ 两条边并入单次 draw_multiline（原逐符号 2 次 draw_line）
-	var mtn_col := _dim_color(Color(0.6, 0.52, 0.42, 0.55), df)
-	var spacing := 34.0 * px
+		RenderingServer.canvas_item_add_triangle_array(ci, d_idx, d_pts,
+				PackedColorArray([Color(0.72, 0.62, 0.38, 0.3)]))
+	# 山脉 ∧ 符号：两段边并入单次 multiline
+	var spacing := 34.0 * px0
 	var mtn_segs := PackedVector2Array()
 	for r in DB.geo_rich.get("mountain_ranges", []):
 		var wpts: Array = r.get("wpts", [])
@@ -312,8 +316,8 @@ func _draw_geo_terrain(px: float, df: float) -> void:
 			var t := carry
 			while t <= seg_len:
 				var p := a.lerp(b, t / maxf(seg_len, 0.001))
-				var up := Vector2(-sin(ang), -cos(ang)) * 7.0 * px
-				var along := Vector2(sin(ang), -cos(ang)).orthogonal() * 5.0 * px
+				var up := Vector2(-sin(ang), -cos(ang)) * 7.0 * px0
+				var along := Vector2(sin(ang), -cos(ang)).orthogonal() * 5.0 * px0
 				mtn_segs.push_back(p - up * 0.9 + along)
 				mtn_segs.push_back(p + up)
 				mtn_segs.push_back(p + up)
@@ -321,25 +325,63 @@ func _draw_geo_terrain(px: float, df: float) -> void:
 				t += spacing
 			carry = t - seg_len
 	if mtn_segs.size() >= 2:
-		draw_multiline(mtn_segs, mtn_col, 1.6 * px, true)
-	# 京杭大运河（虚线）
+		RenderingServer.canvas_item_add_multiline(ci, mtn_segs,
+				PackedColorArray([Color(0.6, 0.52, 0.42, 0.55)]), 1.6 * px0, false)
+	# 京杭大运河（虚线 → dash 线段对）
 	var canal: Dictionary = DB.geo_rich.get("canal", {})
 	var cw: Array = canal.get("wpts", [])
+	var canal_segs := PackedVector2Array()
 	for i in range(1, cw.size()):
-		draw_dashed_line(cw[i - 1], cw[i], _dim_color(Color(0.4, 0.68, 0.82, 0.45), df),
-				1.6 * px, 9.0 * px)
+		var ca: Vector2 = cw[i - 1]
+		var cb: Vector2 = cw[i]
+		var glen := ca.distance_to(cb)
+		var nd := int(glen / maxf(9.0 * px0, 1.0))
+		for di in range(nd):
+			if di % 2 == 1:
+				continue
+			canal_segs.push_back(ca.lerp(cb, float(di) / float(nd)))
+			canal_segs.push_back(ca.lerp(cb, minf(float(di + 1) / float(nd), 1.0)))
+	if canal_segs.size() >= 2:
+		RenderingServer.canvas_item_add_multiline(ci, canal_segs,
+				PackedColorArray([Color(0.4, 0.68, 0.82, 0.45)]), 1.6 * px0, false)
 	# 补充河流
 	for rv in DB.geo_rich.get("rivers", []):
 		var rw: Array = rv.get("wpts", [])
 		if rw.size() >= 2:
-			draw_polyline(rw, COL_WATER, float(rv.get("w", 2.0)) * px * 0.55, true)
-	# 补充湖泊
+			RenderingServer.canvas_item_add_polyline(ci, rw,
+					PackedColorArray([COL_WATER]), float(rv.get("w", 2.0)) * px0 * 0.55, false)
+	# 湖泊（椭圆 24 边形）
 	for g in DB.geo_rich.get("lakes", []):
 		if not g.has("wpos"):
 			continue
-		draw_set_transform(g["wpos"], 0.0, Vector2(g["wrx"], g["wry"]))
-		draw_circle(Vector2.ZERO, 1.0, COL_WATER * Color(1, 1, 1, 0.75))
-		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		var lpoly := PackedVector2Array()
+		var lwpos: Vector2 = g["wpos"]
+		for k2 in range(24):
+			var a2 := TAU * k2 / 24.0
+			lpoly.push_back(lwpos + Vector2(cos(a2) * float(g["wrx"]), sin(a2) * float(g["wry"])))
+		RenderingServer.canvas_item_add_polygon(ci, lpoly,
+				PackedColorArray([COL_WATER * Color(1, 1, 1, 0.75)]))
+	# 城市核心点（菱形批；夜间光晕由 _draw_city_glow 立即绘制）
+	var c_idx := PackedInt32Array()
+	var c_pts := PackedVector2Array()
+	var c_base := 0
+	for c in DB.background.get("cities", []):
+		if not c.has("wpos"):
+			continue
+		var major: bool = c.get("major", false)
+		var cpos: Vector2 = c["wpos"]
+		var rc := (3.0 if major else 2.0) * px0
+		c_pts.push_back(cpos + Vector2(0, -rc))
+		c_pts.push_back(cpos + Vector2(rc, 0))
+		c_pts.push_back(cpos + Vector2(0, rc))
+		c_pts.push_back(cpos + Vector2(-rc, 0))
+		c_idx.append_array(PackedInt32Array([c_base, c_base + 1, c_base + 2,
+				c_base, c_base + 2, c_base + 3]))
+		c_base += 4
+	if c_base > 0:
+		RenderingServer.canvas_item_add_triangle_array(ci, c_idx, c_pts,
+				PackedColorArray([Color(0.82, 0.87, 0.95, 0.75)]))
+	_terrain_items.append(ci)
 
 
 # 贪心抽稀：保留点间距 >= ~3.5 屏幕像素（等距采样对密集站场无效）；
