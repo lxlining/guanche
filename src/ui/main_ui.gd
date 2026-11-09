@@ -157,6 +157,7 @@ const LEGEND_CLASSES := [
 ]
 
 var legend_buttons: Array = []
+var legend_panel: PanelContainer
 
 
 func _build_legend() -> void:
@@ -164,6 +165,7 @@ func _build_legend() -> void:
 	p.set_anchors_and_offsets_preset(Control.PRESET_CENTER_LEFT, Control.PRESET_MODE_MINSIZE, 12)
 	p.grow_vertical = Control.GROW_DIRECTION_BOTH
 	ui_root.add_child(p)
+	legend_panel = p
 	var vb := VBoxContainer.new()
 	vb.add_theme_constant_override("separation", 4)
 	p.add_child(vb)
@@ -695,14 +697,23 @@ func _on_spot_mode(on: bool) -> void:
 
 
 func _on_aviation_changed() -> void:
-	if Meta.aviation_on and FlightSim.ready_ok:
-		show_toast("✈ 航空模式：%d 机场 · %d 航线 · 日航班 %d 班，点击飞机查看详情" % [
+	var air_ok: bool = FlightSim.ready_ok
+	if Meta.aviation_on and air_ok:
+		show_toast("✈ 航空视图：%d 机场 · %d 航线 · 日航班 %d 班，点击飞机/机场查看详情（F8 切回铁路）" % [
 			FlightSim.airport_list.size(), FlightSim.routes.size(), FlightSim.flights.size()])
-	elif not FlightSim.ready_ok:
+	elif Meta.aviation_on and not air_ok:
 		show_toast("航空数据未就绪（data/air/aviation.json 缺失）")
+	elif air_ok:
+		show_toast("🛤 铁路视图（F8 切换航空）")
+	# 视图归属：图例/打卡横幅/小地图属铁路，航空视图收起
+	legend_panel.visible = not Meta.aviation_on
+	mini_map.visible = not Meta.aviation_on
+	if Meta.aviation_on:
+		checkin_pill.visible = false
 	var ab := ui_root.find_child("AirButton", true, false)
 	if ab != null:
 		ab.set_pressed_no_signal(Meta.aviation_on)
+		ab.text = "🛤 铁路视图 [F8]" if Meta.aviation_on else "✈ 航空视图 [F8]"
 
 
 func close_flight_cards() -> void:

@@ -9,7 +9,7 @@ var _last_zoom := -1.0
 
 
 func _process(_delta: float) -> void:
-	var on: bool = Meta.aviation_on and FlightSim.ready_ok and not Meta.focus_active()
+	var on: bool = Meta.aviation_on and FlightSim.ready_ok
 	var cam := get_viewport().get_camera_2d()
 	var zoom := cam.zoom.x if cam != null else DB.fit_zoom
 	if on != _last_on or (on and absf(zoom - _last_zoom) > _last_zoom * 0.12):
@@ -27,24 +27,25 @@ func _draw() -> void:
 	if zoom > 0.05:
 		return  # 近景只看列车与机场，弧线是噪音
 	var lod := 8 if zoom < 0.004 else (16 if zoom < 0.012 else 24)
-	var alpha := 0.22 if zoom < 0.004 else (0.22 if zoom < 0.012 else 0.26)
-	var w := 1.2 if lod < 24 else 1.0
-	var skip_km := 350.0 if lod == 8 else 700.0
+	# 统一天蓝弧网（经典航线图风格）；全国视野略去 <250km 短线防糊
+	# 线宽随相机缩放：width 是世界单位，须乘 px 才能保持屏幕像素恒定
+	var alpha := 0.26 if zoom < 0.004 else (0.32 if zoom < 0.012 else 0.4)
+	var px := 1.0 / maxf(zoom, 1.0e-6)
+	var w := (1.2 if lod < 24 else 1.1) * px
+	var skip_km := 250.0 if lod == 8 else 0.0
+	var arc_col := Color(0.45, 0.72, 1.0, alpha)
 	# 按颜色收集线段：每条路径展开为成对端点
-	var segs: Dictionary = {}   # color_str -> PackedVector2Array
+	var segs := PackedVector2Array()
 	for ri in range(FlightSim.routes.size()):
 		var r: Dictionary = FlightSim.routes[ri]
-		if lod < 24 and r["dist_km"] < skip_km:
-			continue  # 低倍视野略去短航线，突出干线
+		if skip_km > 0.0 and r["dist_km"] < skip_km:
+			continue
 		var pts: PackedVector2Array = r["path8"] if lod == 8 else (r["path16"] if lod == 16 else r["path"])
-		var al: Dictionary = FlightSim.airlines.get(str(r["airline"]), {})
-		var key := str(al.get("color", "#5b7fe0"))
-		var arr: PackedVector2Array = segs.get(key, PackedVector2Array())
 		for i in range(1, pts.size()):
-			arr.append(pts[i - 1])
-			arr.append(pts[i])
-		segs[key] = arr
-	for key in segs:
-		var col := Color(key)
-		col.a = alpha
-		draw_multiline(segs[key], col, w, true)
+			segs.append(pts[i - 1])
+			segs.append(pts[i])
+	if segs.size() >= 2:
+		draw_multiline(segs, arc_col, w, false)
+	if OS.get_environment("ARC_DEBUG") != "":
+		print("[arc] draw visible=%s zoom=%.5f lod=%d segs=%d alpha=%.2f" %
+				[visible, zoom, lod, segs.size(), alpha])

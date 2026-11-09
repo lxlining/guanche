@@ -93,6 +93,7 @@ func _process(delta: float) -> void:
 		_rebuild_rs_terrain(cz)
 	var dfk := 0.55 + 0.45 * daylight_factor(GameTime.t)
 	_line_host.modulate = Color(dfk, dfk, dfk, 1.0)
+	_line_host.visible = not Meta.aviation_on  # 航空视图隐藏铁路线网
 	_geo_host.modulate = Color(dfk, dfk, dfk, 1.0)
 	_terrain_host.modulate = Color(dfk, dfk, dfk, 1.0)
 
@@ -182,6 +183,8 @@ func _draw() -> void:
 	var t4 := Time.get_ticks_usec()
 	PerfProbe.lap("m_sky", t1 - dt0)
 	PerfProbe.lap("m_grat", t4 - t1)
+	if Meta.aviation_on:
+		return  # 航空视图：底图只保留天空/经纬网/省界/地貌/城市
 	var view := Rect2(cam.get_screen_center_position() - Vector2(1.5e6, 1.5e6) / zoom,
 			Vector2(3e6, 3e6) / zoom)
 	_draw_stations(px, df, view, zoom)

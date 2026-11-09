@@ -77,7 +77,10 @@ func _ready() -> void:
 	ui.diagram.connect("train_picked", _on_diagram_pick)
 	ui.line_screen.connect("code_picked", _on_line_screen_pick)
 	Meta.focus_line_changed.connect(_on_line_focus_camera)
+	Meta.aviation_changed.connect(_on_aviation_view_switched)
 	ui.train_search_picked.connect(_on_train_search_pick)
+	if Meta.aviation_on and FlightSim.ready_ok:
+		_on_aviation_view_switched.call_deferred()  # 存档为航空视图时启动即归位
 	ui.cam_jump_requested.connect(func(wpos: Vector2):
 		cam.follow_code = ""
 		cam.position = wpos)
@@ -259,7 +262,7 @@ func _process(delta: float) -> void:
 
 	label_layer.selected = selected
 	label_layer.hover = trains_layer.hover
-	label_layer.aviation_on = Meta.aviation_on and FlightSim.ready_ok and not Meta.focus_active()
+	label_layer.aviation_on = Meta.aviation_on and FlightSim.ready_ok
 	label_layer.flight_selected = flights_layer.selected
 	label_layer.flight_hover = flights_layer.hover
 	label_layer.flight_states = flights_layer._states      # 引用共享，避免重复解算
@@ -274,24 +277,26 @@ func _process(delta: float) -> void:
 		_station_accum = 0.0
 		var ck0 := Time.get_ticks_usec()
 		PerfProbe.lap("checkin", 0)
-		var checkin_target := ""
-		var checkin_best := 3000.0
-		for line_id in DB.line_order:
-			var line: Dictionary = DB.lines[line_id]
-			for sid in line["order"]:
-				var d: float = cam.position.distance_to(line["stations"][sid]["pos"])
-				if d < 7000.0:
-					Meta.visit_station(sid)
-				if d < checkin_best:
-					checkin_best = d
-					checkin_target = DB.station_name(line_id, sid)
-		ui.set_checkin_target(checkin_target, Meta.checkins.has(checkin_target))
-		# 机场到访：航空模式且非专注时，镜头 15km 内的机场记一次到访（成就）
-		if Meta.aviation_on and FlightSim.ready_ok and not Meta.focus_active():
+		if Meta.aviation_on:
+			# 航空视图：铁路打卡收起，只做机场到访（成就）
+			ui.set_checkin_target("", false)
 			for iata in FlightSim.airports:
 				var ap: Dictionary = FlightSim.airports[iata]
 				if (ap["pos"] as Vector2).distance_to(cam.position) < 15000.0:
 					Meta.visit_airport(str(iata))
+		else:
+			var checkin_target := ""
+			var checkin_best := 3000.0
+			for line_id in DB.line_order:
+				var line: Dictionary = DB.lines[line_id]
+				for sid in line["order"]:
+					var d: float = cam.position.distance_to(line["stations"][sid]["pos"])
+					if d < 7000.0:
+						Meta.visit_station(sid)
+					if d < checkin_best:
+						checkin_best = d
+						checkin_target = DB.station_name(line_id, sid)
+			ui.set_checkin_target(checkin_target, Meta.checkins.has(checkin_target))
 
 	if follow_code != "":
 		_follow_tick()
@@ -353,8 +358,10 @@ func _on_map_click(world_pos: Vector2) -> void:
 	if Meta.spot_mode:
 		Meta.place_spot(world_pos)
 		return
-	# 航空优先：飞机 > 机场 > 铁路
-	if Meta.aviation_on and FlightSim.ready_ok and not Meta.focus_active():
+	# 视图互斥：航空视图只点飞机/机场；铁路视图只点列车/车站/线路
+	if Meta.aviation_on:
+		if not FlightSim.ready_ok:
+			return
 		var fidx: int = flights_layer.pick(world_pos, cam.zoom.x)
 		if fidx >= 0:
 			_on_flight_click(fidx)
@@ -362,7 +369,7 @@ func _on_map_click(world_pos: Vector2) -> void:
 		var ap: String = flights_layer.pick_airport(world_pos, cam.zoom.x)
 		if ap != "":
 			_on_airport_click(ap)
-			return
+		return
 	var code: String = trains_layer.pick(world_pos, cam.zoom.x)
 	if code != "":
 		_select(code)
@@ -621,6 +628,44 @@ func _on_line_focus_camera() -> void:
 	cam.follow_code = ""
 	cam.position = line["center"]
 	cam.zoom = Vector2(line["fit_zoom"], line["fit_zoom"])
+
+
+# ---------- 视图分离：铁路 / 航空 ----------
+
+var _cam_rail := {"has": false, "pos": Vector2.ZERO, "z": 0.0}
+var _cam_air := {"has": false, "pos": Vector2.ZERO, "z": 0.0}
+
+
+func _on_aviation_view_switched() -> void:
+	# 双视图各自记忆相机：切换时保存当前、恢复目标视图上次的视野
+	var cur := {"has": true, "pos": cam.position, "z": cam.zoom.x}
+	if Meta.aviation_on:
+		_cam_rail = cur
+		# 铁路专属状态随视图收起
+		if Meta.focus_active():
+			Meta.clear_focus()
+			ui.sync_focus_pill()
+		if follow_code != "":
+			_end_follow(false)
+		_select("")
+		if _cam_air["has"]:
+			cam.follow_code = ""
+			cam.position = _cam_air["pos"]
+			cam.zoom = Vector2(_cam_air["z"], _cam_air["z"])
+		else:
+			cam.follow_code = ""
+			cam.position = DB.map_center
+			cam.zoom = Vector2(DB.fit_zoom * 1.02, DB.fit_zoom * 1.02)
+	else:
+		_cam_air = cur
+		if follow_flight >= 0:
+			_end_flight_follow()
+		ui.close_flight_cards()
+		flights_layer.selected = -1
+		if _cam_rail["has"]:
+			cam.follow_code = ""
+			cam.position = _cam_rail["pos"]
+			cam.zoom = Vector2(_cam_rail["z"], _cam_rail["z"])
 
 
 func _locate(code: String) -> void:

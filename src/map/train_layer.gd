@@ -19,6 +19,11 @@ var _last_mouse := Vector2(-1e9, -1e9)
 
 
 func _process(delta: float) -> void:
+	# 铁路视图专属：航空视图下整层隐藏（含观测/悬停）
+	visible = not Meta.aviation_on
+	if not visible:
+		hover = ""
+		return
 	_mouse_world = get_global_mouse_position()
 	var cam := get_viewport().get_camera_2d()
 	var zoom := cam.zoom.x if cam != null else DB.fit_zoom

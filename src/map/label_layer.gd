@@ -24,6 +24,7 @@ var _geo: Array = []
 var _linenames: Array = []
 var _flights: Array = []          # 航班号标注池
 var _airports: Array = []         # 机场名标注池（静态文本）
+var _last_rail := true            # 上帧视图（切换时强制重摆静态标注）
 
 
 func _ready() -> void:
@@ -154,40 +155,47 @@ func _process(_delta: float) -> void:
 	var center: Vector2 = cam.get_screen_center_position()
 	var rect := Rect2(Vector2.ZERO, _root.size).grow(60.0)
 
-	# 静态标注（2348 站 + 省市 + 地理）：仅相机移动/缩放时重摆，
-	# 位置只依赖相机，静止帧跳过是最大的每帧节省。
+	# 静态标注：省市/地理两个视图共享；车站/线名仅铁路视图。
+	# 仅相机移动/缩放时重摆，位置只依赖相机，静止帧跳过是最大的每帧节省。
+	var rail_view := not aviation_on
 	if not is_equal_approx(center.x, _last_cam.x) or not is_equal_approx(center.y, _last_cam.y) \
-			or not is_equal_approx(zoom, _last_cam_zoom):
+			or not is_equal_approx(zoom, _last_cam_zoom) or rail_view != _last_rail:
 		_last_cam = center
 		_last_cam_zoom = zoom
-		var show_station := zoom > 0.02
-		var show_km := zoom > 0.055
+		_last_rail = rail_view
+		var show_station := zoom > 0.02 and rail_view
+		var show_km := zoom > 0.055 and rail_view
 		for e in _province:
 			_place(e["label"], e["wpos"], center, half, zoom, rect, Vector2(-30, -20), true)
 		for e in _cities:
 			_place(e["label"], e["wpos"], center, half, zoom, rect, Vector2(6, -16), true)
 		for e in _stations:
-			var vis: bool = e["major"] or show_station
+			var vis: bool = (e["major"] or show_station) and rail_view
 			_place(e["label"], e["wpos"], center, half, zoom, rect, Vector2(9, -21), vis)
 			_place(e["km"], e["wpos"], center, half, zoom, rect, Vector2(9, 4), vis and show_km)
 		for e in _geo:
 			_place(e["label"], e["wpos"], center, half, zoom, rect, Vector2.ZERO, true)
-		var show_lines := zoom > 0.008
+		var show_lines := zoom > 0.008 and rail_view
 		for e in _linenames:
 			_place(e["label"], e["wpos"], center, half, zoom, rect, Vector2(0, -14), show_lines)
-	var tl0 := Time.get_ticks_usec()
-	_sync_trains(center, half, zoom, rect)
-	var sl0 := Time.get_ticks_usec()
-	_sync_spots(center, half, zoom, rect)
-	PerfProbe.lap("lbl_trains", Time.get_ticks_usec() - sl0 + (sl0 - tl0))
-	if aviation_on:
-		_sync_airports(center, half, zoom, rect)
-		_sync_flights(center, half, zoom, rect)
-	else:
+	if rail_view:
+		var tl0 := Time.get_ticks_usec()
+		_sync_trains(center, half, zoom, rect)
+		var sl0 := Time.get_ticks_usec()
+		_sync_spots(center, half, zoom, rect)
+		PerfProbe.lap("lbl_trains", Time.get_ticks_usec() - sl0 + (sl0 - tl0))
 		for e in _airports:
 			e["label"].visible = false
 		for l in _flights:
 			l.visible = false
+	else:
+		for l in _trains:
+			l.visible = false
+		for e in _stations:
+			e["label"].visible = false
+			e["km"].visible = false
+		_sync_airports(center, half, zoom, rect)
+		_sync_flights(center, half, zoom, rect)
 
 
 func _sync_airports(center: Vector2, half: Vector2, zoom: float, rect: Rect2) -> void:

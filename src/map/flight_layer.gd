@@ -14,7 +14,7 @@ var force_idx := -1    # 被跟随/选中的航班：每帧单独解算（相机
 
 
 func _process(_delta: float) -> void:
-	visible = Meta.aviation_on and FlightSim.ready_ok and not Meta.focus_active()
+	visible = Meta.aviation_on and FlightSim.ready_ok
 	if not visible:
 		hover = -1
 		hover_ap = ""

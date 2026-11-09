@@ -26,6 +26,7 @@ build 流程（走廊排序链式拼接，天然免疫 OSM 碎片化与平行线
 import heapq
 import json
 import math
+import os
 import re
 import socket
 import sys
@@ -574,23 +575,31 @@ def cmd_build(line_id):
         while progress:
             progress = False
             cand = None
-            for i, f in enumerate(fam):
-                if i in used:
-                    continue
-                lo, hi = min(f["ta"], f["tb"]), max(f["ta"], f["tb"])
-                if hi < last_t - 0.01 or lo > last_t + 0.05:
-                    continue
-                if f["ta"] <= f["tb"]:
-                    entry, far = f["pts"][0], f["pts"][-1]
-                    t_far = f["tb"]
-                else:
-                    entry, far = f["pts"][-1], f["pts"][0]
-                    t_far = f["ta"]
-                if t_far < last_t - 0.01:
-                    continue
-                dcur = dist_m(out_f[-1], entry) if out_f else 0.0
-                if cand is None or dcur < cand[0]:
-                    cand = (dcur, i, entry, far, t_far)
+            # 双线铁路每方向一条 way：平行碎片（起点已在已拼范围内）会把
+            # 第二轨整段拼进链里导致长度 ×2——优先「向前」碎片，平行碎片
+            # 仅当无向前候选时兜底
+            for pass_only_forward in (True, False):
+                for i, f in enumerate(fam):
+                    if i in used:
+                        continue
+                    lo, hi = min(f["ta"], f["tb"]), max(f["ta"], f["tb"])
+                    if hi < last_t - 0.01 or lo > last_t + 0.05:
+                        continue
+                    if pass_only_forward and lo < last_t - 0.02:
+                        continue  # 平行/回退碎片：本轮跳过
+                    if f["ta"] <= f["tb"]:
+                        entry, far = f["pts"][0], f["pts"][-1]
+                        t_far = f["tb"]
+                    else:
+                        entry, far = f["pts"][-1], f["pts"][0]
+                        t_far = f["ta"]
+                    if t_far < last_t - 0.01:
+                        continue
+                    dcur = dist_m(out_f[-1], entry) if out_f else 0.0
+                    if cand is None or dcur < cand[0]:
+                        cand = (dcur, i, entry, far, t_far)
+                if cand is not None:
+                    break
             if cand is not None:
                 _d, i, entry, far, t_far = cand
                 f = fam[i]
@@ -629,7 +638,7 @@ def cmd_build(line_id):
             min(min(f["ta"], f["tb"]) for f in fam)
         return out_f, n_gap, span
 
-    def station_coverage_ok(pts_f, max_m=20000.0):
+    def station_coverage_ok(pts_f, max_m=30000.0):
         for s in stations:
             pos = (float(s["lon"]), float(s["lat"]))
             dmin = 1e18
@@ -795,17 +804,48 @@ def cmd_build(line_id):
         import collections as _collections
         all_counts = _collections.Counter(
             f["name"] for f in frags_all.values() if f["name"])
-        for name, _cnt in all_counts.most_common(4):
+        # 名称变体优先：数据名常为「xx铁路」，OSM 官方名多为「xx高速线/线」
+        name_variants = [str(line.get("name", ""))]
+        if name_variants[0].endswith("铁路"):
+            base = name_variants[0][:-2]
+            name_variants.append(base + ("线" if "高速" in base else "高速线"))
+            name_variants.append(base + "线")
+        variant_set = set(name_variants)
+        ordered = name_variants + [n for n, _ in all_counts.most_common(6)
+                                   if n not in variant_set]
+        for name in ordered:
             r = chain_family_free(name)
             if not r:
+                if os.environ.get("DIAG"):
+                    eprint("[diag] %s 族「%s」: 碎片<2 或链为空" % (line_id, name))
                 continue
             pts_f, n_gap_f, span_f = r
             if len(pts_f) < 2 or span_f < 0.80:
+                if os.environ.get("DIAG"):
+                    eprint("[diag] %s 族「%s」: span=%.2f pts=%d" %
+                           (line_id, name, span_f, len(pts_f)))
                 continue
+            # 截取到站序范围：家族链可能延伸出数据区段（如 宁杭全程 vs
+            # 数据部分段、京哈家族 vs 哈大段）——先截取再验长度比
+            s0 = (float(stations[0]["lon"]), float(stations[0]["lat"]))
+            sN = (float(stations[-1]["lon"]), float(stations[-1]["lat"]))
+            i0 = min(range(len(pts_f)), key=lambda k: dist_m(s0, pts_f[k]))
+            iN = min(range(len(pts_f)), key=lambda k: dist_m(sN, pts_f[k]))
+            if i0 > iN:
+                pts_f = pts_f[::-1]
+                i0, iN = len(pts_f) - 1 - i0, len(pts_f) - 1 - iN
+            if iN - i0 >= max(4, len(pts_f) // 8):
+                pts_f = pts_f[i0:iN + 1]
             len_f = poly_len(pts_f)
             if not (0.65 <= len_f / max(old_len, 1.0) <= 1.9):
+                if os.environ.get("DIAG"):
+                    eprint("[diag] %s 族「%s」: 截取后比值 x%.2f (%.0f/%.0f km)" %
+                           (line_id, name, len_f / max(old_len, 1.0),
+                            len_f / 1000.0, old_len / 1000.0))
                 continue
             if not station_coverage_ok(pts_f):
+                if os.environ.get("DIAG"):
+                    eprint("[diag] %s 族「%s」: 站点覆盖不足" % (line_id, name))
                 continue
             chosen = (pts_f, n_gap_f, name)
             break
