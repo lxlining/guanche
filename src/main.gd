@@ -344,6 +344,10 @@ func _unhandled_input(event: InputEvent) -> void:
 				GameTime.toggle_pause()
 			KEY_P:
 				Meta.toggle_spot_mode()
+			KEY_EQUAL, KEY_KP_ADD:
+				cam.zoom_step(1.3)
+			KEY_MINUS, KEY_KP_SUBTRACT:
+				cam.zoom_step(1.0 / 1.3)
 			KEY_D:
 				ui.toggle_dex()
 			KEY_J:

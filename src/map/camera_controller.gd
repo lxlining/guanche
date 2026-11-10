@@ -1,4 +1,5 @@
-# 相机控制：拖拽平移、滚轮以鼠标为中心缩放、边界钳制、跟随列车。
+# 相机控制：拖拽平移、滚轮以鼠标为中心平滑缩放（指数缓动 + 锚点保持）、
+# 双击放大、键盘 +/-、边界钳制、跟随列车。
 extends Camera2D
 
 signal map_clicked(world_pos: Vector2)
@@ -10,6 +11,9 @@ var follow_code := ""
 
 var _dragging := false
 var _drag_moved := false
+var _tz := -1.0               # 平滑缩放目标（-1 = 无动画）
+var _anchor_screen := Vector2.ZERO
+var _anchor_world := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -22,13 +26,19 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP and event.pressed:
-			_zoom_at(1.10)
+			_zoom_at(1.18)
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
-			_zoom_at(1.0 / 1.10)
+			_zoom_at(1.0 / 1.18)
 		elif event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
-				_dragging = true
-				_drag_moved = false
+				if event.double_click:
+					# 双击放大：以点击处为锚点 ×1.8（不进入拖拽）
+					var mu := get_global_mouse_position()
+					_start_zoom_anim(zoom.x * 1.8, mu, mu)
+				else:
+					_tz = -1.0
+					_dragging = true
+					_drag_moved = false
 			else:
 				if _dragging and not _drag_moved:
 					map_clicked.emit(get_global_mouse_position())
@@ -39,6 +49,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			map_right_clicked.emit(get_global_mouse_position())
 	elif event is InputEventMouseMotion and _dragging:
+		_tz = -1.0
 		position -= event.relative / zoom.x
 		if event.relative.length() > 2.0:
 			_drag_moved = true
@@ -48,6 +59,19 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	if _tz > 0.0 and not is_equal_approx(zoom.x, _tz):
+		# 指数缓动逼近目标 zoom；锚点地理点在动画期间保持屏幕位置稳定
+		var w := 1.0 - pow(0.0002, delta)
+		var z_new := lerpf(zoom.x, _tz, clampf(w, 0.0, 1.0))
+		zoom = Vector2(z_new, z_new)
+		var vp := get_viewport().get_visible_rect().size
+		position = _anchor_world - (_anchor_screen - vp * 0.5) / z_new
+		if follow_code != "":
+			follow_code = ""
+		_clamp_position()
+		if absf(zoom.x - _tz) / _tz < 0.008:
+			zoom = Vector2(_tz, _tz)
+			_tz = -1.0
 	if follow_code != "":
 		var st = Simulation.states.get(follow_code)
 		if st != null and st.has("pos"):
@@ -56,18 +80,41 @@ func _process(delta: float) -> void:
 			_clamp_position()
 
 
-func _zoom_at(f: float) -> void:
-	var pos_old := position
-	var z_old := zoom.x
-	var mu := get_global_mouse_position()
-	var z_new := clampf(z_old * f, min_zoom, max_zoom)
-	if is_equal_approx(z_new, z_old):
+# 统一缩放入口：factor 相对缩放，anchor_screen 屏幕锚点，anchor_world 锚点地理点
+func _start_zoom_anim(z_target: float, anchor_screen: Vector2, anchor_world: Vector2) -> void:
+	z_target = clampf(z_target, min_zoom, max_zoom)
+	if z_target <= 0.0:
 		return
-	zoom = Vector2(z_new, z_new)
-	position = mu - (mu - pos_old) * (z_old / z_new)
+	_tz = z_target
+	_anchor_screen = anchor_screen
+	_anchor_world = anchor_world
 	if follow_code != "":
 		follow_code = ""
-	_clamp_position()
+
+
+func _zoom_at(f: float) -> void:
+	var mu := get_global_mouse_position()
+	var vp := get_viewport().get_visible_rect().size
+	if _tz > 0.0:
+		# 动画中再次滚动：锚点取「鼠标屏幕位置在目标 zoom 下」的地理点（延续不漂移）
+		var aw := position + (mu - vp * 0.5) / _tz
+		_start_zoom_anim(_tz * f, mu, aw)
+	else:
+		_start_zoom_anim(zoom.x * f, mu, mu)
+
+
+# UI 缩放按钮 / 键盘入口：以屏幕中心为锚点
+func zoom_step(f: float) -> void:
+	var vp := get_viewport().get_visible_rect().size
+	var aw := position + (vp * 0.5) / (_tz if _tz > 0.0 else zoom.x)
+	_start_zoom_anim((_tz if _tz > 0.0 else zoom.x) * f, vp * 0.5, aw)
+
+
+func zoom_reset_nation() -> void:
+	_tz = -1.0
+	follow_code = ""
+	position = DB.map_center
+	zoom = Vector2(DB.fit_zoom, DB.fit_zoom)
 
 
 func _clamp_position() -> void:

@@ -92,6 +92,7 @@ func _ready() -> void:
 	mini_map.jump_requested.connect(func(wpos: Vector2):
 		cam_jump_requested.emit(wpos))
 	ui_root.add_child(mini_map)
+	_build_zoom_widget()
 	line_screen = LineScreen.new()
 	ui_root.add_child(line_screen)
 	flight_card = FlightCard.new()
@@ -158,6 +159,31 @@ const LEGEND_CLASSES := [
 
 var legend_buttons: Array = []
 var legend_panel: PanelContainer
+var zoom_panel: PanelContainer
+var zoom_label: Label
+
+
+# 缩放控件：＋/－/全国复位 + 视野宽度指示（小地图上方，双视图通用）
+func _build_zoom_widget() -> void:
+	zoom_panel = UIKit.panel_container(UIKit.flat(UIKit.BG, 12, UIKit.BORDER, 1, 6))
+	zoom_panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 14)
+	zoom_panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	zoom_panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	zoom_panel.offset_bottom = -172
+	var hb := HBoxContainer.new()
+	hb.add_theme_constant_override("separation", 4)
+	zoom_panel.add_child(hb)
+	hb.add_child(UIKit.button("＋", func(): _cam().zoom_step(1.4)))
+	hb.add_child(UIKit.button("－", func(): _cam().zoom_step(1.0 / 1.4)))
+	hb.add_child(UIKit.button("⤢ 全国", func(): _cam().zoom_reset_nation()))
+	zoom_label = UIKit.label("", 11, UIKit.DIM)
+	zoom_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	hb.add_child(zoom_label)
+	ui_root.add_child(zoom_panel)
+
+
+func _cam() -> Camera2D:
+	return get_viewport().get_camera_2d()
 
 
 func _build_legend() -> void:
@@ -597,6 +623,17 @@ func _process(delta: float) -> void:
 		clock_label.text = ("Ⅱ " if GameTime.paused else "") + GameTime.time_string_full()
 		clock_sub.text = "%s× · %d 条线路 · %d 站 · 在图 %d 趟" % [
 			_fmt_speed(GameTime.speed), DB.line_order.size(), DB.total_station_count(), _active_count()]
+	if zoom_label != null:
+		var cam := get_viewport().get_camera_2d()
+		if cam != null:
+			var vp_w_m: float = get_viewport().get_visible_rect().size.x / cam.zoom.x
+			zoom_label.text = "视野 ≈ %s" % _fmt_span(vp_w_m)
+
+
+func _fmt_span(m: float) -> String:
+	if m >= 100000.0:
+		return "%.0f km" % (m / 1000.0)
+	return "%.0f km" % (m / 1000.0)
 
 
 func _active_count() -> int:

@@ -163,8 +163,8 @@ func _process(_delta: float) -> void:
 		_last_cam = center
 		_last_cam_zoom = zoom
 		_last_rail = rail_view
-		var show_station := zoom > 0.02 and rail_view
-		var show_km := zoom > 0.055 and rail_view
+		var show_station := zoom > 0.012 and rail_view
+		var show_km := zoom > 0.028 and rail_view
 		for e in _province:
 			_place(e["label"], e["wpos"], center, half, zoom, rect, Vector2(-30, -20), true)
 		for e in _cities:
