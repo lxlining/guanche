@@ -178,8 +178,14 @@ def cmd_fetch(line_id, pair_idx=None, station_idx=None):
         sel = [sts[pair_idx], sts[pair_idx + 1]]
     lons = [float(s["lon"]) for s in sel]
     lats = [float(s["lat"]) for s in sel]
-    south, north = min(lats) - BBOX_PAD, max(lats) + BBOX_PAD
-    west, east = min(lons) - BBOX_PAD, max(lons) + BBOX_PAD
+    # 包围格外扩可由 OSM_PAD 覆盖（keep-old 宽幅补抓用 0.35°，
+    # 消除长站间距站对框之间的走廊缺口），钳制在 0.10~0.50 度
+    try:
+        pad = min(0.50, max(0.10, float(os.environ.get("OSM_PAD", BBOX_PAD))))
+    except ValueError:
+        pad = BBOX_PAD
+    south, north = min(lats) - pad, max(lats) + pad
+    west, east = min(lons) - pad, max(lons) + pad
     query = ("[out:json][timeout:120];"
              'way["railway"="rail"](%f,%f,%f,%f);out geom qt;'
              % (south, west, north, east))

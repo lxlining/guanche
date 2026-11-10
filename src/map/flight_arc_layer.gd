@@ -10,12 +10,15 @@ var _last_zoom := -1.0
 
 func _process(_delta: float) -> void:
 	var on: bool = Meta.aviation_on and FlightSim.ready_ok
+	# 每帧显式设置可见性：节点默认 visible=true，若仅在「变化分支」里
+	# 赋值，航空模式从关启动时永不进入分支——入树自动绘帧会用启动瞬间
+	# 的 px 画出横跨全屏的巨型蓝条
+	visible = on
 	var cam := get_viewport().get_camera_2d()
 	var zoom := cam.zoom.x if cam != null else DB.fit_zoom
 	if on != _last_on or (on and absf(zoom - _last_zoom) > _last_zoom * 0.12):
 		_last_on = on
 		_last_zoom = zoom
-		visible = on
 		queue_redraw()
 
 
