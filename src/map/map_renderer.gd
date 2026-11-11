@@ -29,6 +29,9 @@ var _geo_sig := ""
 var _terrain_host: Node2D
 var _terrain_items: Array = [] # 山脉/沙漠/地貌/城市/湖泊保留式 item
 var _grat_cache: Array = []    # 经纬网两段数组（常量，懒建一次）
+var _rs_new_items: Array = []  # 增量重建中的新 item 集（完成前旧集持续显示）
+var _rs_queue: Array = []      # 待重建线路队列
+const RS_STEP := 6             # 每帧重建的线路数（预算 ~10ms）
 
 
 func _ready() -> void:
@@ -47,11 +50,14 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	for rid in _rs_items:
 		RenderingServer.free_rid(rid)
+	for rid in _rs_new_items:
+		RenderingServer.free_rid(rid)
 	for rid in _geo_items:
 		RenderingServer.free_rid(rid)
 	for rid in _terrain_items:
 		RenderingServer.free_rid(rid)
 	_rs_items = []
+	_rs_new_items = []
 	_geo_items = []
 	_terrain_items = []
 var _last_cam := Vector2(NAN, NAN)
@@ -85,7 +91,8 @@ func _process(delta: float) -> void:
 	if bucket != _rs_bucket or sig != _rs_sig:
 		_rs_bucket = bucket
 		_rs_sig = sig
-		_rebuild_rs_lines(cz)
+		_start_rs_rebuild()
+	_rs_rebuild_step()  # 增量重录：每帧处理若干条，避免缩放档位跨越时整帧卡顿
 	if bucket != _geo_bucket or sig != _geo_sig:
 		_geo_bucket = bucket
 		_geo_sig = sig
@@ -423,22 +430,37 @@ func _get_line_segs(line_id: String, wpts: PackedVector2Array, zoom: float) -> P
 
 
 # 一次性把路网记录进 RS canvas item（重录约 0.5~1s，仅在缩放桶跨越时发生）
-func _rebuild_rs_lines(zoom: float) -> void:
-	for rid in _rs_items:
+func _start_rs_rebuild() -> void:
+	# 增量重建：丢弃半成品队列（旧 item 继续显示直到新集完成，无闪烁）
+	for rid in _rs_new_items:
 		RenderingServer.free_rid(rid)
-	_rs_items = []
-	var zb := pow(2.0, float(_rs_bucket))
-	var px0 := 1.0 / maxf(zb, 1.0e-6)
-	var wf0: float = clampf(zb / 0.01, 0.55, 1.0)
-	var aa: bool = zb > 0.004
+	_rs_new_items = []
+	_rs_queue = []
 	for line_id in DB.line_order:
 		if Meta.is_focus_line(line_id):
 			continue
 		var line: Dictionary = DB.lines[line_id]
 		if not Meta.is_class_visible(DB.line_class(line_id)):
 			continue
+		_rs_queue.append(line_id)
+
+
+# 每帧处理最多 RS_STEP 条线路（预算 ~10ms），队列清空后换上新集
+func _rs_rebuild_step() -> void:
+	if _rs_queue.is_empty():
+		return
+	var zb := pow(2.0, float(_rs_bucket))
+	var px0 := 1.0 / maxf(zb, 1.0e-6)
+	var wf0: float = clampf(zb / 0.01, 0.55, 1.0)
+	var aa: bool = zb > 0.004
+	var budget := RS_STEP
+	while budget > 0 and not _rs_queue.is_empty():
+		var line_id: String = _rs_queue.pop_front()
+		var line: Dictionary = DB.lines.get(line_id, {})
+		if line.is_empty():
+			continue
 		var wpts: PackedVector2Array = line["wpts"]
-		var segs := _get_line_segs(line_id, wpts, zoom)
+		var segs := _get_line_segs(line_id, wpts, zb)
 		if segs.size() < 2:
 			continue
 		var cls := DB.line_class(line_id)
@@ -456,7 +478,6 @@ func _rebuild_rs_lines(zoom: float) -> void:
 		# OSM 缺口段虚线（逐缺口铺 dash 线段对）
 		var dash_segs := PackedVector2Array()
 		var dash_c: Color = core_col.lightened(0.35)
-		var dash_w := core_w * wf0 * px0
 		var dash_step := 10.0 * px0
 		for gr in line.get("gap_ranges", []):
 			var ga: Vector2 = wpts[gr[0]]
@@ -472,11 +493,16 @@ func _rebuild_rs_lines(zoom: float) -> void:
 				dash_segs.push_back(ga.lerp(gb, minf(float(di + 1) / float(nd), 1.0)))
 		if dash_segs.size() >= 2:
 			RenderingServer.canvas_item_add_multiline(ci, dash_segs,
-					PackedColorArray([dash_c]), dash_w, false)
-		RenderingServer.canvas_item_set_visible(ci, true)
-		_rs_items.append(ci)
-	if OS.get_environment("RS_DEBUG") != "":
-		print("[map] RS rebuild bucket=%d items=%d" % [_rs_bucket, _rs_items.size()])
+					PackedColorArray([dash_c]), core_w * wf0 * px0, false)
+		_rs_new_items.append(ci)
+		budget -= 1
+	if _rs_queue.is_empty():
+		for rid in _rs_items:
+			RenderingServer.free_rid(rid)
+		_rs_items = _rs_new_items
+		_rs_new_items = []
+		if OS.get_environment("RS_DEBUG") != "":
+			print("[map] RS rebuild done bucket=%d items=%d" % [_rs_bucket, _rs_items.size()])
 
 
 func _draw_stations(px: float, df: float, view: Rect2, zoom: float) -> void:
