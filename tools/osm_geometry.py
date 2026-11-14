@@ -48,11 +48,10 @@ COORD_FIX_M = 2000.0       # 站坐标修正阈值
 OVERPASS_ENDPOINTS = [
     "https://overpass-api.de/api/interpreter",
     "https://overpass.kumi.systems/api/interpreter",
-    "https://overpass.osm.jp/api/interpreter",
     "https://overpass.private.coffee/api/interpreter",
     "https://overpass.osm.ch/api/interpreter",
 ]
-ALLOWED_HOSTS = {"overpass-api.de", "overpass.kumi.systems", "overpass.osm.jp",
+ALLOWED_HOSTS = {"overpass-api.de", "overpass.kumi.systems",
                  "overpass.private.coffee", "overpass.osm.ch"}
 LINE_ID_RE = re.compile(r"^[a-z0-9_]{1,64}$")
 PRIVATE_PREFIXES = ("10.", "192.168.", "169.254.", "127.", "0.",
@@ -139,7 +138,6 @@ def overpass_post(query, timeout=150):
     # 字面量端点（与 OVERPASS_ENDPOINTS 一致，供静态审查）
     for url in ("https://overpass-api.de/api/interpreter",
                 "https://overpass.kumi.systems/api/interpreter",
-                "https://overpass.osm.jp/api/interpreter",
                 "https://overpass.private.coffee/api/interpreter",
                 "https://overpass.osm.ch/api/interpreter"):
         try:
