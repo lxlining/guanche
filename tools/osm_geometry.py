@@ -796,7 +796,9 @@ def cmd_build(line_id):
                 node_path = astar_path(g, na, nb)
                 if node_path:
                     seg = [pa] + [g.nodes[n] for n in node_path] + [pb]
-                    if gc_m(pa, pb) > 1.0 and poly_len(seg) / base > 2.6:
+                    # 每对比值上限：自动走线之字形绕行放宽到 4.0
+                    per_pair_max = 4.0 if _auto_route else 2.6
+                    if gc_m(pa, pb) > 1.0 and poly_len(seg) / base > per_pair_max:
                         seg = None
             if seg is None:
                 fb_pairs += 1
@@ -810,7 +812,18 @@ def cmd_build(line_id):
         pair_len = poly_len(geometry_pair)
         pair_ratio = pair_len / max(old_len, 1.0)
         fb_frac = fb_pairs / max(n_pairs, 1)
-        if LEN_RATIO_MIN <= pair_ratio <= LEN_RATIO_MAX and fb_frac <= 0.45:
+        if os.environ.get("DIAG"):
+            eprint("[diag] %s A*: OK %d / 回退 %d (x%.2f, 上限比 %.2f-%.2f, 回退率<=0.45)"
+                   % (line_id, ok_pairs, fb_pairs, pair_ratio,
+                      LEN_RATIO_MIN, LEN_RATIO_MAX))
+        # 自动走线跨多条物理线之字形运行，真实轨道距离可达直线的数倍——
+        # 比值上限放宽（真校验是站点吸附 + 每对 2.6 上限 + 回退率），
+        # 回退率也放宽到 0.60（城市站场碎片多，个别对失败可接受）
+        if _auto_route:
+            ratio_lo, ratio_hi, fb_max = 0.30, 7.5, 0.60
+        else:
+            ratio_lo, ratio_hi, fb_max = LEN_RATIO_MIN, LEN_RATIO_MAX, 0.45
+        if ratio_lo <= pair_ratio <= ratio_hi and fb_frac <= fb_max:
             eprint("[build] %s: 逐对 A*（OK %d / 回退 %d）x%.2f => 采纳"
                    % (line_id, ok_pairs, fb_pairs, pair_ratio))
             chosen = (geometry_pair, fb_pairs, "逐对A*")
