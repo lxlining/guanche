@@ -78,6 +78,7 @@ func _ready() -> void:
 	ui.line_screen.connect("code_picked", _on_line_screen_pick)
 	Meta.focus_line_changed.connect(_on_line_focus_camera)
 	Meta.aviation_changed.connect(_on_aviation_view_switched)
+	ui.airport_search_requested.connect(_on_airport_search)
 	ui.train_search_picked.connect(_on_train_search_pick)
 	if Meta.aviation_on and FlightSim.ready_ok:
 		_on_aviation_view_switched.call_deferred()  # 存档为航空视图时启动即归位
@@ -391,6 +392,22 @@ func _on_flight_click(idx: int) -> void:
 	Meta.observe_flight(str(FlightSim.flights[idx]["id"]))
 
 
+# 搜索选择机场：切航空视图 → 飞至机场 → 打开机场卡
+func _on_airport_search(iata: String) -> void:
+	if not FlightSim.airports.has(iata):
+		return
+	flights_layer.selected = -1
+	ui.flight_card.hide()
+	ui.detail.hide()
+	var ap: Dictionary = FlightSim.airports[iata]
+	cam.follow_code = ""
+	cam.position = ap["pos"]
+	if cam.zoom.x < 0.008:
+		cam.zoom = Vector2(0.01, 0.01)
+	ui.airport_card.show_airport(iata)
+	Meta.visit_airport(iata)
+
+
 func _on_airport_click(iata: String) -> void:
 	flights_layer.selected = -1
 	ui.flight_card.hide()
@@ -413,6 +430,9 @@ func _toggle_flight_follow(idx: int) -> void:
 	follow_flight = idx
 	cam.follow_code = ""
 	ui.flight_card.set_following(true)
+	# 跟随时自动拉近：全国视野下直接跟随看不清飞机姿态
+	if cam.zoom.x < 0.0025:
+		cam.zoom_to(0.005)
 
 
 func _end_flight_follow() -> void:

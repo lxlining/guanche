@@ -4,6 +4,7 @@ extends CanvasLayer
 signal train_search_picked(code: String)
 signal cam_jump_requested(world_pos: Vector2)
 signal flight_picked(idx: int)
+signal airport_search_requested(iata: String)
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
 const FontLib := preload("res://src/ui/font_lib.gd")
@@ -724,6 +725,11 @@ func _build_global_search() -> void:
 		open_station_by_name(sname))
 	global_search.line_picked.connect(func(line_id: String):
 		line_screen.open(line_id))
+	global_search.airport_picked.connect(func(iata: String):
+		if not Meta.aviation_on:
+			Meta.set_aviation(true)
+		if FlightSim.airports.has(iata):
+			airport_search_requested.emit(iata))
 
 
 func _on_spot_mode(on: bool) -> void:

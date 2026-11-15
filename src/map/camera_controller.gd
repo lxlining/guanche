@@ -110,6 +110,13 @@ func zoom_step(f: float) -> void:
 	_start_zoom_anim((_tz if _tz > 0.0 else zoom.x) * f, vp * 0.5, aw)
 
 
+# 平滑变焦到指定缩放（跟随航班起飞时自动拉近用）
+func zoom_to(z: float) -> void:
+	var vp := get_viewport().get_visible_rect().size
+	var center_w := position + (vp * 0.5) / maxf(zoom.x, 1.0e-6)
+	_start_zoom_anim(z, vp * 0.5, center_w)
+
+
 func zoom_reset_nation() -> void:
 	_tz = -1.0
 	follow_code = ""

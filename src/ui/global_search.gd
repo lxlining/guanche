@@ -6,6 +6,7 @@ extends PanelContainer
 signal train_picked(code: String)
 signal station_picked(sname: String)
 signal line_picked(line_id: String)
+signal airport_picked(iata: String)
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
 
@@ -31,7 +32,7 @@ func _ready() -> void:
 	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	hb.add_child(icon)
 	search = LineEdit.new()
-	search.placeholder_text = "搜索：车次 / 车站 / 线路 / 拼音…"
+	search.placeholder_text = "搜索：车次 / 车站 / 线路 / 机场 / 拼音…"
 	search.clear_button_enabled = true
 	search.custom_minimum_size = Vector2(380, 30)
 	search.add_theme_font_size_override("font_size", 14)
@@ -140,6 +141,33 @@ func _refresh() -> void:
 	for nm in stations:
 		results_box.add_child(_row("📍", nm, "车站", func(): station_picked.emit(nm)))
 		found += 1
+	# 机场（名称/城市/IATA/拼音）
+	if FlightSim.ready_ok:
+		var airports: Array = []
+		for iata in FlightSim.airports:
+			var ap: Dictionary = FlightSim.airports[iata]
+			var apn: String = str(ap["name"])
+			var hit_ap := false
+			if not is_ascii:
+				hit_ap = apn.to_lower().contains(q) \
+						or str(ap["city"]).to_lower().contains(q) \
+						or str(iata).to_lower().begins_with(q)
+			else:
+				hit_ap = str(iata).to_lower().begins_with(q) \
+						or apn.to_lower().contains(q) \
+						or str(ap["city"]).to_lower().contains(q) \
+						or _py_match(apn, q)
+			if hit_ap:
+				airports.append([str(iata), apn, str(ap["city"]),
+						int(ap["routes_n"])])
+			if airports.size() >= 3:
+				break
+		for a in airports:
+			var iata_a: String = a[0]
+			results_box.add_child(_row("🛫", "%s (%s)" % [a[1], iata_a],
+					"%s · %d 条航线" % [a[2], a[3]],
+					func(): airport_picked.emit(iata_a)))
+			found += 1
 	# 车次（≥2 字符时包含匹配）
 	var trains: Array = []
 	for tr in DB.trains:

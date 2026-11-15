@@ -11,6 +11,8 @@ var _states := {}      # idx -> state（0.2s 实时量化重建，供拾取与�
 var _airborne: Array = []
 var _fl_accum := 0.0
 var force_idx := -1    # 被跟随/选中的航班：每帧单独解算（相机平滑所需）
+var trail := PackedVector2Array()  # 被选中/跟随航班的飞行轨迹（世界坐标）
+var _trail_for := -1
 
 
 func _process(_delta: float) -> void:
@@ -19,13 +21,18 @@ func _process(_delta: float) -> void:
 		hover = -1
 		hover_ap = ""
 		_states = {}
+		trail = PackedVector2Array()
+		_trail_for = -1
 		return
 	var tf0 := Time.get_ticks_usec()
 	# 状态缓存 0.2s 实时量化：低速时大幅省算力，高速时每帧重建（无损）
 	_fl_accum += _delta
 	var t := GameTime.t
 	if _states.size() > 0 and _fl_accum < 0.2:
-		# 被跟随/选中航班保持逐帧平滑
+		# 被跟随/选中航班保持逐帧平滑 + 轨迹累积（>2.5km 记一点）
+		if force_idx != _trail_for:
+			_trail_for = force_idx
+			trail = PackedVector2Array()
 		if force_idx >= 0 and FlightSim.flights.size() > force_idx:
 			var fst := FlightSim.state_for(force_idx, t)
 			var fph: String = str(fst["phase"])
@@ -35,6 +42,12 @@ func _process(_delta: float) -> void:
 				_states[force_idx] = fst
 				if not _airborne.has(force_idx):
 					_airborne.append(force_idx)
+				var tp: Vector2 = fst["pos"]
+				if trail.is_empty() \
+						or (trail[trail.size() - 1] as Vector2).distance_to(tp) > 2500.0:
+					trail.append(tp)
+					if trail.size() > 360:
+						trail.remove_at(0)
 		return
 	_fl_accum = 0.0
 	_states = {}
@@ -133,6 +146,9 @@ func _draw() -> void:
 		draw_multiline(halo_segs, Color(1.0, 0.85, 0.5, 0.32), 1.2 * px, true)
 	if hov_ap_pos != Vector2.INF:
 		draw_arc(hov_ap_pos, (hov_ap_r + 6.0) * px, 0.0, TAU, 24, Color.WHITE, 1.6 * px, true)
+	# 被选中/跟随航班的飞行轨迹（白色渐淡尾迹）
+	if trail.size() >= 2:
+		draw_polyline(trail, Color(1, 1, 1, 0.35), 2.2 * px, false)
 
 	# 在途航班：普通飞机并入三角批缓冲（单次提交），选中/悬停单独高亮
 	var small := zoom < 0.008
