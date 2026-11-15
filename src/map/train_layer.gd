@@ -33,9 +33,9 @@ func _process(delta: float) -> void:
 	if not _mouse_world.is_equal_approx(_last_mouse):
 		_last_mouse = _mouse_world
 		_update_hover(zoom)
-	# 观测判定：4Hz 节流
+	# 观测判定：1Hz 节流（万级遍历 × 2 循环）
 	_obs_accum += delta
-	if _obs_accum >= 0.5:
+	if _obs_accum >= 1.0:
 		_obs_accum = 0.0
 		var ob0 := Time.get_ticks_usec()
 		_run_observation(zoom)
@@ -153,8 +153,8 @@ func _draw() -> void:
 			draw_polyline(tpts, Color(1, 1, 1, 0.30), 2.4 * px, true)
 			draw_polyline(tpts, Color(0.1, 0.1, 0.15, 0.75), 1.0 * px, true)
 
-	# LOD：全国视野用小圆点，中景小箭头，近景完整箭头
-	var dot_mode := zoom < 0.006
+	# LOD：全国/中景用方向菱形批渲染（draw call 友好），近景完整箭头
+	var dot_mode := zoom < 0.010
 	var small := zoom < 0.015
 	# 形状/颜色外提：避免每车每帧重建 PackedVector2Array 与 Color(str)
 	var shape_long := PackedVector2Array([

@@ -15,6 +15,9 @@ var center := Vector2.ZERO
 var tracks: Array = []          # [{pts: PackedVector2Array(world), named: bool, len: float}]
 var adj_names: Array = []       # 邻站提示 [{name, pos, dir}]
 var _loaded_for := ""
+var _load_queue: Array = []     # 增量解析队列（每帧 2 个缓存文件，防大站冻结）
+var _seen_ways := {}
+var _loading := false
 var _zoom := 1.0
 var _offset := Vector2.ZERO
 var _dragging := false
@@ -54,16 +57,20 @@ func open(station_name: String, pos: Vector2) -> void:
 	_zoom = 1.0
 	_offset = Vector2.ZERO
 	visible = true
-	empty_label.visible = false
 	title_label.text = "站场视图 · %s" % sname
-	_load_tracks(sname, pos)
+	tracks = []
+	adj_names = []
+	_seen_ways = {}
+	_load_queue = _collect_cache_files(station_name)
+	_loading = not _load_queue.is_empty()
+	empty_label.visible = _loading
+	empty_label.text = "加载中…" if _loading else "该站周边暂无 OSM 站场数据。"
+	_load_tracks(sname, pos)  # 邻站提示等轻量部分同步完成
 	queue_redraw()
 
 
-func _load_tracks(station_name: String, pos: Vector2) -> void:
-	tracks = []
-	adj_names = []
-	# 找到包含该站的线路 → 对应的 OSM 缓存文件
+# 收集该站相关 OSM 缓存文件清单（不含宽幅补抓 __w*）
+func _collect_cache_files(station_name: String) -> Array:
 	var files := {}
 	for line_id in DB.line_order:
 		var line: Dictionary = DB.lines[line_id]
@@ -81,46 +88,66 @@ func _load_tracks(station_name: String, pos: Vector2) -> void:
 		var fw := "%s/%s.json" % [OSMDIR, line_id]
 		if FileAccess.file_exists(fw):
 			files[fw] = true
-	var seen_ways := {}
-	for fp in files.keys():
-		var f := FileAccess.open(fp, FileAccess.READ)
-		if f == null:
+	return files.keys()
+
+
+func _process(_delta: float) -> void:
+	if not _loading:
+		return
+	# 增量解析：每帧最多 2 个缓存文件（大站 6MB 级缓存同步解析会冻结 UI）
+	for _i in range(2):
+		if _load_queue.is_empty():
+			break
+		_parse_cache_file(str(_load_queue.pop_front()))
+	queue_redraw()
+	if _load_queue.is_empty():
+		_loading = false
+		empty_label.visible = false
+		queue_redraw()
+
+
+func _parse_cache_file(fp: String) -> void:
+	var f := FileAccess.open(fp, FileAccess.READ)
+	if f == null:
+		return
+	var parsed = JSON.parse_string(f.get_as_text())
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return
+	for el in parsed.get("elements", []):
+		if el.get("type") != "way":
 			continue
-		var parsed = JSON.parse_string(f.get_as_text())
-		if typeof(parsed) != TYPE_DICTIONARY:
+		var wid = el.get("id")
+		if _seen_ways.has(wid):
 			continue
-		for el in parsed.get("elements", []):
-			if el.get("type") != "way":
-				continue
-			var wid = el.get("id")
-			if seen_ways.has(wid):
-				continue
-			var geom: Array = el.get("geometry", [])
-			if geom.size() < 2:
-				continue
-			var all_pts := PackedVector2Array()
-			for p in geom:
-				all_pts.append(GeoScript.lonlat_to_world(float(p["lon"]), float(p["lat"])))
-			# 近站裁剪：把 way 切成 ≤(半径+2km) 的连续段，丢弃远端长尾
-			var runs := []
-			var run := PackedVector2Array()
-			for w in all_pts:
-				if w.distance_to(pos) <= VIEW_RADIUS_M + 3000.0:
-					run.append(w)
-				elif run.size() >= 2:
-					runs.append(run)
-					run = PackedVector2Array()
-				else:
-					run = PackedVector2Array()
-			if run.size() >= 2:
+		var geom: Array = el.get("geometry", [])
+		if geom.size() < 2:
+			continue
+		var all_pts := PackedVector2Array()
+		for p in geom:
+			all_pts.append(GeoScript.lonlat_to_world(float(p["lon"]), float(p["lat"])))
+		# 近站裁剪：把 way 切成 ≤(半径+2km) 的连续段，丢弃远端长尾
+		var runs := []
+		var run := PackedVector2Array()
+		for w in all_pts:
+			if w.distance_to(center) <= VIEW_RADIUS_M + 3000.0:
+				run.append(w)
+			elif run.size() >= 2:
 				runs.append(run)
-			if runs.is_empty():
-				continue
-			seen_ways[wid] = true
-			var tags: Dictionary = el.get("tags", {})
-			var wname: String = str(tags.get("name", ""))
-			for r in runs:
-				tracks.append({"pts": r, "named": wname != "", "len": _poly_len(r)})
+				run = PackedVector2Array()
+			else:
+				run = PackedVector2Array()
+		if run.size() >= 2:
+			runs.append(run)
+		if runs.is_empty():
+			continue
+		_seen_ways[wid] = true
+		var tags: Dictionary = el.get("tags", {})
+		var wname: String = str(tags.get("name", ""))
+		for r in runs:
+			tracks.append({"pts": r, "named": wname != "", "len": _poly_len(r)})
+
+
+func _load_tracks(station_name: String, pos: Vector2) -> void:
 	# 相邻站提示：取该站所属线路的左右邻站
 	for line_id in DB.line_order:
 		var line: Dictionary = DB.lines[line_id]

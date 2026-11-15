@@ -35,10 +35,17 @@ var _r_dist := PackedFloat64Array()
 
 func _ready() -> void:
 	_load_data()
-	if ready_ok:
-		_build_schedule()
-	print("[air] 航空就绪：机场 %d · 航线 %d · 日航班 %d" %
-			[airport_list.size(), routes.size(), flights.size()])
+	print("[air] 航空就绪：机场 %d · 航线 %d（班表惰性构建）" %
+			[airport_list.size(), routes.size()])
+
+
+# 班表惰性构建：7822 班 × 字典生成 ~0.3s，移出启动路径（首次使用时构建）
+func _ensure_schedule() -> void:
+	if _schedule_built or not ready_ok:
+		return
+	_build_schedule()
+	_schedule_built = true
+	print("[air] 班表构建完成：日航班 %d" % flights.size())
 
 
 func _load_data() -> void:
@@ -203,6 +210,7 @@ func _build_schedule() -> void:
 
 # 当前在途航班 idx 列表（60 游戏秒粒度缓存）
 func active_flights(t: float) -> Array:
+	_ensure_schedule()
 	var bin := int(t / 60.0)
 	if bin != _active_bin:
 		_active_bin = bin
@@ -235,6 +243,7 @@ func point_at(r: Dictionary, prog: float) -> Vector2:
 
 # 航班状态：phase = pre(待起飞) / climb / cruise / descend / done(已到达)
 func state_for(idx: int, t: float) -> Dictionary:
+	_ensure_schedule()
 	var dep := _f_dep[idx]
 	var dur := _f_dur[idx]
 	var el := fposmod(t - dep, 86400.0)
@@ -290,9 +299,11 @@ func state_for(idx: int, t: float) -> Dictionary:
 
 # 航司 -> 日航班数（航司图例用；懒计算一次）
 var _al_counts := {}
+var _schedule_built := false
 
 
 func airline_flight_counts() -> Dictionary:
+	_ensure_schedule()
 	if not _al_counts.is_empty():
 		return _al_counts
 	for fl in flights:
@@ -303,6 +314,7 @@ func airline_flight_counts() -> Dictionary:
 
 # 某机场出发航班 idx（按距当前时刻的起飞间隔升序，出发大屏用）
 func airport_departures(iata: String, t: float) -> Array:
+	_ensure_schedule()
 	var out := []
 	for i in range(flights.size()):
 		if str(flights[i]["from"]) == iata:
@@ -314,6 +326,7 @@ func airport_departures(iata: String, t: float) -> Array:
 
 # 某机场到港航班 idx（按距当前时刻的降落间隔升序，到港大屏用）
 func airport_arrivals(iata: String, t: float) -> Array:
+	_ensure_schedule()
 	var out := []
 	for i in range(flights.size()):
 		if str(flights[i]["to"]) == iata:
