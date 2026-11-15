@@ -17,6 +17,7 @@ var airport_list: Array = []
 var airlines: Dictionary = {}   # code -> {name,color}
 var routes: Array = []          # [{airline,from,to,daily,path,lens,total_len,dist_km,path8,path16}]
 var flights: Array = []         # [{id,ri,al,al_name,al_color,from,to,dep,arr,dur}]
+var flight_index: Dictionary = {}   # 航班号 -> idx
 var _active_cache: Array = []   # 当前 60s 时间桶内的在途航班 idx
 var _active_bin := -1
 
@@ -166,6 +167,10 @@ func _build_schedule() -> void:
 			id = "%s-%d" % [fl["num"], k]
 		used[id] = true
 		fl["id"] = id
+	# 航班号 -> idx 索引（全局搜索全天航班用）
+	flight_index = {}
+	for i in range(flights.size()):
+		flight_index[str(flights[i]["id"])] = i
 	# 热路径平行数组
 	_f_dep = PackedFloat64Array()
 	_f_dur = PackedFloat64Array()
@@ -304,6 +309,19 @@ func airport_departures(iata: String, t: float) -> Array:
 			out.append(i)
 	out.sort_custom(func(a, b):
 		return fposmod(flights[a]["dep"] - t, 86400.0) < fposmod(flights[b]["dep"] - t, 86400.0))
+	return out
+
+
+# 某机场到港航班 idx（按距当前时刻的降落间隔升序，到港大屏用）
+func airport_arrivals(iata: String, t: float) -> Array:
+	var out := []
+	for i in range(flights.size()):
+		if str(flights[i]["to"]) == iata:
+			out.append(i)
+	out.sort_custom(func(a, b):
+		var aa := fposmod(flights[a]["dep"] + flights[a]["dur"] - t, 86400.0)
+		var bb := fposmod(flights[b]["dep"] + flights[b]["dur"] - t, 86400.0)
+		return aa < bb)
 	return out
 
 

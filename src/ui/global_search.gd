@@ -7,6 +7,7 @@ signal train_picked(code: String)
 signal station_picked(sname: String)
 signal line_picked(line_id: String)
 signal airport_picked(iata: String)
+signal flight_searched(idx: int)
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
 
@@ -190,6 +191,31 @@ func _refresh() -> void:
 			found += 1
 			if found >= 12:
 				break
+	# 航班（全天 7822 班：航班号前缀 / 航司 / 城市包含）
+	if FlightSim.ready_ok and q.length() >= 2:
+		var fls: Array = []
+		for fid in FlightSim.flight_index:
+			var fl: Dictionary = FlightSim.flights[FlightSim.flight_index[fid]]
+			var fid_l := str(fid).to_lower()
+			if not (fid_l.begins_with(q) or fid_l.contains(q)):
+				var aln := str(fl["al_name"]).to_lower()
+				var route := (str(FlightSim.airports[fl["from"]]["city"])
+						+ str(FlightSim.airports[fl["to"]]["city"])).to_lower()
+				if not (aln.contains(q) or route.contains(q)):
+					continue
+			fls.append(FlightSim.flight_index[fid])
+			if fls.size() >= 4:
+				break
+		for fidx in fls:
+			var fl2: Dictionary = FlightSim.flights[fidx]
+			var fidx_c: int = fidx
+			results_box.add_child(_row("✈", "%s   %s → %s" % [str(fl2["id"]),
+					FlightSim.airports[fl2["from"]]["city"],
+					FlightSim.airports[fl2["to"]]["city"]],
+					"%s · 起飞 %s" % [str(fl2["al_name"]),
+					GameTime.fmt_hhmm_abs(float(fl2["dep"]))],
+					func(): flight_searched.emit(fidx_c)))
+			found += 1
 	results_panel.visible = found > 0
 
 

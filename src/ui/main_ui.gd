@@ -5,6 +5,7 @@ signal train_search_picked(code: String)
 signal cam_jump_requested(world_pos: Vector2)
 signal flight_picked(idx: int)
 signal airport_search_requested(iata: String)
+signal flight_search_requested(idx: int)
 
 const UIKit := preload("res://src/ui/ui_kit.gd")
 const FontLib := preload("res://src/ui/font_lib.gd")
@@ -510,6 +511,30 @@ func _refresh_checkin_book() -> void:
 		if heat.size() > 12:
 			checkin_book_list.add_child(UIKit.label(
 					"…另有 %d 条线路已涉及" % (heat.size() - 12), 11, UIKit.DIM))
+	# 航空页：已到访机场（镜头 15km 内到访；点击飞至）
+	if not Meta.airport_visits.is_empty() and FlightSim.ready_ok:
+		checkin_book_list.add_child(UIKit.vspace(6))
+		checkin_book_list.add_child(UIKit.label(
+				"✈ 已到访机场 %d / %d" % [Meta.airport_visits.size(),
+				FlightSim.airport_list.size()], 11, UIKit.DIM))
+		for iata in Meta.airport_visits:
+			if not FlightSim.airports.has(iata):
+				continue
+			var ap: Dictionary = FlightSim.airports[iata]
+			var iata_c := str(iata)
+			var b := Button.new()
+			b.focus_mode = Control.FOCUS_NONE
+			b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			b.text = "🛫 %s (%s)  ·  %d 条航线" % [str(ap["name"]), iata_c,
+					int(ap["routes_n"])]
+			b.flat = true
+			b.add_theme_font_size_override("font_size", 12)
+			b.add_theme_color_override("font_color", UIKit.TEXT)
+			b.tooltip_text = "点击飞至该机场"
+			b.pressed.connect(func():
+				if Meta.aviation_on and FlightSim.airports.has(iata_c):
+					airport_search_requested.emit(iata_c))
+			checkin_book_list.add_child(b)
 
 
 func _sync_checkin_pill() -> void:
@@ -770,6 +795,10 @@ func _build_global_search() -> void:
 			Meta.set_aviation(true)
 		if FlightSim.airports.has(iata):
 			airport_search_requested.emit(iata))
+	global_search.flight_searched.connect(func(idx: int):
+		if not Meta.aviation_on:
+			Meta.set_aviation(true)
+		flight_search_requested.emit(idx))
 
 
 func _on_spot_mode(on: bool) -> void:

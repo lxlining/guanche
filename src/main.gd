@@ -66,6 +66,9 @@ func _ready() -> void:
 	ui.flight_list.connect("flight_selected", func(idx: int):
 		_on_flight_click(idx)
 		_locate_flight(idx))
+	ui.flight_search_requested.connect(func(idx: int):
+		_on_flight_click(idx)
+		_locate_flight(idx))
 	ui.train_list.connect("train_selected", _on_list_select)
 	ui.detail.connect("follow_requested", _toggle_follow)
 	ui.detail.connect("station_info_requested", _on_stop_station_click)
