@@ -63,6 +63,9 @@ func _ready() -> void:
 	trains_layer.connect("train_clicked", _on_train_clicked)
 	ui.flight_card.connect("follow_requested", _toggle_flight_follow)
 	ui.flight_picked.connect(_on_flight_pick)
+	ui.flight_list.connect("flight_selected", func(idx: int):
+		_on_flight_click(idx)
+		_locate_flight(idx))
 	ui.train_list.connect("train_selected", _on_list_select)
 	ui.detail.connect("follow_requested", _toggle_follow)
 	ui.detail.connect("station_info_requested", _on_stop_station_click)
@@ -314,7 +317,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
 			KEY_TAB:
-				ui.toggle_list()
+				if Meta.aviation_on:
+					ui.toggle_flight_list()
+				else:
+					ui.toggle_list()
 			KEY_F:
 				if follow_flight >= 0:
 					_toggle_flight_follow(follow_flight)

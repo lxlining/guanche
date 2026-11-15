@@ -283,6 +283,19 @@ func state_for(idx: int, t: float) -> Dictionary:
 			"alt": alt, "speed": speed, "prog": prog, "remain": dur - el}
 
 
+# 航司 -> 日航班数（航司图例用；懒计算一次）
+var _al_counts := {}
+
+
+func airline_flight_counts() -> Dictionary:
+	if not _al_counts.is_empty():
+		return _al_counts
+	for fl in flights:
+		var al := str(fl["al"])
+		_al_counts[al] = int(_al_counts.get(al, 0)) + 1
+	return _al_counts
+
+
 # 某机场出发航班 idx（按距当前时刻的起飞间隔升序，出发大屏用）
 func airport_departures(iata: String, t: float) -> Array:
 	var out := []

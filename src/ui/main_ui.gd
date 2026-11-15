@@ -20,6 +20,7 @@ const GlobalSearch := preload("res://src/ui/global_search.gd")
 const MiniMap := preload("res://src/ui/mini_map.gd")
 const FlightCard := preload("res://src/ui/flight_card.gd")
 const AirportCard := preload("res://src/ui/airport_card.gd")
+const FlightList := preload("res://src/ui/flight_list.gd")
 
 var ui_root: Control
 var clock_label: Label
@@ -52,6 +53,8 @@ var line_screen: Control
 var global_search: Control
 var flight_card: Control
 var airport_card: Control
+var flight_list: Control
+var air_legend_panel: PanelContainer
 var focus_pill: PanelContainer
 var focus_label: Label
 var help_panel: Control
@@ -103,6 +106,9 @@ func _ready() -> void:
 		airport_card.hide()
 		flight_picked.emit(idx))
 	ui_root.add_child(airport_card)
+	flight_list = FlightList.new()
+	ui_root.add_child(flight_list)
+	_build_air_legend()
 	_build_help()
 
 	focus_pill = UIKit.panel_container(UIKit.flat(Color("1a2230e6"), 10, UIKit.WARN, 1, 10))
@@ -185,6 +191,40 @@ func _build_zoom_widget() -> void:
 
 func _cam() -> Camera2D:
 	return get_viewport().get_camera_2d()
+
+
+# 航司图例（航空视图专属）：颜色方块 + 两字码 + 日航班数，双列紧凑排布
+func _build_air_legend() -> void:
+	air_legend_panel = UIKit.panel_container(UIKit.flat(UIKit.BG, 12, UIKit.BORDER, 1, 10))
+	air_legend_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_LEFT, Control.PRESET_MODE_MINSIZE, 12)
+	air_legend_panel.grow_vertical = Control.GROW_DIRECTION_BOTH
+	air_legend_panel.visible = false
+	ui_root.add_child(air_legend_panel)
+	var vb := VBoxContainer.new()
+	vb.add_theme_constant_override("separation", 4)
+	air_legend_panel.add_child(vb)
+	vb.add_child(UIKit.label("航司 · 日航班", 12, UIKit.DIM))
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 10)
+	grid.add_theme_constant_override("v_separation", 2)
+	vb.add_child(grid)
+	var counts := FlightSim.airline_flight_counts()
+	var codes := counts.keys()
+	codes.sort()
+	for code in codes:
+		var al: Dictionary = FlightSim.airlines.get(str(code), {"name": str(code), "color": "#3f7fe0"})
+		var hb := HBoxContainer.new()
+		hb.add_theme_constant_override("separation", 4)
+		var chip := UIKit.label("▬", 11, Color(str(al["color"])))
+		chip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		hb.add_child(chip)
+		hb.add_child(UIKit.label("%s %d" % [code, counts[code]], 11, UIKit.TEXT))
+		grid.add_child(hb)
+
+
+func toggle_flight_list() -> void:
+	flight_list.toggle()
 
 
 func _build_legend() -> void:
@@ -748,8 +788,9 @@ func _on_aviation_changed() -> void:
 		show_toast("航空数据未就绪（data/air/aviation.json 缺失）")
 	elif air_ok:
 		show_toast("🛤 铁路视图（F8 切换航空）")
-	# 视图归属：图例/打卡横幅/小地图属铁路，航空视图收起
+	# 视图归属：图例/打卡横幅/小地图属铁路，航司图例属航空
 	legend_panel.visible = not Meta.aviation_on
+	air_legend_panel.visible = Meta.aviation_on and FlightSim.ready_ok
 	mini_map.visible = not Meta.aviation_on
 	if Meta.aviation_on:
 		checkin_pill.visible = false
