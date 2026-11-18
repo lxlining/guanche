@@ -687,8 +687,14 @@ func _process(delta: float) -> void:
 			toast_panel.visible = false
 	if clock_label != null:
 		clock_label.text = ("Ⅱ " if GameTime.paused else "") + GameTime.time_string_full()
-		clock_sub.text = "%s× · %d 条线路 · %d 站 · 在图 %d 趟" % [
-			_fmt_speed(GameTime.speed), DB.line_order.size(), DB.total_station_count(), _active_count()]
+		if Meta.aviation_on and FlightSim.ready_ok:
+			clock_sub.text = "%s× · 航空视图 · %d 机场 · 在途 %d 班" % [
+				_fmt_speed(GameTime.speed), FlightSim.airport_list.size(),
+				FlightSim.active_flights(GameTime.t).size()]
+		else:
+			clock_sub.text = "%s× · %d 条线路 · %d 站 · 在图 %d 趟" % [
+				_fmt_speed(GameTime.speed), DB.line_order.size(),
+				DB.total_station_count(), _active_count()]
 	if zoom_label != null:
 		var cam := get_viewport().get_camera_2d()
 		if cam != null:

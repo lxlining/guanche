@@ -118,26 +118,36 @@ func _state_in_leg(train: Dictionary, leg: Dictionary, rel: float) -> Dictionary
 	var segs: Array = leg["segs"]
 	var line_id: String = leg["line"]
 
-	for i in range(stops_l.size()):
-		if rel < stops_l[i]["dep_rel"]:
-			if rel >= stops_l[i]["arr_rel"]:
-				return _state_at_stop(train, line_id, stops_l[i], rel,
-						leg["i0"] + i, leg["i0"] + i + 1)
-			# 区间运行：segs[i-1] 连接 stops[i-1] -> stops[i]
-			var seg: Dictionary = segs[i - 1]
-			var tau: float = (rel - stops_l[i - 1]["dep_rel"]) / maxf(
-					stops_l[i]["arr_rel"] - stops_l[i - 1]["dep_rel"], 1.0)
-			var p: float = _trapezoid_progress(tau, seg["accel"])
-			var arc: float = lerpf(seg["arc0"], seg["arc1"], p)
-			var slope: float = _trapezoid_slope(tau, seg["accel"])
-			var v_kmh: float = seg["len_m"] / maxf(seg["dur_s"], 1.0) * slope * 3.6
-			var rpt := DB.arc_pos(line_id, arc)
-			var dirv: Vector2 = _probe_dir(line_id, arc, leg)
-			return _mk_state(train, line_id, "run", rpt, dirv,
-					DB.km_at_arc(line_id, arc), rel, leg["i0"] + i, leg["i0"] + i + 1,
-					minf(v_kmh, 350.0))
-	# 已驶离本腿末端（时间缝隙由 transfer 分支处理，此处兜底收车）
-	return {"code": train["code"], "status": "done"}
+	# 二分定位：stops_l[i].dep_rel 升序，找第一个 dep_rel > rel 的站
+	# （原线性扫平均走一半，京沪等 20+ 站长腿每车每帧都要走）
+	var lo := 0
+	var hi := stops_l.size() - 1
+	while lo < hi - 1:
+		var mid := (lo + hi) >> 1
+		if float(stops_l[mid]["dep_rel"]) <= rel:
+			lo = mid
+		else:
+			hi = mid
+	var i := hi
+	if float(stops_l[i]["dep_rel"]) <= rel:
+		# 已驶离本腿末端（时间缝隙由 transfer 分支处理，此处兜底收车）
+		return {"code": train["code"], "status": "done"}
+	if rel >= float(stops_l[i]["arr_rel"]):
+		return _state_at_stop(train, line_id, stops_l[i], rel,
+				leg["i0"] + i, leg["i0"] + i + 1)
+	# 区间运行：segs[i-1] 连接 stops[i-1] -> stops[i]
+	var seg: Dictionary = segs[i - 1]
+	var tau: float = (rel - float(stops_l[i - 1]["dep_rel"])) / maxf(
+			float(stops_l[i]["arr_rel"]) - float(stops_l[i - 1]["dep_rel"]), 1.0)
+	var p: float = _trapezoid_progress(tau, seg["accel"])
+	var arc: float = lerpf(float(seg["arc0"]), float(seg["arc1"]), p)
+	var slope: float = _trapezoid_slope(tau, seg["accel"])
+	var v_kmh: float = float(seg["len_m"]) / maxf(float(seg["dur_s"]), 1.0) * slope * 3.6
+	var rpt := DB.arc_pos(line_id, arc)
+	var dirv: Vector2 = _probe_dir(line_id, arc, leg)
+	return _mk_state(train, line_id, "run", rpt, dirv,
+			DB.km_at_arc(line_id, arc), rel, leg["i0"] + i, leg["i0"] + i + 1,
+			minf(v_kmh, 350.0))
 
 
 func _transfer_state(train: Dictionary, tr: Dictionary, rel: float,
