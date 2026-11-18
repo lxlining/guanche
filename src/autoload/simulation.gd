@@ -187,23 +187,23 @@ func _state_at_stop(train: Dictionary, line_id: String, stop: Dictionary,
 			DB.km_at_arc(line_id, stop["arc"]), rel, stop_idx, next_idx, 0.0)
 
 
-# 箭头朝向探测：沿行驶方向取前方 80m 采样（与 down=弧长递增同一套定义）
+# 箭头朝向探测：取前方 40m 所在段的行进方向（单次二分；原为两次全量
+# 二分的两点采样）——下行=弧长递增，上行=递减
 func _probe_dir(line_id: String, arc: float, leg) -> Vector2:
 	var sign := 1.0
 	if leg != null:
 		sign = 1.0 if leg["arc1"] > leg["arc0"] else -1.0
-	var p0 := DB.arc_pos(line_id, arc)
-	var p1 := DB.arc_pos(line_id, arc + 80.0 * sign)
-	var dv := p1 - p0
+	var dv: Vector2 = DB.arc_dir(line_id, arc + 40.0 * sign)
 	if dv.length_squared() > 1.0:
-		return dv.normalized()
+		return dv * sign
 	return dv
 
 
 func _mk_state(train: Dictionary, line_id: String, status: String, pos: Vector2,
 		dirv: Vector2, km: int, rel: float, stop_idx: int, next_idx: int,
 		v_kmh: float = 0.0) -> Dictionary:
-	var stops: Array = train["stops"]
+	# 精简字段：next_* 四键只有详情卡消费（选中车每 0.2s 一次），
+	# 不再为每车每帧构建——detail_card 改由 stops 表按 stop_idx 直查
 	var st := {
 		"code": train["code"], "type": train["type"], "dir": train["dir"],
 		"line": line_id,
@@ -211,16 +211,6 @@ func _mk_state(train: Dictionary, line_id: String, status: String, pos: Vector2,
 		"speed_kmh": minf(v_kmh, 350.0), "km": km,
 		"rel": rel, "stop_idx": stop_idx
 	}
-	if next_idx < stops.size():
-		st["next_sid"] = stops[next_idx]["sid"]
-		st["next_line"] = str(stops[next_idx].get("line", line_id))
-		st["next_arr_s"] = stops[next_idx]["arr_s"]
-		st["next_name"] = str(stops[next_idx].get("name", st["next_sid"]))
-	else:
-		st["next_sid"] = ""
-		st["next_line"] = ""
-		st["next_arr_s"] = -1.0
-		st["next_name"] = ""
 	return st
 
 

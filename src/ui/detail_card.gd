@@ -273,9 +273,13 @@ func _tick_now() -> void:
 		"run":
 			status_label.text = "在途 · K%d · %d km/h" % [int(st.get("km", 0)), int(st.get("speed_kmh", 0.0))]
 			status_label.add_theme_color_override("font_color", UIKit.GOOD)
-			var nsid: String = st.get("next_sid", "")
-			if nsid != "":
-				next_label.text = "下一站：%s · %s 到" % [str(st.get("next_name", nsid)), GameTime.fmt_hhmm_abs(st.get("next_arr_s", -1.0))]
+			# 下一站按 stop_idx 直查 stops 表（状态不再携带 next_* 四键）
+			var si := int(st.get("stop_idx", -1))
+			var stops_all: Array = train["stops"]
+			if si >= 0 and si < stops_all.size():
+				var nx: Dictionary = stops_all[si]
+				next_label.text = "下一站：%s · %s 到" % [
+					str(nx.get("name", "")), GameTime.fmt_hhmm_abs(float(nx.get("arr_s", -1.0)))]
 		"stop":
 			var cur_i := int(st.get("stop_idx", 0))
 			status_label.text = "停站 %s" % str(train["stops"][cur_i].get("name", ""))

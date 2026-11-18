@@ -730,6 +730,9 @@ func _start_follow(code: String) -> void:
 	trains_layer.trail.clear()
 	cam.follow_code = code
 	ui.detail.following = true
+	# 跟随列车自动拉近：全国视野下看不清列车姿态
+	if cam.zoom.x < 0.02:
+		cam.zoom_to(0.02)
 
 	var st: Dictionary = Simulation.states.get(code, {})
 	var status := str(st.get("status", "off"))

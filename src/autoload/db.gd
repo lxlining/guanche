@@ -501,6 +501,32 @@ func arc_pos(line_id: String, arc: float) -> Vector2:
 	return gvec[lo].lerp(gvec[hi], f)
 
 
+# 热路径专用：取弧长所在段的行进方向（弧长递增朝向；无字典分配）
+func arc_dir(line_id: String, arc: float) -> Vector2:
+	var line: Dictionary = line(line_id)
+	var gvec: PackedVector2Array = line.get("gvec", PackedVector2Array())
+	if gvec.is_empty():
+		var pts: Array = line["geometry_pts"]
+		gvec = PackedVector2Array()
+		for p in pts:
+			gvec.push_back(p["pos"])
+		line["gvec"] = gvec
+	var cum: PackedFloat64Array = line["cum"]
+	var a := clampf(arc, 0.0, line["total_len_m"])
+	var lo := 0
+	var hi := cum.size() - 1
+	while lo < hi - 1:
+		var mid := (lo + hi) >> 1
+		if cum[mid] <= a:
+			lo = mid
+		else:
+			hi = mid
+	var dv := gvec[hi] - gvec[lo]
+	if dv.length_squared() > 1.0:
+		return dv.normalized()
+	return dv
+
+
 # 两弧长之间的几何点列（含精确端点插值），用于绘制列车全程走线
 func geometry_between(line_id: String, arc_a: float, arc_b: float) -> PackedVector2Array:
 	var ln: Dictionary = lines.get(line_id, {})
