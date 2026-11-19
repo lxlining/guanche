@@ -776,7 +776,18 @@ func _follow_tick() -> void:
 		trains_layer.trail.append(pos_now)
 		if trains_layer.trail.size() > 80:
 			trains_layer.trail.pop_front()
-	ui.set_follow_pill("正在跟随 %s · 已跟随 %d km · [Esc] 退出" % [follow_code, int(_f_dist / 1000.0)])
+	# 跟随信息：停站/下一站提示（状态 stop = 当前停靠，run = 下一停靠）
+	var next_hint := ""
+	var si := int(st.get("stop_idx", -1))
+	var stops_all: Array = DB.train_by_code.get(follow_code, {}).get("stops", [])
+	if status == "stop" and si >= 0 and si < stops_all.size():
+		next_hint = " · 停 %s" % str(stops_all[si].get("name", ""))
+		if si + 1 < stops_all.size():
+			next_hint += " · 下一站 %s" % str(stops_all[si + 1].get("name", ""))
+	elif si >= 0 and si < stops_all.size():
+		next_hint = " · 下一站 %s" % str(stops_all[si].get("name", ""))
+	ui.set_follow_pill("正在跟随 %s%s · 已跟随 %d km · [Esc] 退出" % [
+		follow_code, next_hint, int(_f_dist / 1000.0)])
 
 	# 对向交会检测（每次跟随会话最多上报一次）
 	if _cross_ready:

@@ -113,6 +113,15 @@ func _draw() -> void:
 	var cam_center: Vector2 = cam.get_screen_center_position()
 	var vp_size: Vector2 = get_viewport_rect().size / zoom
 
+	if Meta.aviation_on and FlightSim.ready_ok:
+		_draw_aviation_mini(cam, zoom, cam_center)
+	else:
+		_draw_rail_mini(cam, zoom, cam_center, vp_size)
+
+
+# 铁路小地图：线网缩略 + 视野框 + 列车点
+func _draw_rail_mini(cam: Camera2D, zoom: float, cam_center: Vector2,
+		vp_size: Vector2) -> void:
 	# 线路缩略（线段批缓存，size 变化才重建；单次 draw_multiline，无 AA）
 	for segs in _pixel_lines():
 		draw_multiline(segs, COL_LINE, 1.0, false)
@@ -137,6 +146,51 @@ func _draw() -> void:
 			draw_circle(mp, 1.2, Color(1, 1, 1, 0.5))
 			active += 1
 			if active > 200:
+				break
+
+
+# 航空小地图：机场点 + 简化弧网 + 在途航班点
+func _draw_aviation_mini(cam: Camera2D, zoom: float, cam_center: Vector2) -> void:
+	if not FlightSim.ready_ok:
+		return
+	var t := GameTime.t
+	var vp_size: Vector2 = get_viewport_rect().size / zoom
+	# 简化弧网（每线 8 点抽稀）
+	var segs := PackedVector2Array()
+	for r in FlightSim.routes:
+		var pts: PackedVector2Array = r["path8"]
+		var prev := _world_to_mini(pts[0])
+		for i in range(1, pts.size()):
+			var cur := _world_to_mini(pts[i])
+			segs.push_back(prev)
+			segs.push_back(cur)
+			prev = cur
+	draw_multiline(segs, Color(0.45, 0.72, 1.0, 0.35), 1.0, false)
+	# 机场点
+	for iata in FlightSim.airports:
+		var ap: Dictionary = FlightSim.airports[iata]
+		var mp := _world_to_mini(ap["pos"])
+		if int(ap["major"]) == 1:
+			draw_circle(mp, 1.8, Color(0.95, 0.7, 0.25, 0.95))
+		else:
+			draw_circle(mp, 1.0, Color(0.8, 0.7, 0.45, 0.6))
+	# 视野框
+	var half := vp_size * 0.5 / zoom
+	var tl := _world_to_mini(cam_center - half)
+	var br := _world_to_mini(cam_center + half)
+	draw_rect(Rect2(tl, br - tl), COL_VIEWPORT, false, 1.2)
+	# 在途航班点
+	var flown := 0
+	for idx in FlightSim.active_flights(t):
+		var st: Dictionary = FlightSim.state_for(idx, t)
+		var ph: String = str(st["phase"])
+		if ph == "pre" or ph == "done":
+			continue
+		var mp := _world_to_mini(st["pos"])
+		if Rect2(Vector2.ZERO, size).has_point(mp):
+			draw_circle(mp, 1.2, Color(1, 1, 1, 0.6))
+			flown += 1
+			if flown > 260:
 				break
 
 	# 边框
