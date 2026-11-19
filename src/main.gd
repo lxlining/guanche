@@ -439,6 +439,7 @@ func _toggle_flight_follow(idx: int) -> void:
 	follow_flight = idx
 	cam.follow_code = ""
 	ui.flight_card.set_following(true)
+	Meta.board_flight(idx)  # 值机：乘坐记录（打卡簿航空页联动）
 	# 跟随时自动拉近：全国视野下直接跟随看不清飞机姿态
 	if cam.zoom.x < 0.0025:
 		cam.zoom_to(0.005)

@@ -13,6 +13,8 @@ var _fl_accum := 0.0
 var force_idx := -1    # 被跟随/选中的航班：每帧单独解算（相机平滑所需）
 var trail := PackedVector2Array()  # 被选中/跟随航班的飞行轨迹（世界坐标）
 var _trail_for := -1
+var _spot_accum := 0.0
+var _last_flight_obs := {}         # fid -> 上次被机位观测的游戏时刻（30min 冷却）
 
 
 func _process(_delta: float) -> void:
@@ -69,6 +71,32 @@ func _process(_delta: float) -> void:
 	else:
 		hover_ap = ""
 	queue_redraw()
+	# 机位观测航班：机位 6km 半径内经过的航班计入观测（1Hz，30min 冷却）
+	_spot_accum += _delta
+	if _spot_accum >= 1.0:
+		_spot_accum = 0.0
+		_observe_by_spots(t)
+
+
+func _observe_by_spots(t: float) -> void:
+	if Meta.spots.is_empty():
+		return
+	for idx in _airborne:
+		var st: Dictionary = _states.get(idx, {})
+		if st.is_empty():
+			continue
+		var fid := str(FlightSim.flights[idx]["id"])
+		var last: float = float(_last_flight_obs.get(fid, -1.0e9))
+		if t - last < 1800.0:
+			continue
+		var pos: Vector2 = st["pos"]
+		for s in Meta.spots:
+			if pos.distance_to(s["world"]) <= s["r_m"]:
+				_last_flight_obs[fid] = t
+				Meta.observe_flight(fid)
+				break
+	if _last_flight_obs.size() > 2048:
+		_last_flight_obs.clear()
 
 
 func pick(world_pos: Vector2, zoom: float) -> int:

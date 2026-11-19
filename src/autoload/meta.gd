@@ -60,6 +60,21 @@ func observe_flight(fid: String) -> void:
 	check_achievements()
 
 
+# 乘坐记录：跟随航班开始值机（fid -> {from,to,n}）
+var flight_trips: Dictionary = {}
+
+
+func board_flight(idx: int) -> void:
+	if idx < 0 or idx >= FlightSim.flights.size():
+		return
+	var fl: Dictionary = FlightSim.flights[idx]
+	var fid := str(fl["id"])
+	var rec: Dictionary = flight_trips.get(fid, {"from": str(fl["from"]),
+			"to": str(fl["to"]), "n": 0})
+	rec["n"] = int(rec.get("n", 0)) + 1
+	flight_trips[fid] = rec
+
+
 # 航司两字码（航班号前两位；重号后缀 -N 不影响）
 func airlines_seen_count() -> int:
 	var set := {}
@@ -414,7 +429,8 @@ func save() -> void:
 		"class_visible": class_visible, "checkins": checkins,
 		"search_history": search_history,
 		"aviation_on": aviation_on, "flights_seen": flights_seen,
-		"airport_visits": airport_visits, "follow_flight_done": follow_flight_done
+		"airport_visits": airport_visits, "follow_flight_done": follow_flight_done,
+		"flight_trips": flight_trips
 	}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f != null:
@@ -439,6 +455,7 @@ func _load_save() -> void:
 	flights_seen = parsed.get("flights_seen", {})
 	airport_visits = parsed.get("airport_visits", {})
 	follow_flight_done = bool(parsed.get("follow_flight_done", false))
+	flight_trips = parsed.get("flight_trips", {})
 	GameTime.speed = float(parsed.get("speed", GameTime.speed))
 	GameTime.paused = bool(parsed.get("paused", false))
 	discovered = parsed.get("discovered", {})

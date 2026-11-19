@@ -522,11 +522,17 @@ func _refresh_checkin_book() -> void:
 				continue
 			var ap: Dictionary = FlightSim.airports[iata]
 			var iata_c := str(iata)
+			# 该机场涉及的乘坐记录（从/到任一端）
+			var trips := 0
+			for ft in Meta.flight_trips.values():
+				if str(ft.get("from", "")) == iata_c or str(ft.get("to", "")) == iata_c:
+					trips += int(ft.get("n", 0))
 			var b := Button.new()
 			b.focus_mode = Control.FOCUS_NONE
 			b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-			b.text = "🛫 %s (%s)  ·  %d 条航线" % [str(ap["name"]), iata_c,
-					int(ap["routes_n"])]
+			b.text = "🛫 %s (%s)  ·  %d 条航线%s" % [str(ap["name"]), iata_c,
+					int(ap["routes_n"]),
+					"  ·  乘坐 %d 班" % trips if trips > 0 else ""]
 			b.flat = true
 			b.add_theme_font_size_override("font_size", 12)
 			b.add_theme_color_override("font_color", UIKit.TEXT)
