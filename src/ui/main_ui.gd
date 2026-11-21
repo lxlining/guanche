@@ -829,10 +829,9 @@ func _on_aviation_changed() -> void:
 		show_toast("航空数据未就绪（data/air/aviation.json 缺失）")
 	elif air_ok:
 		show_toast("🛤 铁路视图（F8 切换航空）")
-	# 视图归属：图例/打卡横幅/小地图属铁路，航司图例属航空
+	# 视图归属：铁路图例/打卡横幅属铁路，航司图例属航空，小地图双视图常显
 	legend_panel.visible = not Meta.aviation_on
 	air_legend_panel.visible = Meta.aviation_on and FlightSim.ready_ok
-	mini_map.visible = not Meta.aviation_on
 	if Meta.aviation_on:
 		checkin_pill.visible = false
 	var ab := ui_root.find_child("AirButton", true, false)

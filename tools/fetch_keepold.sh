@@ -18,7 +18,9 @@ echo "[fetch_keepold] 宽幅站对任务 $total 个（单 worker + 25s 间隔）
 for pass in 1 2 3 4 5 6; do
   todo=0
   while read -r id k; do
-    [ -s "$OSM/${id}__w${k}.json" ] || todo=$((todo+1))
+    id="${id%$'\r'}"; k="${k%$'\r'}"
+    [ -z "$id" ] && continue
+    [ -s "$OSM/${id}__${k}.json" ] || todo=$((todo+1))
   done < "$TASKS"
   echo "[$(date +%T)] [fetch_keepold] 第 $pass 轮：待抓 $todo / $total"
   if [ "$todo" -eq 0 ]; then
@@ -26,6 +28,8 @@ for pass in 1 2 3 4 5 6; do
     break
   fi
   while read -r id k; do
+    id="${id%$'\r'}"; k="${k%$'\r'}"   # 清除 CRLF（Windows 重定向残留）
+    [ -z "$id" ] && continue
     out="$OSM/${id}__w${k}.json"
     if [ -s "$out" ]; then continue; fi
     tmp="$out.tmp.$$"
