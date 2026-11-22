@@ -73,6 +73,7 @@ func board_flight(idx: int) -> void:
 			"to": str(fl["to"]), "n": 0})
 	rec["n"] = int(rec.get("n", 0)) + 1
 	flight_trips[fid] = rec
+	check_achievements()
 
 
 # 航司两字码（航班号前两位；重号后缀 -N 不影响）
@@ -299,7 +300,17 @@ func _eval(def: Dictionary) -> bool:
 			return follow_flight_done
 		"airports_min":
 			return airport_visits.size() >= int(def.get("n", 1))
+		"rides_min":
+			return _rides_total() >= int(def.get("n", 1))
 	return false
+
+
+# 乘坐总班次（flight_trips 各航 n 之和）
+func _rides_total() -> int:
+	var total := 0
+	for rec in flight_trips.values():
+		total += int(rec.get("n", 0))
+	return total
 
 
 func _unlock(def: Dictionary) -> void:
@@ -352,6 +363,8 @@ func progress_text(def: Dictionary) -> String:
 			return "%d/%d" % [airlines_seen_count(), int(def.get("n", 1))]
 		"airports_min":
 			return "%d/%d" % [airport_visits.size(), int(def.get("n", 1))]
+		"rides_min":
+			return "%d/%d" % [_rides_total(), int(def.get("n", 1))]
 	return ""
 
 

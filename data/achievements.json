@@ -171,6 +171,27 @@
       "desc": "移动镜头到访 15 座机场上空。",
       "check": "airports_min",
       "n": 15
+    },
+    {
+      "id": "ride_5",
+      "name": "空中飞人",
+      "desc": "跟随值机 5 个航班。",
+      "check": "rides_min",
+      "n": 5
+    },
+    {
+      "id": "ride_15",
+      "name": "常旅客",
+      "desc": "跟随值机 15 个航班。",
+      "check": "rides_min",
+      "n": 15
+    },
+    {
+      "id": "airports_50",
+      "name": "机场通",
+      "desc": "到访 50 座机场上空。",
+      "check": "airports_min",
+      "n": 50
     }
   ]
 }
